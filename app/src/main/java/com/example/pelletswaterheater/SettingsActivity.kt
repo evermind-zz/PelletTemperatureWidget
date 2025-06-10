@@ -1,8 +1,6 @@
 package com.example.pelletswaterheater
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -21,14 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
 import androidx.work.WorkManager
 import androidx.glance.appwidget.updateAll
 import androidx.work.OneTimeWorkRequestBuilder
-import com.example.pelletswaterheater.SettingsActivity.Companion.getSharedPrefs
-import com.example.pelletswaterheater.SettingsActivity.Companion.getStoredWidgetSize
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,34 +44,16 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    companion object {
-        fun getSharedPrefs(context: Context): SharedPreferences {
-            val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-            val sharedPrefs = EncryptedSharedPreferences.create(
-                "secure_prefs",
-                masterKeyAlias,
-                context,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-            return sharedPrefs
-        }
-
-        fun getStoredWidgetSize(context: Context, dimension: String): String? {
-            return getSetting(context, "widget_$dimension")
-        }
-
-    }
 }
 
 @Composable
 fun SettingsScreen() {
     val context = LocalContext.current
-    var serverUrl by remember { mutableStateOf(getStoredUrl(context) ?: "http://192.168.178.4:4321/<PASSWORD>/all") }
-    var widgetWidth by remember { mutableStateOf(getStoredWidgetSize(context, "width") ?: "100") }
-    var widgetHeight by remember { mutableStateOf(getStoredWidgetSize(context, "height") ?: "100") }
-    var backgroundColor by remember { mutableStateOf(getStoredBackgroundColor(context) ?: "FFF3E5F5") }
-    var textColor by remember { mutableStateOf(getStoredTextColor(context) ?: "FF000000") }
+    var serverUrl by remember { mutableStateOf(TemperatureUtils.getStoredUrl(context) ?: "http://192.168.178.4:4321/<PASSWORD>/all") }
+    var widgetWidth by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "width") ?: "100") }
+    var widgetHeight by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "height") ?: "100") }
+    var backgroundColor by remember { mutableStateOf(TemperatureUtils.getStoredBackgroundColor(context) ?: "FFF3E5F5") }
+    var textColor by remember { mutableStateOf(TemperatureUtils.getStoredTextColor(context) ?: "FF000000") }
     var backgroundColorSelection by remember { mutableStateOf(if (backgroundColor == "TRANSPARENT") "Transparent" else "Custom") }
     var textColorSelection by remember { mutableStateOf("Custom") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -246,25 +222,6 @@ private fun isValidHexColor(color: String): Boolean {
     return color.matches(Regex("^[0-9A-Fa-f]{8}$")) || color == "TRANSPARENT"
 }
 
-public fun getStoredBackgroundColor(context: Context): String? {
-    val sharedPrefs = getSharedPrefs(context)
-    return sharedPrefs.getString("background_color", null)
-}
-
-private fun getStoredTextColor(context: Context): String? {
-    val sharedPrefs = getSharedPrefs(context)
-    return sharedPrefs.getString("text_color", null)
-}
-
-private fun getSetting(context: Context, key: String): String? {
-    val sharedPrefs = getSharedPrefs(context)
-    return sharedPrefs.getString(key, null)
-}
-
-fun getStoredUrl(context: Context): String? {
-    return getSetting(context, "server_url")
-}
-
 private fun saveSettings(
     context: Context,
     url: String,
@@ -273,13 +230,5 @@ private fun saveSettings(
     backgroundColor: String,
     textColor: String
 ) {
-    val sharedPrefs = getSharedPrefs(context)
-    with(sharedPrefs.edit()) {
-        putString("server_url", url)
-        putString("widget_width", width)
-        putString("widget_height", height)
-        putString("background_color", backgroundColor)
-        putString("text_color", textColor)
-        apply()
-    }
+    TemperatureUtils.saveSettings(context, url, width, height, backgroundColor, textColor)
 }

@@ -27,6 +27,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import com.example.pelletswaterheater.TemperatureUtils.formatTemperature
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -73,7 +74,7 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = temperatureState ?: "Loading...",
+            text = formatTemperature(temperatureState),
             fontSize = 48.sp,
             textAlign = TextAlign.Center
         )
