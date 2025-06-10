@@ -1,5 +1,6 @@
 package com.example.pelletswaterheater
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
@@ -38,6 +39,7 @@ import kotlinx.coroutines.withContext
 import androidx.glance.appwidget.SizeMode
 import kotlin.math.min
 import kotlinx.serialization.json.Json
+import java.text.DecimalFormat
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.net.URL
@@ -61,6 +63,7 @@ class TemperatureWidget : GlanceAppWidget() {
         }
     }
 
+    @SuppressLint("StateFlowValueCalledInComposition")
     @Composable
     fun TemperatureWidgetContent(
         width: Dp = 100.dp,
@@ -68,7 +71,18 @@ class TemperatureWidget : GlanceAppWidget() {
         backgroundColor: Color = Color(0xFFF3E5F5), // Default purple
         textColor: Color = Color.Black // Default black
     ) {
-        val temperature = TemperatureWorker.latestTemperatureFlow.value ?: "Loading..."
+        val rawTemperature = TemperatureWorker.latestTemperatureFlow.value ?: "Loading..."
+        val temperature = when {
+            rawTemperature == "Error" -> "Error"
+            rawTemperature == "Loading..." -> "Loading..."
+            else -> try {
+                DecimalFormat("0.0").format(rawTemperature.toFloat()) + "°C"
+            } catch (e: NumberFormatException) {
+                "Error"
+            }
+        }
+        val error =
+            TemperatureWorker.errorFlow.value?.let { it.take(20) } // Limit error to 20 chars
 
         Column(
             modifier = GlanceModifier
@@ -79,17 +93,30 @@ class TemperatureWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = temperature,
-                style = TextStyle(fontSize = 24.sp, color = ColorProvider(Color.Black))
-            )
-            Image(
-                provider = ImageProvider(R.drawable.ic_refresh),
-                contentDescription = "Refresh",
-                modifier = GlanceModifier
-                    .size(24.dp)
-                    .clickable(actionRunCallback<RefreshWidgetAction>())
-            )
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = temperature,
+                    style = TextStyle(fontSize = 20.sp, color = ColorProvider(textColor)),
+                    modifier = GlanceModifier.defaultWeight()
+                )
+                Image(
+                    provider = ImageProvider(R.drawable.ic_refresh),
+                    contentDescription = "Refresh",
+                    modifier = GlanceModifier
+                        .size(24.dp)
+                        .clickable(actionRunCallback<RefreshWidgetAction>())
+                )
+            }
+            if (error != null) {
+                Text(
+                    text = error,
+                    style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
+                    modifier = GlanceModifier.fillMaxWidth()
+                )
+            }
         }
     }
 
