@@ -5,6 +5,7 @@ import android.net.wifi.WifiManager
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -34,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import androidx.glance.appwidget.SizeMode
 import kotlin.math.min
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -42,19 +44,35 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 class TemperatureWidget : GlanceAppWidget() {
+
+    override val sizeMode: SizeMode
+        get() = SizeMode.Exact
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            TemperatureWidgetContent()
+            val width = SettingsActivity.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
+            val height = SettingsActivity.getStoredWidgetSize(context, "height")?.toIntOrNull() ?: 100
+            TemperatureWidgetContent(
+                width = width.dp,
+                height = height.dp,
+                backgroundColor = getStoredBackgroundColor(context),
+                textColor = getStoredTextColor(context)
+            )
         }
     }
 
     @Composable
-    fun TemperatureWidgetContent() {
+    fun TemperatureWidgetContent(
+        width: Dp = 100.dp,
+        height: Dp = 100.dp,
+        backgroundColor: Color = Color(0xFFF3E5F5), // Default purple
+        textColor: Color = Color.Black // Default black
+    ) {
         val temperature = TemperatureWorker.latestTemperatureFlow.value ?: "Loading..."
 
         Column(
             modifier = GlanceModifier
-                .fillMaxSize()
+                .size(width, height)
                 .background(Color(0xFFF3E5F5))
                 .cornerRadius(16.dp)
                 .padding(8.dp),
@@ -73,6 +91,18 @@ class TemperatureWidget : GlanceAppWidget() {
                     .clickable(actionRunCallback<RefreshWidgetAction>())
             )
         }
+    }
+
+    private fun getStoredBackgroundColor(context: Context): Color {
+        val sharedPrefs = SettingsActivity.getSharedPrefs(context)
+        val colorHex = sharedPrefs.getString("background_color", "FFF3E5F5") // Default purple
+        return if (colorHex == "TRANSPARENT") Color.Transparent else Color(colorHex?.toLong(16) ?: 0xFFF3E5F5)
+    }
+
+    private fun getStoredTextColor(context: Context): Color {
+        val sharedPrefs = SettingsActivity.getSharedPrefs(context)
+        val colorHex = sharedPrefs.getString("text_color", "FF000000") // Default black
+        return Color(colorHex?.toLong(16) ?: 0xFF000000)
     }
 }
 

@@ -1,12 +1,16 @@
 package com.example.pelletswaterheater
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,9 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.glance.appwidget.updateAll
+import androidx.work.OneTimeWorkRequestBuilder
+import com.example.pelletswaterheater.SettingsActivity.Companion.getSharedPrefs
+import com.example.pelletswaterheater.SettingsActivity.Companion.getStoredWidgetSize
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class SettingsActivity : ComponentActivity() {
@@ -34,6 +44,25 @@ class SettingsActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        fun getSharedPrefs(context: Context): SharedPreferences {
+            val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+            val sharedPrefs = EncryptedSharedPreferences.create(
+                "secure_prefs",
+                masterKeyAlias,
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+            return sharedPrefs
+        }
+
+        fun getStoredWidgetSize(context: Context, dimension: String): String? {
+            return getSetting(context, "widget_$dimension")
+        }
+
+    }
 }
 
 @Composable
@@ -42,7 +71,17 @@ fun SettingsScreen() {
     var serverUrl by remember { mutableStateOf(getStoredUrl(context) ?: "http://192.168.178.4:4321/<PASSWORD>/all") }
     var widgetWidth by remember { mutableStateOf(getStoredWidgetSize(context, "width") ?: "100") }
     var widgetHeight by remember { mutableStateOf(getStoredWidgetSize(context, "height") ?: "100") }
+    var backgroundColor by remember { mutableStateOf(getStoredBackgroundColor(context) ?: "FFF3E5F5") }
+    var textColor by remember { mutableStateOf(getStoredTextColor(context) ?: "FF000000") }
+    var backgroundColorSelection by remember { mutableStateOf(if (backgroundColor == "TRANSPARENT") "Transparent" else "Custom") }
+    var textColorSelection by remember { mutableStateOf("Custom") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val predefinedColors = listOf(
+        "Purple" to "FFF3E5F5",
+        "White" to "FFFFFFFF",
+        "Black" to "FF000000",
+        "Transparent" to "TRANSPARENT"
+    )
 
     Column(
         modifier = Modifier
@@ -75,6 +114,46 @@ fun SettingsScreen() {
             modifier = Modifier.fillMaxWidth(),
             isError = errorMessage != null
         )
+        Text(text = "Background Color", style = MaterialTheme.typography.bodyLarge)
+        DropdownMenu(
+            selectedOption = backgroundColorSelection,
+            options = predefinedColors.map { it.first } + "Custom",
+            onOptionSelected = { selected ->
+                backgroundColorSelection = selected
+                if (selected != "Custom") {
+                    backgroundColor = predefinedColors.find { it.first == selected }?.second ?: "FFF3E5F5"
+                }
+            }
+        )
+        if (backgroundColorSelection == "Custom") {
+            OutlinedTextField(
+                value = backgroundColor,
+                onValueChange = { if (it.matches(Regex("^[0-9A-Fa-f]{0,8}$"))) backgroundColor = it },
+                label = { Text("Background Color (Hex, e.g., FFF3E5F5)") },
+                modifier = Modifier.fillMaxWidth(),
+                isError = errorMessage != null && !isValidHexColor(backgroundColor)
+            )
+        }
+        Text(text = "Text Color", style = MaterialTheme.typography.bodyLarge)
+        DropdownMenu(
+            selectedOption = textColorSelection,
+            options = predefinedColors.map { it.first }.filter { it != "Transparent" } + "Custom",
+            onOptionSelected = { selected ->
+                textColorSelection = selected
+                if (selected != "Custom") {
+                    textColor = predefinedColors.find { it.first == selected }?.second ?: "FF000000"
+                }
+            }
+        )
+        if (textColorSelection == "Custom") {
+            OutlinedTextField(
+                value = textColor,
+                onValueChange = { if (it.matches(Regex("^[0-9A-Fa-f]{0,8}$"))) textColor = it },
+                label = { Text("Text Color (Hex, e.g., FF000000)") },
+                modifier = Modifier.fillMaxWidth(),
+                isError = errorMessage != null && !isValidHexColor(textColor)
+            )
+        }
         errorMessage?.let {
             Text(
                 text = it,
@@ -89,17 +168,23 @@ fun SettingsScreen() {
                         serverUrl.isBlank() -> "Server URL cannot be empty"
                         widgetWidth.toIntOrNull()?.let { it < 40 } == true -> "Widget width must be at least 40dp"
                         widgetHeight.toIntOrNull()?.let { it < 40 } == true -> "Widget height must be at least 40dp"
+                        !isValidHexColor(backgroundColor) && backgroundColorSelection == "Custom" -> "Invalid background color hex"
+                        !isValidHexColor(textColor) && textColorSelection == "Custom" -> "Invalid text color hex"
                         else -> null
                     }
                 } else {
                     errorMessage = null
-                    saveSettings(context, serverUrl, widgetWidth, widgetHeight)
+                    saveSettings(context, serverUrl, widgetWidth, widgetHeight, backgroundColor, textColor)
                     Toast.makeText(context, "settings saved", Toast.LENGTH_SHORT).show()
                     WorkManager.getInstance(context).enqueue(
                         OneTimeWorkRequestBuilder<TemperatureWorker>()
                             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
                             .build()
                     )
+                    // Force widget update
+                    CoroutineScope(Dispatchers.Main).launch {
+                        TemperatureWidget().updateAll(context)
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -109,37 +194,83 @@ fun SettingsScreen() {
     }
 }
 
+@Composable
+fun DropdownMenu(
+    selectedOption: String,
+    options: List<String>,
+    onOptionSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        OutlinedTextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    modifier = Modifier.clickable { expanded = true }
+                )
+            }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+private fun isValidHexColor(color: String): Boolean {
+    return color.matches(Regex("^[0-9A-Fa-f]{8}$")) || color == "TRANSPARENT"
+}
+
+private fun getStoredBackgroundColor(context: Context): String? {
+    val sharedPrefs = getSharedPrefs(context)
+    return sharedPrefs.getString("background_color", null)
+}
+
+private fun getStoredTextColor(context: Context): String? {
+    val sharedPrefs = getSharedPrefs(context)
+    return sharedPrefs.getString("text_color", null)
+}
+
 private fun getSetting(context: Context, key: String): String? {
     val sharedPrefs = getSharedPrefs(context)
     return sharedPrefs.getString(key, null)
-}
-
-private fun getSharedPrefs(context: Context): SharedPreferences {
-    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    val sharedPrefs = EncryptedSharedPreferences.create(
-        "secure_prefs",
-        masterKeyAlias,
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-    return sharedPrefs
 }
 
 fun getStoredUrl(context: Context): String? {
     return getSetting(context, "server_url")
 }
 
-private fun getStoredWidgetSize(context: Context, dimension: String): String? {
-    return getSetting(context, "widget_$dimension")
-}
-
-private fun saveSettings(context: Context, url: String, width: String, height: String) {
+private fun saveSettings(
+    context: Context,
+    url: String,
+    width: String,
+    height: String,
+    backgroundColor: String,
+    textColor: String
+) {
     val sharedPrefs = getSharedPrefs(context)
     with(sharedPrefs.edit()) {
         putString("server_url", url)
         putString("widget_width", width)
         putString("widget_height", height)
+        putString("background_color", backgroundColor)
+        putString("text_color", textColor)
         apply()
     }
 }
