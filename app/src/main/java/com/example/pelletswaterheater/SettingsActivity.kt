@@ -14,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import androidx.work.BackoffPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import java.util.concurrent.TimeUnit
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +95,11 @@ fun SettingsScreen() {
                     errorMessage = null
                     saveSettings(context, serverUrl, widgetWidth, widgetHeight)
                     Toast.makeText(context, "settings saved", Toast.LENGTH_SHORT).show()
-                    WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TemperatureWorker>().build())
+                    WorkManager.getInstance(context).enqueue(
+                        OneTimeWorkRequestBuilder<TemperatureWorker>()
+                            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+                            .build()
+                    )
                 }
             },
             modifier = Modifier.fillMaxWidth()

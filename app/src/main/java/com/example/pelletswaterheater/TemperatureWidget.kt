@@ -24,6 +24,7 @@ import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.unit.ColorProvider
+import androidx.work.BackoffPolicy
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -33,10 +34,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import kotlin.math.min
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.net.URL
+import java.util.concurrent.TimeUnit
 
 class TemperatureWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -79,7 +82,11 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshWidgetAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TemperatureWorker>().build())
+        WorkManager.getInstance(context).enqueue(
+            OneTimeWorkRequestBuilder<TemperatureWorker>()
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+                .build()
+        )
     }
 }
 
@@ -90,6 +97,9 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         val latestTemperatureFlow = MutableStateFlow<String?>(null)
         val errorFlow = MutableStateFlow<String?>(null)
         private const val SERVER_IP = "192.168.178.4"
+        private var failureCount = 0
+        private const val INITIAL_BACKOFF_MS = 5000L // 5 seconds
+        private const val MAX_BACKOFF_MS = 60000L // 60 seconds
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -98,6 +108,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             errorFlow.value = "Device not on the same network as the server"
             return@withContext Result.failure()
         }
+        applyBackoffDelay()
 
         try {
             val url = getStoredUrl(applicationContext) ?: "http://$SERVER_IP:4321/<PASSWORD>/all"
@@ -107,13 +118,21 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() + "°C" } ?: "Error"
             latestTemperatureFlow.value = temp
             errorFlow.value = null
+            failureCount = 0 // Reset backoff on success
             Result.success(workDataOf("temperature" to temp))
         } catch (e: Exception) {
             latestTemperatureFlow.value = "Error"
             errorFlow.value = "Failed to fetch temperature: ${e.message}"
             Log.e(TAG, e.message, e)
+            failureCount++ // Increment failure count for backoff
             Result.failure()
-        }.also { delay(10 * 60 * 1000L) } // 10 minutes
+        }
+    }
+
+    private suspend fun applyBackoffDelay() {
+        if (failureCount > 0) {
+            delay(min(INITIAL_BACKOFF_MS * (1L shl failureCount), MAX_BACKOFF_MS))
+        }
     }
 
     private fun isOnSameLocalNetwork(context: Context): Boolean {
