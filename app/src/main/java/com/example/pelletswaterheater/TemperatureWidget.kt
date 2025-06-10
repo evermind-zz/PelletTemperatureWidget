@@ -81,26 +81,26 @@ class TemperatureWidget : GlanceAppWidget() {
                 "Error"
             }
         }
-        val error =
-            TemperatureWorker.errorFlow.value?.let { it.take(20) } // Limit error to 20 chars
+        val error = TemperatureWorker.errorFlow.value
 
         Column(
             modifier = GlanceModifier
                 .size(width, height)
-                .background(Color(0xFFF3E5F5))
+                .background(backgroundColor)
                 .cornerRadius(16.dp)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Log.d("TemperatureWidget", "Rendering: temp=$temperature, error=$error, bgColor=$backgroundColor, width=$width, height=$height")
             Row(
-                modifier = GlanceModifier.fillMaxWidth(),
+                modifier = GlanceModifier.fillMaxWidth().wrapContentWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = temperature,
                     style = TextStyle(fontSize = 20.sp, color = ColorProvider(textColor)),
-                    modifier = GlanceModifier.defaultWeight()
+                    modifier = GlanceModifier.wrapContentWidth()
                 )
                 Image(
                     provider = ImageProvider(R.drawable.ic_refresh),
@@ -108,13 +108,14 @@ class TemperatureWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .size(24.dp)
                         .clickable(actionRunCallback<RefreshWidgetAction>())
+                        .padding(start = 8.dp)
                 )
             }
             if (error != null) {
                 Text(
                     text = error,
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
-                    modifier = GlanceModifier.fillMaxWidth()
+                    modifier = GlanceModifier.fillMaxWidth().wrapContentHeight()
                 )
             }
         }

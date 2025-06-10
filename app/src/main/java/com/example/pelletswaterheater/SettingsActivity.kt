@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -90,7 +92,8 @@ fun SettingsScreen() {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .imePadding().padding(bottom = 80.dp), // Handle keyboard and add padding
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -105,6 +108,7 @@ fun SettingsScreen() {
             modifier = Modifier.fillMaxWidth(),
             isError = errorMessage != null
         )
+        Log.d("SettingsScreen", "Rendering: url=$serverUrl, width=$widgetWidth, height=$widgetHeight, bg=$backgroundColor, text=$textColor")
         OutlinedTextField(
             value = widgetWidth,
             onValueChange = { widgetWidth = it.filter { it.isDigit() } },
