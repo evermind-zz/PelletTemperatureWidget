@@ -1,6 +1,7 @@
 package com.example.pelletswaterheater
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -102,7 +103,12 @@ fun SettingsScreen() {
     }
 }
 
-fun getStoredUrl(context: Context): String? {
+private fun getSetting(context: Context, key: String): String? {
+    val sharedPrefs = getSharedPrefs(context)
+    return sharedPrefs.getString(key, null)
+}
+
+private fun getSharedPrefs(context: Context): SharedPreferences {
     val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
     val sharedPrefs = EncryptedSharedPreferences.create(
         "secure_prefs",
@@ -111,30 +117,19 @@ fun getStoredUrl(context: Context): String? {
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
-    return sharedPrefs.getString("server_url", null)
+    return sharedPrefs
+}
+
+fun getStoredUrl(context: Context): String? {
+    return getSetting(context, "server_url")
 }
 
 private fun getStoredWidgetSize(context: Context, dimension: String): String? {
-    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    val sharedPrefs = EncryptedSharedPreferences.create(
-        "secure_prefs",
-        masterKeyAlias,
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-    return sharedPrefs.getString("widget_$dimension", null)
+    return getSetting(context, "widget_$dimension")
 }
 
 private fun saveSettings(context: Context, url: String, width: String, height: String) {
-    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    val sharedPrefs = EncryptedSharedPreferences.create(
-        "secure_prefs",
-        masterKeyAlias,
-        context,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    val sharedPrefs = getSharedPrefs(context)
     with(sharedPrefs.edit()) {
         putString("server_url", url)
         putString("widget_width", width)
