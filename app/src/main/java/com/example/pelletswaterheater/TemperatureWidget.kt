@@ -89,7 +89,8 @@ class TemperatureWidget : GlanceAppWidget() {
             Log.d("TemperatureWidget", "Rendering: temp=$temperature, time=$formattedTime, error=$error, bgColor=$backgroundColor, width=$width, height=$height")
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
                     provider = ImageProvider(R.drawable.ic_refresh),
@@ -97,7 +98,7 @@ class TemperatureWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .size(20.dp)
                         .clickable(actionRunCallback<RefreshWidgetAction>())
-                        .padding(start = 4.dp)
+                        .padding(end = 4.dp)
                 )
                 Text(
                     text = temperature,
@@ -109,14 +110,20 @@ class TemperatureWidget : GlanceAppWidget() {
                 Text(
                     text = "Last updated: $formattedTime",
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor), textAlign = TextAlign.Center),
-                    modifier = GlanceModifier.fillMaxWidth().wrapContentHeight()
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 4.dp)
                 )
             }
             if (error != null) {
                 Text(
                     text = error,
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
-                    modifier = GlanceModifier.fillMaxWidth().wrapContentHeight()
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 4.dp)
                 )
             }
         }
