@@ -24,8 +24,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         val errorFlow = MutableStateFlow<String?>(null)
         private const val SERVER_IP = "192.168.178.4" // placeholder IP user need to set the correct one
         private var backoffCount = 0
-        private const val INITIAL_BACKOFF_MS = 5000L // 5 seconds
-        private const val MAX_BACKOFF_MS = 60000L // 60 seconds
+        fun resetBackoffCount() { backoffCount = 0 }
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -38,7 +37,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             Log.e(TAG, "Network mismatch")
             return@withContext Result.failure()
         }
-        applyBackoffDelay()
 
         try {
             val jsonString = URL(url).readText()
@@ -58,14 +56,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             Log.e(TAG, "Error fetching temperature: $maskedMessage", e)
             backoffCount++ // Increment backoff count
             Result.failure()
-        }
-    }
-
-    private suspend fun applyBackoffDelay() {
-        if (backoffCount > 0) {
-            val delayMs = minOf(INITIAL_BACKOFF_MS * (1L shl backoffCount), MAX_BACKOFF_MS)
-            Log.d(TAG, "Applying backoff delay: $delayMs ms")
-            delay(delayMs)
         }
     }
 

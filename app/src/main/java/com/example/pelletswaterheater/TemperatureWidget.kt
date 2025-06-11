@@ -26,6 +26,10 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.unit.ColorProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.updateAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TemperatureWidget : GlanceAppWidget() {
 
@@ -110,7 +114,21 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshWidgetAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        TemperatureUtils.enqueueTemperatureUpdate(context)
+        // Debounce: Check last refresh time
+        val sharedPrefs = TemperatureUtils.getSharedPrefs(context)
+        val lastRefresh = sharedPrefs.getLong("last_refresh_time", 0)
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastRefresh < 5000) {
+            Log.d("RefreshWidgetAction", "Refresh debounced: Too soon since last refresh")
+            return
+        }
+        sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
+
+        TemperatureUtils.forceTemperatureUpdate(context)
+        // Force widget update after refresh
+        CoroutineScope(Dispatchers.Main).launch {
+            TemperatureWidget().updateAll(context)
+        }
     }
 }
 

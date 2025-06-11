@@ -17,6 +17,9 @@ import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
 object TemperatureUtils {
+    private const val ONE_TIME_WORK_NAME = "temperature_one_time_update"
+    private const val PERIODIC_WORK_NAME = "temperature_periodic_update"
+
     fun formatTemperature(rawValue: String?): String {
         return when {
             rawValue == null || rawValue == "Loading..." -> "Loading..."
@@ -89,7 +92,7 @@ object TemperatureUtils {
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
             .build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "temperature_periodic_update",
+            PERIODIC_WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
@@ -101,8 +104,25 @@ object TemperatureUtils {
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
-            "temperature_one_time_update",
+            ONE_TIME_WORK_NAME,
             ExistingWorkPolicy.KEEP,
+            workRequest
+        )
+        return workRequest
+    }
+
+    fun forceTemperatureUpdate(context: Context): OneTimeWorkRequest {
+        // Cancel any existing OneTimeWorkRequest
+        WorkManager.getInstance(context).cancelUniqueWork(ONE_TIME_WORK_NAME)
+        // Reset backoff count for immediate retry
+        TemperatureWorker.resetBackoffCount()
+        // Enqueue a new OneTimeWorkRequest with no initial delay
+        val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            ONE_TIME_WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
             workRequest
         )
         return workRequest
