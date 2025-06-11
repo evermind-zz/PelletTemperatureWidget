@@ -3,14 +3,14 @@ package com.example.pelletswaterheater
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
-import androidx.work.PeriodicWorkRequest
-import androidx.work.BackoffPolicy
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import androidx.work.BackoffPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
@@ -101,5 +101,13 @@ object TemperatureUtils {
             .build()
         WorkManager.getInstance(context).enqueue(workRequest)
         return workRequest
+    }
+
+    fun maskPasswordInUrl(url: String): String {
+        val regex = Regex("""http://[^/]+/[^/]+/all""")
+        return regex.replace(url) { match ->
+            val parts = match.value.split("/")
+            "${parts[0]}/${parts[1]}/****/all"
+        }
     }
 }
