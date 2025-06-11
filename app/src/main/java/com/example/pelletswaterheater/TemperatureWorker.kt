@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         val latestTemperatureFlow = MutableStateFlow<String?>(null)
         val errorFlow = MutableStateFlow<String?>(null)
         val lastUpdateTimeFlow = MutableStateFlow<Long>(0L)
-        private const val SERVER_IP = "192.168.178.4" // placeholder IP user need to set the correct one
+        private const val SERVER_IP = "192.168.178.4" // placeholder IP user needs to set the correct one
         private var backoffCount = 0
         fun resetBackoffCount() { backoffCount = 0 }
     }
@@ -66,7 +67,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
     private fun updateLastUpdateTimeAndSendUpdateBroadcast() {
         lastUpdateTimeFlow.value = System.currentTimeMillis()
-        applicationContext.sendBroadcast(Intent(ACTION_UPDATE_WIDGET))
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(ACTION_UPDATE_WIDGET))
     }
 
     private fun isOnSameLocalNetwork(context: Context, url: String): Boolean {

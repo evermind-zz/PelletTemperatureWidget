@@ -31,6 +31,7 @@ import androidx.glance.unit.ColorProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.updateAll
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -150,11 +151,11 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        context.registerReceiver(receiver, IntentFilter(TemperatureWorker.ACTION_UPDATE_WIDGET))
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, IntentFilter(TemperatureWorker.ACTION_UPDATE_WIDGET))
     }
 
     override fun onDisabled(context: Context) {
-        context.unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
         super.onDisabled(context)
     }
 }
