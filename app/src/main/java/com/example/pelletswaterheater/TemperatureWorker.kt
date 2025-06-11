@@ -1,15 +1,15 @@
 package com.example.pelletswaterheater
 
 import android.content.Context
+import android.content.Intent
 import android.net.wifi.WifiManager
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -19,9 +19,11 @@ import java.net.URL
 class TemperatureWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
     companion object {
+        const val ACTION_UPDATE_WIDGET = "com.example.pelletswaterheater.ACTION_UPDATE_WIDGET"
         private val TAG = TemperatureWorker::class.java.simpleName
         val latestTemperatureFlow = MutableStateFlow<String?>(null)
         val errorFlow = MutableStateFlow<String?>(null)
+        val lastUpdateTimeFlow = MutableStateFlow<Long>(0L)
         private const val SERVER_IP = "192.168.178.4" // placeholder IP user need to set the correct one
         private var backoffCount = 0
         fun resetBackoffCount() { backoffCount = 0 }
@@ -35,6 +37,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             latestTemperatureFlow.value = "Wrong Network"
             errorFlow.value = "Device not on the same network as the server"
             Log.e(TAG, "Network mismatch")
+            updateLastUpdateTimeAndSendUpdateBroadcast()
             return@withContext Result.failure()
         }
 
@@ -56,7 +59,14 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             Log.e(TAG, "Error fetching temperature: $maskedMessage", RuntimeException(maskedMessage, e))
             backoffCount++ // Increment backoff count
             Result.failure()
+        } finally {
+            updateLastUpdateTimeAndSendUpdateBroadcast()
         }
+    }
+
+    private fun updateLastUpdateTimeAndSendUpdateBroadcast() {
+        lastUpdateTimeFlow.value = System.currentTimeMillis()
+        applicationContext.sendBroadcast(Intent(ACTION_UPDATE_WIDGET))
     }
 
     private fun isOnSameLocalNetwork(context: Context, url: String): Boolean {
