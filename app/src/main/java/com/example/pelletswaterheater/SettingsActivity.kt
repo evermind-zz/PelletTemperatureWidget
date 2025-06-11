@@ -23,6 +23,8 @@ import androidx.work.BackoffPolicy
 import androidx.work.WorkManager
 import androidx.glance.appwidget.updateAll
 import androidx.work.OneTimeWorkRequestBuilder
+import com.example.pelletswaterheater.TemperatureUtils.getStoredBackgroundColorHex
+import com.example.pelletswaterheater.TemperatureUtils.getStoredTextColorHex
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,8 +54,8 @@ fun SettingsScreen() {
     var serverUrl by remember { mutableStateOf(TemperatureUtils.getStoredUrl(context) ?: "http://192.168.178.4:4321/<PASSWORD>/all") }
     var widgetWidth by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "width") ?: "100") }
     var widgetHeight by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "height") ?: "100") }
-    var backgroundColor by remember { mutableStateOf(TemperatureUtils.getStoredBackgroundColor(context) ?: "FFF3E5F5") }
-    var textColor by remember { mutableStateOf(TemperatureUtils.getStoredTextColor(context) ?: "FF000000") }
+    var backgroundColor by remember { mutableStateOf(TemperatureUtils.getStoredBackgroundColorHex(context) ?: "FFF3E5F5") }
+    var textColor by remember { mutableStateOf(TemperatureUtils.getStoredTextColorHex(context) ?: "FF000000") }
     var backgroundColorSelection by remember { mutableStateOf(if (backgroundColor == "TRANSPARENT") "Transparent" else "Custom") }
     var textColorSelection by remember { mutableStateOf("Custom") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -161,11 +163,7 @@ fun SettingsScreen() {
                     errorMessage = null
                     saveSettings(context, serverUrl, widgetWidth, widgetHeight, backgroundColor, textColor)
                     Toast.makeText(context, "settings saved", Toast.LENGTH_SHORT).show()
-                    WorkManager.getInstance(context).enqueue(
-                        OneTimeWorkRequestBuilder<TemperatureWorker>()
-                            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-                            .build()
-                    )
+                    TemperatureUtils.enqueueTemperatureUpdate(context)
                     // Force widget update
                     CoroutineScope(Dispatchers.Main).launch {
                         TemperatureWidget().updateAll(context)

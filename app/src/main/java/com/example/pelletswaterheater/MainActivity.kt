@@ -1,5 +1,6 @@
 package com.example.pelletswaterheater
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -22,21 +23,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.work.BackoffPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
 import com.example.pelletswaterheater.TemperatureUtils.formatTemperature
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        scheduleTemperatureUpdate()
+        scheduleTemperatureUpdate(this)
         setContent {
             PelletsWaterHeaterTheme {
                 Surface(
@@ -49,11 +45,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun scheduleTemperatureUpdate() {
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES)
-           .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(this).enqueue(periodicWorkRequest)
+    private fun scheduleTemperatureUpdate(context: Context) {
+        TemperatureUtils.enqueueTemperatureUpdate(context) // Immediate update
+        TemperatureUtils.schedulePeriodicTemperatureUpdate(context) // Periodic updates
     }
 }
 

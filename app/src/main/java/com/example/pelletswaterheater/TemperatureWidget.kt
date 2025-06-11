@@ -24,22 +24,8 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.unit.ColorProvider
-import androidx.work.BackoffPolicy
-import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
-import kotlin.math.min
-import kotlinx.serialization.json.Json
-import java.text.DecimalFormat
-import kotlinx.serialization.json.jsonObject
-import com.example.pelletswaterheater.TemperatureUtils.formatTemperature
-import java.util.concurrent.TimeUnit
 
 class TemperatureWidget : GlanceAppWidget() {
 
@@ -71,7 +57,7 @@ class TemperatureWidget : GlanceAppWidget() {
         val temperature = when {
             rawTemperature == "Error" -> "Error"
             rawTemperature == "Loading..." -> "Loading..."
-            else -> formatTemperature(rawTemperature)
+            else -> TemperatureUtils.formatTemperature(rawTemperature)
         }
         val error = TemperatureWorker.errorFlow.value
 
@@ -124,11 +110,7 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshWidgetAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WorkManager.getInstance(context).enqueue(
-            OneTimeWorkRequestBuilder<TemperatureWorker>()
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-                .build()
-        )
+        TemperatureUtils.enqueueTemperatureUpdate(context)
     }
 }
 
