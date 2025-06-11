@@ -54,10 +54,17 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             Result.success(workDataOf("temperature" to temp))
         } catch (e: Exception) {
             val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
-            val maskedMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
+            // Mask password in original exception message
+            val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
+            // Create new exception with masked message
+            val maskedException = when (e) {
+                is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
+                else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
+            }.apply { stackTrace = e.stackTrace } // Preserve stack trace
+            val maskedMessage = "Failed to fetch temperature: $maskedOriginalMessage"
             latestTemperatureFlow.value = "Error"
-            errorFlow.value = "Failed to fetch temperature: $maskedMessage"
-            Log.e(TAG, "Error fetching temperature: $maskedMessage", RuntimeException(maskedMessage, e))
+            errorFlow.value = maskedMessage
+            Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
             backoffCount++ // Increment backoff count
             Result.failure()
         } finally {
