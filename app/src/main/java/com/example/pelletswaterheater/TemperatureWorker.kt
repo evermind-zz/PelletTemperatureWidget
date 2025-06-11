@@ -53,7 +53,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             val maskedMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
             latestTemperatureFlow.value = "Error"
             errorFlow.value = "Failed to fetch temperature: $maskedMessage"
-            Log.e(TAG, "Error fetching temperature: $maskedMessage", e)
+            Log.e(TAG, "Error fetching temperature: $maskedMessage", RuntimeException(maskedMessage, e))
             backoffCount++ // Increment backoff count
             Result.failure()
         }
