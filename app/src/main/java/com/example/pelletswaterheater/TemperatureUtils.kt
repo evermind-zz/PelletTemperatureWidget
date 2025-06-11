@@ -129,10 +129,6 @@ object TemperatureUtils {
     }
 
     fun maskPasswordInUrl(url: String): String {
-        val regex = Regex("""http://[^/]+/[^/]+/all""")
-        return regex.replace(url) { match ->
-            val parts = match.value.split("/")
-            "${parts[0]}/${parts[1]}/****/all"
-        }
+        return url.replace(Regex("(https?://[^/]+/)[^/]+(/.*)"), "$1****$2")
     }
 }
