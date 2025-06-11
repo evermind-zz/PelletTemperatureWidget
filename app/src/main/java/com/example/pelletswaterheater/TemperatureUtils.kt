@@ -7,6 +7,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
@@ -99,7 +100,11 @@ object TemperatureUtils {
         val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
             .build()
-        WorkManager.getInstance(context).enqueue(workRequest)
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "temperature_one_time_update",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
         return workRequest
     }
 
