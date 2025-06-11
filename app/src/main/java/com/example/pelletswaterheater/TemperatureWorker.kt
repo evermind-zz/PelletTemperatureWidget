@@ -13,22 +13,26 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.net.URI
 import java.net.URL
 
 class TemperatureWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
-    private val TAG = TemperatureWorker::class.java.simpleName
 
     companion object {
+        private val TAG = TemperatureWorker::class.java.simpleName
         val latestTemperatureFlow = MutableStateFlow<String?>(null)
         val errorFlow = MutableStateFlow<String?>(null)
-        private const val SERVER_IP = "192.168.178.4"
+        private const val SERVER_IP = "192.168.178.4" // placeholder IP user need to set the correct one
         private var backoffCount = 0
         private const val INITIAL_BACKOFF_MS = 5000L // 5 seconds
         private const val MAX_BACKOFF_MS = 60000L // 60 seconds
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        if (!isOnSameLocalNetwork(applicationContext)) {
+
+        val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://$SERVER_IP:4321/<PASSWORD>/all"
+
+        if (!isOnSameLocalNetwork(applicationContext, url)) {
             latestTemperatureFlow.value = "Wrong Network"
             errorFlow.value = "Device not on the same network as the server"
             Log.e(TAG, "Network mismatch")
@@ -37,7 +41,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         applyBackoffDelay()
 
         try {
-            val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://$SERVER_IP:4321/<PASSWORD>/all"
             val jsonString = URL(url).readText()
             val json = Json.parseToJsonElement(jsonString).jsonObject
             val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
@@ -64,14 +67,15 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         }
     }
 
-    private fun isOnSameLocalNetwork(context: Context): Boolean {
+    private fun isOnSameLocalNetwork(context: Context, url: String): Boolean {
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val wifiInfo = wifiManager.connectionInfo ?: return false
         val deviceIp = wifiInfo.ipAddress
         if (deviceIp == 0) return false
         val deviceIpString = formatIpAddress(deviceIp)
-        Log.d(TAG, "Device IP: $deviceIpString, Server IP: $SERVER_IP")
-        return deviceIpString.split(".").take(3) == SERVER_IP.split(".").take(3)
+        val serverIp = URI(url).host // we expect always a IP no hostname
+        Log.d(TAG, "Device IP: $deviceIpString, Server IP: $serverIp")
+        return deviceIpString.split(".").take(3) == serverIp.split(".").take(3)
     }
 
     private fun formatIpAddress(ip: Int): String {
