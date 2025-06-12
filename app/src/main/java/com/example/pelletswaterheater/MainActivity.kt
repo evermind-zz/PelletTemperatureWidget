@@ -1,7 +1,7 @@
 package com.example.pelletswaterheater
 
-import android.content.Context
-import android.content.Intent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -18,36 +18,38 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
-import com.example.pelletswaterheater.TemperatureUtils.formatTemperature
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        scheduleTemperatureUpdate(this)
+        reinitializeWidget()
+        TemperatureUtils.enqueueTemperatureUpdate(this)
+        TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
+        CoroutineScope(Dispatchers.Main).launch {
+            TemperatureWidget().updateAll(this@MainActivity)
+        }
         setContent {
-            PelletsWaterHeaterTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    TemperatureDisplay()
-                }
-            }
+            TemperatureDisplay()
         }
     }
 
-    private fun scheduleTemperatureUpdate(context: Context) {
-        TemperatureUtils.enqueueTemperatureUpdate(context) // Immediate update
-        TemperatureUtils.schedulePeriodicTemperatureUpdate(context) // Periodic updates
+    private fun reinitializeWidget() {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val componentName = ComponentName(this, TemperatureWidgetReceiver::class.java)
+        val widgetIds = appWidgetManager.getAppWidgetIds(componentName)
+        if (widgetIds.isNotEmpty()) {
+            appWidgetManager.notifyAppWidgetViewDataChanged(widgetIds, 0)
+            CoroutineScope(Dispatchers.Main).launch {
+                TemperatureWidget().updateAll(this@MainActivity)
+            }
+        }
     }
 }
 
@@ -63,45 +65,23 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = viewModel()) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = formatTemperature(temperatureState),
-            fontSize = 48.sp,
-            textAlign = TextAlign.Center
+            text = temperatureState?.let { TemperatureUtils.formatTemperature(it) } ?: "Unknown",
+            fontSize = 24.sp
         )
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, SettingsActivity::class.java))
-            }
-        ) {
-            Text("Open Settings")
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { TemperatureUtils.forceTemperatureUpdate(context) }) {
+            Text("Refresh")
         }
-    }
-}
-
-class TemperatureViewModel : ViewModel() {
-    private val _temperature = MutableStateFlow<String?>(null)
-    val temperature: StateFlow<String?> = _temperature
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    init {
-        viewModelScope.launch {
-            TemperatureWorker.latestTemperatureFlow.collect { temp ->
-                _temperature.value = temp
-            }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { context.startActivity(android.content.Intent(context, SettingsActivity::class.java)) }) {
+            Text("Settings")
         }
-        viewModelScope.launch {
-            TemperatureWorker.errorFlow.collect { err ->
-                _error.value = err
-            }
-        }
-    }
-
-    fun clearError() {
-        _error.value = null
     }
 }

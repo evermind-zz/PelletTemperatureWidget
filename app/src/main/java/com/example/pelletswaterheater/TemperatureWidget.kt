@@ -1,10 +1,7 @@
 package com.example.pelletswaterheater
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -31,7 +28,6 @@ import androidx.glance.unit.ColorProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.updateAll
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,6 +50,7 @@ class TemperatureWidget : GlanceAppWidget() {
                 textColor = getStoredTextColor(context)
             )
         }
+        Log.d("TemperatureWidget", "provideGlance called for id=$id")
     }
 
     @SuppressLint("StateFlowValueCalledInComposition")
@@ -64,14 +61,15 @@ class TemperatureWidget : GlanceAppWidget() {
         backgroundColor: Color = Color(0xFFF3E5F5), // Default purple
         textColor: Color = Color.Black // Default black
     ) {
-        val rawTemperature = TemperatureWorker.latestTemperatureFlow.value ?: "Loading..."
+        val viewModel = TemperatureViewModel.getInstance()
+        val rawTemperature = viewModel.temperature.value ?: "Loading..."
         val temperature = when {
             rawTemperature == "Error" -> "Error"
             rawTemperature == "Loading..." -> "Unknown"
             else -> TemperatureUtils.formatTemperature(rawTemperature)
         }
-        val error = TemperatureWorker.errorFlow.value
-        val lastUpdateTime = TemperatureWorker.lastUpdateTimeFlow.value
+        val error = viewModel.error.value
+        val lastUpdateTime = viewModel.lastUpdateTime.value
         val formattedTime = if (lastUpdateTime > 0) {
             SimpleDateFormat("hh:mm a", Locale.getDefault()).format(java.util.Date(lastUpdateTime))
         } else {
@@ -138,25 +136,12 @@ class TemperatureWidget : GlanceAppWidget() {
 class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = TemperatureWidget()
 
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == TemperatureWorker.ACTION_UPDATE_WIDGET) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    glanceAppWidget.updateAll(context)
-                    Log.d("TemperatureWidgetReceiver", "Received update broadcast, widget updated")
-                }
-            }
-        }
-    }
-
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, IntentFilter(TemperatureWorker.ACTION_UPDATE_WIDGET))
-    }
-
-    override fun onDisabled(context: Context) {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
-        super.onDisabled(context)
+        CoroutineScope(Dispatchers.Main).launch {
+            glanceAppWidget.updateAll(context)
+            Log.d("TemperatureWidgetReceiver", "onEnabled: Widget update triggered")
+        }
     }
 }
 
@@ -171,7 +156,7 @@ class RefreshWidgetAction : ActionCallback {
             return
         }
         sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
-
+        Log.d("RefreshWidgetAction", "Triggering force update")
         TemperatureUtils.forceTemperatureUpdate(context)
     }
 }

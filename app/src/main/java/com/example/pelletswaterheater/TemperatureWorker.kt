@@ -1,16 +1,14 @@
 package com.example.pelletswaterheater
 
 import android.content.Context
-import android.content.Intent
 import android.net.wifi.WifiManager
 import android.util.Log
+import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -20,25 +18,21 @@ import java.net.URL
 class TemperatureWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
     companion object {
-        const val ACTION_UPDATE_WIDGET = "com.example.pelletswaterheater.ACTION_UPDATE_WIDGET"
         private val TAG = TemperatureWorker::class.java.simpleName
-        val latestTemperatureFlow = MutableStateFlow<String?>(null)
-        val errorFlow = MutableStateFlow<String?>(null)
-        val lastUpdateTimeFlow = MutableStateFlow<Long>(0L)
-        private const val SERVER_IP = "192.168.178.4" // placeholder IP user needs to set the correct one
         private var backoffCount = 0
         fun resetBackoffCount() { backoffCount = 0 }
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-
-        val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://$SERVER_IP:4321/<PASSWORD>/all"
+        val viewModel = TemperatureViewModel.getInstance()
+        val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
 
         if (!isOnSameLocalNetwork(applicationContext, url)) {
-            latestTemperatureFlow.value = "Wrong Network"
-            errorFlow.value = "Device not on the same network as the server"
+            viewModel.updateTemperature("Wrong Network")
+            viewModel.updateError("Device not on the same network as the server")
+            viewModel.updateLastUpdateTime(System.currentTimeMillis())
             Log.e(TAG, "Network mismatch")
-            updateLastUpdateTimeAndSendUpdateBroadcast()
+            updateWidget()
             return@withContext Result.failure()
         }
 
@@ -47,10 +41,12 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             val json = Json.parseToJsonElement(jsonString).jsonObject
             val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
             val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
-            latestTemperatureFlow.value = temp
-            errorFlow.value = null
+            viewModel.updateTemperature(temp)
+            viewModel.updateError(null)
+            viewModel.updateLastUpdateTime(System.currentTimeMillis())
             backoffCount = 0 // Reset backoff on success
-            Log.d(TAG, "Success: temp=$temp")
+            Log.d(TAG, "Success: temp=$temp, time=${viewModel.lastUpdateTime.value}")
+            updateWidget()
             Result.success(workDataOf("temperature" to temp))
         } catch (e: Exception) {
             val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
@@ -62,19 +58,19 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
             }.apply { stackTrace = e.stackTrace } // Preserve stack trace
             val maskedMessage = "Failed to fetch temperature: $maskedOriginalMessage"
-            latestTemperatureFlow.value = "Error"
-            errorFlow.value = maskedMessage
+            viewModel.updateTemperature("Error")
+            viewModel.updateError(maskedMessage)
+            viewModel.updateLastUpdateTime(System.currentTimeMillis())
             Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
             backoffCount++ // Increment backoff count
+            updateWidget()
             Result.failure()
-        } finally {
-            updateLastUpdateTimeAndSendUpdateBroadcast()
         }
     }
 
-    private fun updateLastUpdateTimeAndSendUpdateBroadcast() {
-        lastUpdateTimeFlow.value = System.currentTimeMillis()
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent(ACTION_UPDATE_WIDGET))
+    private suspend fun updateWidget() {
+        TemperatureWidget().updateAll(applicationContext)
+        Log.d(TAG, "Widget update triggered")
     }
 
     private fun isOnSameLocalNetwork(context: Context, url: String): Boolean {
