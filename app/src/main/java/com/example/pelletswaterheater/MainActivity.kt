@@ -9,7 +9,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +65,7 @@ class MainActivity : ComponentActivity() {
 fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.getInstance()) {
     val temperatureState by viewModel.temperature.collectAsState()
     val error by viewModel.error.collectAsState()
+    val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
     val context = LocalContext.current
 
     error?.let {
@@ -77,11 +84,17 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
             text = temperatureState?.let { TemperatureUtils.formatTemperature(it) } ?: "Unknown",
             fontSize = 24.sp
         )
+        if (lastUpdateTime > 0) {
+            Text(
+                text = "Last updated: ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(lastUpdateTime))}",
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 TemperatureUtils.forceTemperatureUpdate(context)
-                viewModel.updateTemperature("Loading...")
             }
         ) {
             Text("Refresh")

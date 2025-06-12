@@ -42,6 +42,8 @@ class TemperatureWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val width = TemperatureUtils.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
+            val viewModel = TemperatureViewModel.getInstance()
+            Log.d("TemperatureWidget", "Using ViewModel instance: ${viewModel.hashCode()}")
             val height = TemperatureUtils.getStoredWidgetSize(context, "height")?.toIntOrNull() ?: 100
             TemperatureWidgetContent(
                 width = width.dp,

@@ -27,6 +27,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val viewModel = TemperatureViewModel.getInstance()
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
+        Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
         Log.d(TAG, "Starting work: url=$url, backoffCount=$backoffCount")
 
         if (!isOnSameLocalNetwork(applicationContext, url)) {
