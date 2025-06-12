@@ -51,6 +51,10 @@ class TemperatureWidget : GlanceAppWidget() {
             )
         }
         Log.d("TemperatureWidget", "provideGlance called for id=$id")
+        // Fallback update
+        CoroutineScope(Dispatchers.Main).launch {
+            updateAll(context)
+        }
     }
 
     @SuppressLint("StateFlowValueCalledInComposition")
@@ -62,10 +66,10 @@ class TemperatureWidget : GlanceAppWidget() {
         textColor: Color = Color.Black // Default black
     ) {
         val viewModel = TemperatureViewModel.getInstance()
-        val rawTemperature = viewModel.temperature.value ?: "Loading..."
+        val rawTemperature = viewModel.temperature.value
         val temperature = when {
-            rawTemperature == "Error" -> "Error"
-            rawTemperature == "Loading..." -> "Unknown"
+            rawTemperature == "Error" || rawTemperature == "Wrong Network" -> rawTemperature
+            rawTemperature == null || rawTemperature == "Loading..." -> "Unknown"
             else -> TemperatureUtils.formatTemperature(rawTemperature)
         }
         val error = viewModel.error.value
@@ -80,7 +84,7 @@ class TemperatureWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .size(width, height)
                 .background(backgroundColor)
-                .cornerRadius(16.dp)
+                .cornerRadius(8.dp)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -158,5 +162,7 @@ class RefreshWidgetAction : ActionCallback {
         sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
         Log.d("RefreshWidgetAction", "Triggering force update")
         TemperatureUtils.forceTemperatureUpdate(context)
+        // Immediate widget update
+        TemperatureWidget().updateAll(context)
     }
 }

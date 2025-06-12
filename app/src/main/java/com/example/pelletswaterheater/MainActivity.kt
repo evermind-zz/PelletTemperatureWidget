@@ -2,6 +2,7 @@ package com.example.pelletswaterheater
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -15,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,9 +56,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TemperatureDisplay(viewModel: TemperatureViewModel = viewModel()) {
-    val temperatureState = viewModel.temperature.collectAsState().value
-    val error = viewModel.error.collectAsState().value
+fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.getInstance()) {
+    val temperatureState by viewModel.temperature.collectAsState()
+    val error by viewModel.error.collectAsState()
     val context = LocalContext.current
 
     error?.let {
@@ -76,7 +78,12 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = viewModel()) {
             fontSize = 24.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { TemperatureUtils.forceTemperatureUpdate(context) }) {
+        Button(
+            onClick = {
+                TemperatureUtils.forceTemperatureUpdate(context)
+                viewModel.updateTemperature("Loading...")
+            }
+        ) {
             Text("Refresh")
         }
         Spacer(modifier = Modifier.height(16.dp))

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class TemperatureViewModel : ViewModel() {
-    private val _temperature = MutableStateFlow<String?>(null)
+    private val _temperature = MutableStateFlow<String?>("Loading...")
     val temperature: StateFlow<String?> = _temperature
 
     private val _error = MutableStateFlow<String?>(null)
