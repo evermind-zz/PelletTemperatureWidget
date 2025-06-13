@@ -52,11 +52,6 @@ class TemperatureWidget : GlanceAppWidget() {
                 textColor = getStoredTextColor(context)
             )
         }
-        Log.d("TemperatureWidget", "provideGlance called for id=$id")
-        // Fallback update
-        CoroutineScope(Dispatchers.Main).launch {
-            updateAll(context)
-        }
     }
 
     @SuppressLint("StateFlowValueCalledInComposition")
