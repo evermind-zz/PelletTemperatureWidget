@@ -15,6 +15,9 @@ import java.text.DecimalFormat
 import android.util.Log
 import androidx.work.Constraints
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
 
 object TemperatureUtils {
@@ -22,7 +25,6 @@ object TemperatureUtils {
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
 
-    // Formatting and SharedPreferences methods unchanged
     fun formatTemperature(rawValue: String?): String {
         return when {
             rawValue == null || rawValue == "Loading..." -> "Loading..."
@@ -36,7 +38,7 @@ object TemperatureUtils {
     }
 
     fun getSharedPrefs(context: Context): SharedPreferences {
-        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC) // Unchanged
+        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
         return EncryptedSharedPreferences.create(
             "secure_prefs",
             masterKeyAlias,
@@ -45,7 +47,6 @@ object TemperatureUtils {
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
     }
-    // Other SharedPreferences methods (getStoredUrl, getStoredWidgetSize, etc.) unchanged
 
     fun getStoredUrl(context: Context): String? {
         return getSharedPrefs(context).getString("server_url", null)
@@ -69,6 +70,10 @@ object TemperatureUtils {
         return Color(colorHex?.toLong(16) ?: 0xFF000000)
     }
 
+    fun getStoredTextColorHex(context: Context): String? {
+        return getSharedPrefs(context).getString("text_color", "FF000000") // Default black
+    }
+
     fun saveSettings(
         context: Context,
         url: String,
@@ -87,45 +92,48 @@ object TemperatureUtils {
         }
     }
 
-    fun getStoredTextColorHex(context: Context): String? {
-        return getSharedPrefs(context).getString("text_color", "FF000000") // Default black
-    }
-
     fun schedulePeriodicTemperatureUpdate(context: Context) {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES)
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-            .setConstraints(constraints)
-            .addTag(WORK_TAG)
-            .build()
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            WORK_NAME,
-            ExistingPeriodicWorkPolicy.UPDATE,
-            workRequest
+        enqueueWork<PeriodicWorkRequest>(
+            context,
+            configure = { /* No additional config needed */ },
+            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request as PeriodicWorkRequest) },
+            logMessage = "Scheduled periodic temperature update"
         )
-        Log.d(TAG, "Scheduled periodic temperature update")
     }
 
     fun forceTemperatureUpdate(context: Context) {
         WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
         // Reset backoff count for immediate retry
         TemperatureWorker.resetBackoffCount()
+        enqueueWork<OneTimeWorkRequest>(
+            context,
+            configure = { /* No additional config needed */ },
+            enqueue = { wm, request -> wm.enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request as OneTimeWorkRequest) },
+            logMessage = "Enqueued force temperature update"
+        )
+    }
+
+    private inline fun <reified T : WorkRequest> enqueueWork(
+        context: Context,
+        configure: (WorkRequest.Builder<*, *>) -> Unit,
+        enqueue: (WorkManager, WorkRequest) -> Unit,
+        logMessage: String
+    ) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+        val builder = when (T::class) {
+            PeriodicWorkRequest::class -> PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES)
+            OneTimeWorkRequest::class -> OneTimeWorkRequestBuilder<TemperatureWorker>()
+            else -> throw IllegalArgumentException("Unsupported work request type")
+        }
+        builder.setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
             .setConstraints(constraints)
             .addTag(WORK_TAG)
-            .build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            WORK_NAME,
-            ExistingWorkPolicy.REPLACE,
-            workRequest
-        )
-        Log.d(TAG, "Enqueued force temperature update")
+        configure(builder)
+        val workRequest = builder.build()
+        enqueue(WorkManager.getInstance(context), workRequest)
+        Log.d(TAG, logMessage)
     }
 
     fun maskPasswordInUrl(url: String): String {
