@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         reinitializeWidget()
-        TemperatureUtils.enqueueTemperatureUpdate(this)
+        TemperatureUtils.forceTemperatureUpdate(this)
         TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
         CoroutineScope(Dispatchers.Main).launch {
             TemperatureWidget().updateAll(this@MainActivity)

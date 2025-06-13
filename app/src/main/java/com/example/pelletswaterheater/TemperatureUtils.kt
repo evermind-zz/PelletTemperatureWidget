@@ -8,18 +8,21 @@ import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.text.DecimalFormat
+import android.util.Log
+import androidx.work.Constraints
+import androidx.work.NetworkType
 import java.util.concurrent.TimeUnit
 
 object TemperatureUtils {
-    private const val ONE_TIME_WORK_NAME = "temperature_one_time_update"
-    private const val PERIODIC_WORK_NAME = "temperature_periodic_update"
+    private const val WORK_NAME = "temperature_update"
+    private const val WORK_TAG = "temperature_update"
+    private const val TAG = "TemperatureUtils"
 
+    // Formatting and SharedPreferences methods unchanged
     fun formatTemperature(rawValue: String?): String {
         return when {
             rawValue == null || rawValue == "Loading..." -> "Loading..."
@@ -33,7 +36,7 @@ object TemperatureUtils {
     }
 
     fun getSharedPrefs(context: Context): SharedPreferences {
-        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC) // Unchanged
         return EncryptedSharedPreferences.create(
             "secure_prefs",
             masterKeyAlias,
@@ -42,6 +45,7 @@ object TemperatureUtils {
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
     }
+    // Other SharedPreferences methods (getStoredUrl, getStoredWidgetSize, etc.) unchanged
 
     fun getStoredUrl(context: Context): String? {
         return getSharedPrefs(context).getString("server_url", null)
@@ -87,45 +91,41 @@ object TemperatureUtils {
         return getSharedPrefs(context).getString("text_color", "FF000000") // Default black
     }
 
-    fun schedulePeriodicTemperatureUpdate(context: Context): PeriodicWorkRequest {
+    fun schedulePeriodicTemperatureUpdate(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val workRequest = PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+            .setConstraints(constraints)
+            .addTag(WORK_TAG)
             .build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            PERIODIC_WORK_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
+            WORK_NAME,
+            ExistingPeriodicWorkPolicy.UPDATE,
             workRequest
         )
-        return workRequest
+        Log.d(TAG, "Scheduled periodic temperature update")
     }
 
-    fun enqueueTemperatureUpdate(context: Context): OneTimeWorkRequest {
-        val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            ONE_TIME_WORK_NAME,
-            ExistingWorkPolicy.KEEP,
-            workRequest
-        )
-        return workRequest
-    }
-
-    fun forceTemperatureUpdate(context: Context): OneTimeWorkRequest {
-        // Cancel any existing OneTimeWorkRequest
-        WorkManager.getInstance(context).cancelUniqueWork(ONE_TIME_WORK_NAME)
+    fun forceTemperatureUpdate(context: Context) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
         // Reset backoff count for immediate retry
         TemperatureWorker.resetBackoffCount()
-        // Enqueue a new OneTimeWorkRequest with no initial delay
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
+            .setConstraints(constraints)
+            .addTag(WORK_TAG)
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
-            ONE_TIME_WORK_NAME,
+            WORK_NAME,
             ExistingWorkPolicy.REPLACE,
             workRequest
         )
-        return workRequest
+        Log.d(TAG, "Enqueued force temperature update")
     }
 
     fun maskPasswordInUrl(url: String): String {

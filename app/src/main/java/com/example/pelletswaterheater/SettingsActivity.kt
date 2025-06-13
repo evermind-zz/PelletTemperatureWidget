@@ -163,7 +163,7 @@ fun SettingsScreen() {
                     errorMessage = null
                     saveSettings(context, serverUrl, widgetWidth, widgetHeight, backgroundColor, textColor)
                     Toast.makeText(context, "settings saved", Toast.LENGTH_SHORT).show()
-                    TemperatureUtils.enqueueTemperatureUpdate(context)
+                    TemperatureUtils.forceTemperatureUpdate(context)
                     // Force widget update
                     CoroutineScope(Dispatchers.Main).launch {
                         TemperatureWidget().updateAll(context)
