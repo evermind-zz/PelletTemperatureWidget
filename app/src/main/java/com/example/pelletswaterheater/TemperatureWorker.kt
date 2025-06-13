@@ -27,8 +27,10 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val viewModel = TemperatureViewModel.getInstance()
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
+        val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
         Log.d(TAG, "Starting work: url=$url, backoffCount=$backoffCount")
+        //Log.d(TAG, "Starting work: url=$maskedUrl, backoffCount=$backoffCount")
 
         if (!isOnSameLocalNetwork(applicationContext, url)) {
             viewModel.updateTemperature("Wrong Network")
@@ -38,7 +40,8 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             updateWidget()
             return@withContext Result.failure()
         }
-
+        Log.d(TAG, "Attempting temperature fetch: url=$url")
+        //Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
         repeat(3) { attempt ->
             try {
                 viewModel.updateTemperature("Loading...")
@@ -53,8 +56,8 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 Log.d(TAG, "Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
                 updateWidget()
                 return@withContext Result.success(workDataOf("temperature" to temp))
+
             } catch (e: Exception) {
-                val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
                 val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
                 val maskedException = when (e) {
                     is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)

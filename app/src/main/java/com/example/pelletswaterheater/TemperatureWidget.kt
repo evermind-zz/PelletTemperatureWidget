@@ -157,14 +157,18 @@ class RefreshWidgetAction : ActionCallback {
         val sharedPrefs = TemperatureUtils.getSharedPrefs(context)
         val lastRefresh = sharedPrefs.getLong("last_refresh_time", 0)
         val currentTime = System.currentTimeMillis()
+        Log.d("RefreshWidgetAction", "Refresh attempt: currentTime=$currentTime, lastRefresh=$lastRefresh")
         if (currentTime - lastRefresh < 5000) {
-            Log.d("RefreshWidgetAction", "Refresh debounced: Too soon since last refresh")
+            Log.d("RefreshWidgetAction", "Refresh debounced: Too soon since last refresh (delta=${currentTime - lastRefresh}ms)")
             return
         }
-        sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
-        Log.d("RefreshWidgetAction", "Triggering force update")
-        TemperatureUtils.forceTemperatureUpdate(context)
-        // Immediate widget update
-        TemperatureWidget().updateAll(context)
+        try {
+            sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
+            Log.d("RefreshWidgetAction", "Triggering force update")
+            TemperatureUtils.forceTemperatureUpdate(context)
+            Log.d("RefreshWidgetAction", "Refresh enqueued successfully")
+        } catch (e: Exception) {
+            Log.e("RefreshWidgetAction", "Refresh failed", e)
+        }
     }
 }
