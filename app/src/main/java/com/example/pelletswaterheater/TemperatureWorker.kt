@@ -36,24 +36,25 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
         val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
-        Log.d(TAG, "Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
-
-        if (!isOnSameLocalNetwork(applicationContext, url)) {
-            viewModel.updateTemperature("Wrong Network")
-            viewModel.updateError("Device not on the same network as the server")
-            viewModel.updateLastUpdateTime(System.currentTimeMillis())
-            Log.e(TAG, "Network mismatch")
-            updateWidget()
-            return@withContext Result.failure()
-        }
-        Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
         networkMutex.withLock {
+            val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER)
+            Log.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
+
+            if (!isOnSameLocalNetwork(applicationContext, url)) {
+                viewModel.updateTemperature("Wrong Network")
+                viewModel.updateError("Device not on the same network as the server")
+                viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                Log.e(TAG, "worker=$whichWorker Network mismatch")
+                updateWidget()
+                return@withContext Result.failure()
+            }
+            Log.d(TAG, "worker=$whichWorker Attempting temperature fetch: url=$maskedUrl")
             // Ensure minimum 3s between network accesses
             val currentTime = System.currentTimeMillis()
             val timeSinceLast = currentTime - lastAccessTime
             if (timeSinceLast < 3000) {
                 val waitTime = 3000 - timeSinceLast
-                Log.d(TAG, "Waiting ${waitTime}ms to respect 3s network access interval")
+                Log.d(TAG, " worker=$whichWorker Waiting ${waitTime}ms to respect 3s network access interval")
                 delay(waitTime)
             }
 
@@ -69,7 +70,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                     viewModel.updateError(null)
                     viewModel.updateLastUpdateTime(System.currentTimeMillis())
                     backoffCount.set(0)
-                    Log.d(TAG, "Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
+                    Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
                     updateWidget()
                     return@withContext Result.success(workDataOf("temperature" to temp))
 
@@ -80,20 +81,20 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                         is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
                         else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
                     }.apply { stackTrace = e.stackTrace }
-                    val maskedMessage = "Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
+                    val maskedMessage = "worker=$whichWorker Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
                     Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
                     if (attempt < 2) delay(5000L) // Wait 5s before retry
                 }
             }
-        }
 
-        // All retries failed
-        val currentBackoff = backoffCount.incrementAndGet()
-        viewModel.updateTemperature("Error")
-        viewModel.updateError("Failed to fetch temperature after 3 attempts")
-        viewModel.updateLastUpdateTime(System.currentTimeMillis())
-        updateWidget()
-        Log.e(TAG, "All retries failed, backoffCount=$currentBackoff")
+            // All retries failed
+            val currentBackoff = backoffCount.incrementAndGet()
+            viewModel.updateTemperature("Error")
+            viewModel.updateError("Failed to fetch temperature after 3 attempts")
+            viewModel.updateLastUpdateTime(System.currentTimeMillis())
+            updateWidget()
+            Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
+        }
         Result.failure()
     }
 

@@ -18,11 +18,13 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
+import androidx.work.workDataOf
 import java.util.concurrent.TimeUnit
 
 object TemperatureUtils {
     private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
     private const val ONETIME_WORK_NAME = "onetime_temperature_update"
+    const val WHICH_WORKER = "which_worker"
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
 
@@ -99,7 +101,8 @@ object TemperatureUtils {
             context,
             configure = { builder -> builder.setRequiresDeviceIdle(false) },
             enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(PERIODIC_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
-            logMessage = "Scheduled periodic temperature update (10 min)"
+            logMessage = "Scheduled periodic temperature update (10 min)",
+            workerName = PERIODIC_WORK_NAME
         )
     }
 
@@ -109,7 +112,8 @@ object TemperatureUtils {
             context,
             configure = { /* No additional config needed */ },
             enqueue = { wm, request -> wm.enqueueUniqueWork(ONETIME_WORK_NAME, ExistingWorkPolicy.REPLACE, request as OneTimeWorkRequest) },
-            logMessage = "Enqueued force temperature update"
+            logMessage = "Enqueued force temperature update",
+            workerName = ONETIME_WORK_NAME
         )
     }
 
@@ -117,7 +121,8 @@ object TemperatureUtils {
         context: Context,
         configure: (Constraints.Builder) -> Unit,
         enqueue: (WorkManager, WorkRequest) -> Unit,
-        logMessage: String
+        logMessage: String,
+        workerName: String
     ) {
         val constraintsBuilder = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -131,6 +136,7 @@ object TemperatureUtils {
         builder.setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
             .setConstraints(constraintsBuilder.build())
             .addTag(WORK_TAG)
+            .setInputData(workDataOf(WHICH_WORKER to workerName))
         val workRequest = builder.build()
         enqueue(WorkManager.getInstance(context), workRequest)
         Log.d(TAG, logMessage)
