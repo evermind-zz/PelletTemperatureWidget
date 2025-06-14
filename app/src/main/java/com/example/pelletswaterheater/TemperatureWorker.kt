@@ -2,6 +2,8 @@ package com.example.pelletswaterheater
 
 import android.content.Context
 import android.net.wifi.WifiManager
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.atomic.AtomicInteger
 import android.util.Log
 import androidx.glance.appwidget.updateAll
@@ -22,6 +24,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     companion object {
         private val TAG = TemperatureWorker::class.java.simpleName
         private var backoffCount = 0
+        private val networkMutex = Mutex()
         fun resetBackoffCount() { backoffCount = 0 }
     }
     private val backoffCount = AtomicInteger(0)
@@ -29,6 +32,17 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         Log.d(TAG, "Starting worker execution: workId=${id}")
         val viewModel = TemperatureViewModel.getInstance()
+        // Ensure minimum 3s between network accesses
+        while (true) {
+            val lastAccess = TemperatureUtils.getLastNetworkAccessTime()
+            val currentTime = System.currentTimeMillis()
+            val timeSinceLast = currentTime - lastAccess
+            if (timeSinceLast >= 3000) break
+            val waitTime = 3000 - timeSinceLast
+            Log.d(TAG, "Waiting ${waitTime}ms to respect 3s network access interval")
+            delay(waitTime)
+        }
+
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
         val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
@@ -43,30 +57,34 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             return@withContext Result.failure()
         }
         Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
-        repeat(3) { attempt ->
-            try {
-                viewModel.updateTemperature("Loading...")
-                val jsonString = URL(url).readText()
-                val json = Json.parseToJsonElement(jsonString).jsonObject
-                val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
-                val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
-                viewModel.updateTemperature(temp)
-                viewModel.updateError(null)
-                viewModel.updateLastUpdateTime(System.currentTimeMillis())
-                backoffCount.set(0)
-                Log.d(TAG, "Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
-                updateWidget()
-                return@withContext Result.success(workDataOf("temperature" to temp))
+        networkMutex.withLock {
+            repeat(3) { attempt ->
+                try {
+                    viewModel.updateTemperature("Loading...")
+                    val jsonString = URL(url).readText()
+                    TemperatureUtils.updateLastNetworkAccessTime(System.currentTimeMillis())
+                    val json = Json.parseToJsonElement(jsonString).jsonObject
+                    val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
+                    val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
+                    viewModel.updateTemperature(temp)
+                    viewModel.updateError(null)
+                    viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                    backoffCount.set(0)
+                    Log.d(TAG, "Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
+                    updateWidget()
+                    return@withContext Result.success(workDataOf("temperature" to temp))
 
-            } catch (e: Exception) {
-                val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
-                val maskedException = when (e) {
-                    is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
-                    else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
-                }.apply { stackTrace = e.stackTrace }
-                val maskedMessage = "Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
-                Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
-                if (attempt < 2) delay(5000L) // Wait 5s before retry
+                } catch (e: Exception) {
+                    TemperatureUtils.updateLastNetworkAccessTime(System.currentTimeMillis())
+                    val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
+                    val maskedException = when (e) {
+                        is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
+                        else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
+                    }.apply { stackTrace = e.stackTrace }
+                    val maskedMessage = "Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
+                    Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
+                    if (attempt < 2) delay(5000L) // Wait 5s before retry
+                }
             }
         }
 

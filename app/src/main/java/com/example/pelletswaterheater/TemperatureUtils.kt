@@ -19,11 +19,14 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 object TemperatureUtils {
-    private const val WORK_NAME = "temperature_update"
+    private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
+    private const val ONETIME_WORK_NAME = "onetime_temperature_update"
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
+    private val lastNetworkAccessTime = AtomicLong(0L)
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -97,23 +100,19 @@ object TemperatureUtils {
         enqueueWork<PeriodicWorkRequest>(
             context,
             configure = { builder -> builder.setRequiresDeviceIdle(false) },
-            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
+            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(PERIODIC_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
             logMessage = "Scheduled periodic temperature update (10 min)"
         )
     }
 
     fun forceTemperatureUpdate(context: Context) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel all pending work
-        // Reset backoff count for immediate retry
         TemperatureWorker.resetBackoffCount()
         enqueueWork<OneTimeWorkRequest>(
             context,
             configure = { /* No additional config needed */ },
-            enqueue = { wm, request -> wm.enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.REPLACE, request as OneTimeWorkRequest) },
+            enqueue = { wm, request -> wm.enqueueUniqueWork(ONETIME_WORK_NAME, ExistingWorkPolicy.REPLACE, request as OneTimeWorkRequest) },
             logMessage = "Enqueued force temperature update"
         )
-        // Re-schedule periodic work to ensure it resumes
-        schedulePeriodicTemperatureUpdate(context)
     }
 
     private inline fun <reified T : WorkRequest> enqueueWork(
@@ -141,5 +140,11 @@ object TemperatureUtils {
 
     fun maskPasswordInUrl(url: String): String {
         return url.replace(Regex("(https?://[^/]+/)[^/]+(/.*)"), "$1****$2")
+    }
+
+    fun getLastNetworkAccessTime(): Long = lastNetworkAccessTime.get()
+
+    fun updateLastNetworkAccessTime(time: Long) {
+        lastNetworkAccessTime.set(time)
     }
 }
