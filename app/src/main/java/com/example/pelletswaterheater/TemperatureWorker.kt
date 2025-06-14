@@ -31,12 +31,12 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private val backoffCount = AtomicInteger(0)
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        Log.d(TAG, "Starting worker execution: workId=${id}")
-        val viewModel = TemperatureViewModel.getInstance()
-        val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
-        val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
-        Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
         networkMutex.withLock {
+            Log.d(TAG, "Starting worker execution: workId=${id}")
+            val viewModel = TemperatureViewModel.getInstance()
+            val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
+            val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+            Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
             val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER)
             Log.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
@@ -94,8 +94,8 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             viewModel.updateLastUpdateTime(System.currentTimeMillis())
             updateWidget()
             Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
+            Result.failure()
         }
-        Result.failure()
     }
 
     private suspend fun updateWidget() {
