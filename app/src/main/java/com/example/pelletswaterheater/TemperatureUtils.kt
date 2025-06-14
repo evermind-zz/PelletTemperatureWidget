@@ -93,44 +93,47 @@ object TemperatureUtils {
     }
 
     fun schedulePeriodicTemperatureUpdate(context: Context) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
         enqueueWork<PeriodicWorkRequest>(
             context,
-            configure = { /* No additional config needed */ },
-            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request as PeriodicWorkRequest) },
-            logMessage = "Scheduled periodic temperature update"
+            configure = { builder -> builder.setRequiresDeviceIdle(false) },
+            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
+            logMessage = "Scheduled periodic temperature update (10 min)"
         )
     }
 
     fun forceTemperatureUpdate(context: Context) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
+        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel all pending work
         // Reset backoff count for immediate retry
         TemperatureWorker.resetBackoffCount()
         enqueueWork<OneTimeWorkRequest>(
             context,
             configure = { /* No additional config needed */ },
-            enqueue = { wm, request -> wm.enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request as OneTimeWorkRequest) },
+            enqueue = { wm, request -> wm.enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.REPLACE, request as OneTimeWorkRequest) },
             logMessage = "Enqueued force temperature update"
         )
+        // Re-schedule periodic work to ensure it resumes
+        schedulePeriodicTemperatureUpdate(context)
     }
 
     private inline fun <reified T : WorkRequest> enqueueWork(
         context: Context,
-        configure: (WorkRequest.Builder<*, *>) -> Unit,
+        configure: (Constraints.Builder) -> Unit,
         enqueue: (WorkManager, WorkRequest) -> Unit,
         logMessage: String
     ) {
-        val constraints = Constraints.Builder()
+        val constraintsBuilder = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+        configure(constraintsBuilder)
+
         val builder = when (T::class) {
-            PeriodicWorkRequest::class -> PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES)
+            PeriodicWorkRequest::class -> PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
             OneTimeWorkRequest::class -> OneTimeWorkRequestBuilder<TemperatureWorker>()
             else -> throw IllegalArgumentException("Unsupported work request type")
         }
         builder.setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.SECONDS)
-            .setConstraints(constraints)
+            .setConstraints(constraintsBuilder.build())
             .addTag(WORK_TAG)
-        configure(builder)
         val workRequest = builder.build()
         enqueue(WorkManager.getInstance(context), workRequest)
         Log.d(TAG, logMessage)

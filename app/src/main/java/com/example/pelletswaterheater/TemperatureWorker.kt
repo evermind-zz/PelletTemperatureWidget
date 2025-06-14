@@ -2,6 +2,7 @@ package com.example.pelletswaterheater
 
 import android.content.Context
 import android.net.wifi.WifiManager
+import java.util.concurrent.atomic.AtomicInteger
 import android.util.Log
 import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
@@ -23,14 +24,15 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         private var backoffCount = 0
         fun resetBackoffCount() { backoffCount = 0 }
     }
+    private val backoffCount = AtomicInteger(0)
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+        Log.d(TAG, "Starting worker execution: workId=${id}")
         val viewModel = TemperatureViewModel.getInstance()
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
         val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
-        Log.d(TAG, "Starting work: url=$url, backoffCount=$backoffCount")
-        //Log.d(TAG, "Starting work: url=$maskedUrl, backoffCount=$backoffCount")
+        Log.d(TAG, "Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
         if (!isOnSameLocalNetwork(applicationContext, url)) {
             viewModel.updateTemperature("Wrong Network")
@@ -40,8 +42,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             updateWidget()
             return@withContext Result.failure()
         }
-        Log.d(TAG, "Attempting temperature fetch: url=$url")
-        //Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
+        Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
         repeat(3) { attempt ->
             try {
                 viewModel.updateTemperature("Loading...")
@@ -52,7 +53,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 viewModel.updateTemperature(temp)
                 viewModel.updateError(null)
                 viewModel.updateLastUpdateTime(System.currentTimeMillis())
-                backoffCount = 0
+                backoffCount.set(0)
                 Log.d(TAG, "Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
                 updateWidget()
                 return@withContext Result.success(workDataOf("temperature" to temp))
@@ -65,17 +66,17 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 }.apply { stackTrace = e.stackTrace }
                 val maskedMessage = "Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
                 Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
-                if (attempt < 2) delay(1000L) // Wait 1s before retry
+                if (attempt < 2) delay(5000L) // Wait 5s before retry
             }
         }
 
         // All retries failed
+        val currentBackoff = backoffCount.incrementAndGet()
         viewModel.updateTemperature("Error")
         viewModel.updateError("Failed to fetch temperature after 3 attempts")
         viewModel.updateLastUpdateTime(System.currentTimeMillis())
-        backoffCount++
         updateWidget()
-        Log.e(TAG, "All retries failed, backoffCount=$backoffCount")
+        Log.e(TAG, "All retries failed, backoffCount=$currentBackoff")
         Result.failure()
     }
 
