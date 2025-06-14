@@ -24,6 +24,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     companion object {
         private val TAG = TemperatureWorker::class.java.simpleName
         private var backoffCount = 0
+        private var lastAccessTime = 0L
         private val networkMutex = Mutex()
         fun resetBackoffCount() { backoffCount = 0 }
     }
@@ -32,17 +33,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         Log.d(TAG, "Starting worker execution: workId=${id}")
         val viewModel = TemperatureViewModel.getInstance()
-        // Ensure minimum 3s between network accesses
-        while (true) {
-            val lastAccess = TemperatureUtils.getLastNetworkAccessTime()
-            val currentTime = System.currentTimeMillis()
-            val timeSinceLast = currentTime - lastAccess
-            if (timeSinceLast >= 3000) break
-            val waitTime = 3000 - timeSinceLast
-            Log.d(TAG, "Waiting ${waitTime}ms to respect 3s network access interval")
-            delay(waitTime)
-        }
-
         val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
         val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
@@ -58,11 +48,20 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         }
         Log.d(TAG, "Attempting temperature fetch: url=$maskedUrl")
         networkMutex.withLock {
+            // Ensure minimum 3s between network accesses
+            val currentTime = System.currentTimeMillis()
+            val timeSinceLast = currentTime - lastAccessTime
+            if (timeSinceLast < 3000) {
+                val waitTime = 3000 - timeSinceLast
+                Log.d(TAG, "Waiting ${waitTime}ms to respect 3s network access interval")
+                delay(waitTime)
+            }
+
             repeat(3) { attempt ->
                 try {
                     viewModel.updateTemperature("Loading...")
                     val jsonString = URL(url).readText()
-                    TemperatureUtils.updateLastNetworkAccessTime(System.currentTimeMillis())
+                    lastAccessTime = System.currentTimeMillis()
                     val json = Json.parseToJsonElement(jsonString).jsonObject
                     val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
                     val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
@@ -75,7 +74,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                     return@withContext Result.success(workDataOf("temperature" to temp))
 
                 } catch (e: Exception) {
-                    TemperatureUtils.updateLastNetworkAccessTime(System.currentTimeMillis())
+                    lastAccessTime = System.currentTimeMillis()
                     val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
                     val maskedException = when (e) {
                         is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)

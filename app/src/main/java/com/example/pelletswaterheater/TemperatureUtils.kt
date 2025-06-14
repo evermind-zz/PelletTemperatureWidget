@@ -19,14 +19,12 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicLong
 
 object TemperatureUtils {
     private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
     private const val ONETIME_WORK_NAME = "onetime_temperature_update"
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
-    private val lastNetworkAccessTime = AtomicLong(0L)
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -140,11 +138,5 @@ object TemperatureUtils {
 
     fun maskPasswordInUrl(url: String): String {
         return url.replace(Regex("(https?://[^/]+/)[^/]+(/.*)"), "$1****$2")
-    }
-
-    fun getLastNetworkAccessTime(): Long = lastNetworkAccessTime.get()
-
-    fun updateLastNetworkAccessTime(time: Long) {
-        lastNetworkAccessTime.set(time)
     }
 }
