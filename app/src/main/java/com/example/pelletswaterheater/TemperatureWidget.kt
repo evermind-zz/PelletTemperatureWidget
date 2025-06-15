@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -14,6 +16,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.glance.text.Text
@@ -27,9 +30,9 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.unit.ColorProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -39,11 +42,12 @@ class TemperatureWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode
         get() = SizeMode.Exact
 
+    @SuppressLint("StateFlowValueCalledInComposition")
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val width = TemperatureUtils.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
             val viewModel = TemperatureViewModel.getInstance()
-            Log.d("TemperatureWidget", "Using ViewModel instance: ${viewModel.hashCode()}")
+            Log.d("TemperatureWidget", "provideGlance: glanceId=$id, viewModel=${viewModel.hashCode()}, temp=${viewModel.temperature.value}")
+            val width = TemperatureUtils.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
             val height = TemperatureUtils.getStoredWidgetSize(context, "height")?.toIntOrNull() ?: 100
             TemperatureWidgetContent(
                 width = width.dp,
@@ -63,14 +67,14 @@ class TemperatureWidget : GlanceAppWidget() {
         textColor: Color = Color.Black // Default black
     ) {
         val viewModel = TemperatureViewModel.getInstance()
-        val rawTemperature = viewModel.temperature.value
+        val rawTemperature by viewModel.temperature.collectAsState()
+        val error by viewModel.error.collectAsState()
+        val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
         val temperature = when {
             rawTemperature == "Error" || rawTemperature == "Wrong Network" -> rawTemperature
             rawTemperature == null || rawTemperature == "Loading..." -> "Unknown"
             else -> TemperatureUtils.formatTemperature(rawTemperature)
         }
-        val error = viewModel.error.value
-        val lastUpdateTime = viewModel.lastUpdateTime.value
         val formattedTime = if (lastUpdateTime > 0) {
             SimpleDateFormat("hh:mm a", Locale.getDefault()).format(java.util.Date(lastUpdateTime))
         } else {
@@ -86,7 +90,7 @@ class TemperatureWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Log.d("TemperatureWidget", "Rendering: temp=$temperature, time=$formattedTime, error=$error, bgColor=$backgroundColor, width=$width, height=$height")
+            Log.d("TemperatureWidget", "Rendering: temp=$temperature, rawTemp=$rawTemperature, time=$formattedTime, error=$error, bgColor=$backgroundColor, width=$width, height=$height")
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,7 +105,7 @@ class TemperatureWidget : GlanceAppWidget() {
                         .padding(end = 4.dp)
                 )
                 Text(
-                    text = temperature,
+                    text = temperature.toString(),
                     style = TextStyle(fontSize = 20.sp, color = ColorProvider(textColor)),
                     modifier = GlanceModifier.wrapContentWidth()
                 )
@@ -118,7 +122,7 @@ class TemperatureWidget : GlanceAppWidget() {
             }
             if (error != null) {
                 Text(
-                    text = error,
+                    text = error!!,
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
                     modifier = GlanceModifier
                         .fillMaxWidth()
@@ -132,6 +136,33 @@ class TemperatureWidget : GlanceAppWidget() {
     private fun getStoredBackgroundColor(context: Context): Color = TemperatureUtils.getStoredBackgroundColor(context)
 
     private fun getStoredTextColor(context: Context): Color = TemperatureUtils.getStoredTextColor(context)
+
+    suspend fun forceUpdateAll(context: Context) {
+        try {
+            val manager = GlanceAppWidgetManager(context)
+            val glanceIds = manager.getGlanceIds(TemperatureWidget::class.java)
+            Log.d("TemperatureWidget", "forceUpdateAll: Found ${glanceIds.size} widget instances")
+            glanceIds.forEach { glanceId ->
+                update(context, glanceId)
+                Log.d("TemperatureWidget", "Updated glanceId=$glanceId")
+            }
+            if (glanceIds.isEmpty()) {
+                Log.w("TemperatureWidget", "No widget instances found, retrying after 1s")
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(1000)
+                    forceUpdateAll(context)
+                    Log.d("TemperatureWidget", "Fallback retry triggered")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("TemperatureWidget", "Failed to force update widgets", e)
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(1000)
+                forceUpdateAll(context)
+                Log.d("TemperatureWidget", "Retry after failure triggered")
+            }
+        }
+    }
 }
 
 class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
@@ -140,7 +171,7 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         CoroutineScope(Dispatchers.Main).launch {
-            glanceAppWidget.updateAll(context)
+            (glanceAppWidget as TemperatureWidget).forceUpdateAll(context)
             Log.d("TemperatureWidgetReceiver", "onEnabled: Widget update triggered")
         }
     }
@@ -148,23 +179,22 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshWidgetAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        // Debounce: Check last refresh time
         val sharedPrefs = TemperatureUtils.getSharedPrefs(context)
         val lastRefresh = sharedPrefs.getLong("last_refresh_time", 0)
         val currentTime = System.currentTimeMillis()
         Log.d("RefreshWidgetAction", "Refresh attempt: currentTime=$currentTime, lastRefresh=$lastRefresh, delta=${currentTime - lastRefresh}ms")
         if (currentTime - lastRefresh < 5000) {
-            Log.d("RefreshWidgetAction", "Refresh debounced: Too soon since last refresh (delta=${currentTime - lastRefresh}ms)")
+            Log.d("RefreshWidgetAction", "Refresh debounced: Too soon since last refresh")
             return
         }
         try {
             sharedPrefs.edit().putLong("last_refresh_time", currentTime).apply()
-            Log.d("RefreshWidgetAction", "Triggering force update")
             TemperatureUtils.forceTemperatureUpdate(context)
+            (TemperatureWidget()).forceUpdateAll(context)
             Log.d("RefreshWidgetAction", "Refresh enqueued successfully")
         } catch (e: Exception) {
             Log.e("RefreshWidgetAction", "Refresh failed", e)
-            TemperatureWidget().updateAll(context) // Fallback to update widget with current state
+            (TemperatureWidget()).forceUpdateAll(context)
         }
     }
 }

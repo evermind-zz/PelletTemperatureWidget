@@ -37,6 +37,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        TemperatureUtils.appContext = applicationContext // Set app context
         reinitializeWidget()
         TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
         CoroutineScope(Dispatchers.Main).launch {
@@ -87,7 +88,7 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
             Text(
                 text = "Last updated: ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(lastUpdateTime))}",
                 fontSize = 12.sp,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

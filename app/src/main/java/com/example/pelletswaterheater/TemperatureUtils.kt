@@ -27,6 +27,7 @@ object TemperatureUtils {
     const val WHICH_WORKER = "which_worker"
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
+    var appContext: Context? = null // Set in Application or MainActivity
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -85,6 +86,7 @@ object TemperatureUtils {
         backgroundColor: String,
         textColor: String
     ) {
+        val previousUrl = getStoredUrl(context)
         with(getSharedPrefs(context).edit()) {
             putString("server_url", url)
             putString("widget_width", width)
@@ -93,13 +95,22 @@ object TemperatureUtils {
             putString("text_color", textColor)
             apply()
         }
+        // Cancel and reschedule workers on URL change
+        if (previousUrl != url) {
+            WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG)
+            schedulePeriodicTemperatureUpdate(context)
+            forceTemperatureUpdate(context)
+        }
     }
 
     fun schedulePeriodicTemperatureUpdate(context: Context) {
         WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
         enqueueWork<PeriodicWorkRequest>(
             context,
-            configure = { builder -> builder.setRequiresDeviceIdle(false) },
+            configure = { builder -> 
+                builder.setRequiresDeviceIdle(false)
+                builder.setRequiresBatteryNotLow(false) // Allow in Doze mode
+            },
             enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(PERIODIC_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
             logMessage = "Scheduled periodic temperature update (10 min)",
             workerName = PERIODIC_WORK_NAME
