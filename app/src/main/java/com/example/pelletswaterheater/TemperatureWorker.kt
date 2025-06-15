@@ -24,6 +24,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     companion object {
         private val TAG = TemperatureWorker::class.java.simpleName
         private var backoffCount = 0
+        private val accessTimeMutex = Mutex()
         private var lastAccessTime = 0L
         private val networkMutex = Mutex()
         fun resetBackoffCount() { backoffCount = 0 }
@@ -31,38 +32,62 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private val backoffCount = AtomicInteger(0)
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        networkMutex.withLock {
-            Log.d(TAG, "Starting worker execution: workId=${id}")
-            val viewModel = TemperatureViewModel.getInstance()
-            val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
-            val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
-            Log.d(TAG, "Using ViewModel instance: ${viewModel.hashCode()}")
-            val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER)
-            Log.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
+        Log.d(TAG, "Starting worker execution: workId=${id}")
+        val viewModel = TemperatureViewModel.getInstance()
+        val url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
+        val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+        val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER)
+        Log.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
-            if (!isOnSameLocalNetwork(applicationContext, url)) {
+        // Check max retries
+        if (backoffCount.get() > 5) {
+            Log.e(TAG, "worker=$whichWorker Max retries exceeded")
+            networkMutex.withLock {
+                viewModel.updateError("Max retries exceeded")
+            }
+            updateWidget(whichWorker)
+            return@withContext Result.failure()
+        }
+
+        if (!isOnSameLocalNetwork(applicationContext, url)) {
+            networkMutex.withLock {
                 viewModel.updateTemperature("Wrong Network")
                 viewModel.updateError("Device not on the same network as the server")
                 viewModel.updateLastUpdateTime(System.currentTimeMillis())
-                Log.e(TAG, "worker=$whichWorker Network mismatch")
-                updateWidget()
-                return@withContext Result.failure()
             }
-            Log.d(TAG, "worker=$whichWorker Attempting temperature fetch: url=$maskedUrl")
-            // Ensure minimum 3s between network accesses
+            Log.e(TAG, "worker=$whichWorker Network mismatch")
+            updateWidget(whichWorker)
+            return@withContext Result.failure()
+        }
+        Log.d(TAG, "worker=$whichWorker Attempting temperature fetch: url=$maskedUrl")
+
+        // Ensure minimum 3s between network accesses
+        accessTimeMutex.withLock {
             val currentTime = System.currentTimeMillis()
             val timeSinceLast = currentTime - lastAccessTime
             if (timeSinceLast < 3000) {
                 val waitTime = 3000 - timeSinceLast
-                Log.d(TAG, " worker=$whichWorker Waiting ${waitTime}ms to respect 3s network access interval")
+                Log.d(TAG, "worker=$whichWorker Waiting ${waitTime}ms to respect 3s network access interval")
                 delay(waitTime)
+            }
+        }
+
+        networkMutex.withLock {
+            // Ping server
+            try {
+                URL(url).openConnection().apply { connectTimeout = 1000 }.connect()
+            } catch (e: Exception) {
+                Log.e(TAG, "worker=$whichWorker Server ping failed", e)
+                viewModel.updateError("Server unreachable")
+                viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                return@withContext Result.failure()
             }
 
             repeat(3) { attempt ->
                 try {
                     viewModel.updateTemperature("Loading...")
                     val jsonString = URL(url).readText()
-                    lastAccessTime = System.currentTimeMillis()
+                    accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
                     val json = Json.parseToJsonElement(jsonString).jsonObject
                     val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
                     val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
@@ -71,11 +96,11 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                     viewModel.updateLastUpdateTime(System.currentTimeMillis())
                     backoffCount.set(0)
                     Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
-                    updateWidget()
+                    updateWidget(whichWorker)
                     return@withContext Result.success(workDataOf("temperature" to temp))
 
                 } catch (e: Exception) {
-                    lastAccessTime = System.currentTimeMillis()
+                    accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
                     val maskedOriginalMessage = e.message?.replace(url, maskedUrl) ?: "Unknown error"
                     val maskedException = when (e) {
                         is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
@@ -92,15 +117,15 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             viewModel.updateTemperature("Error")
             viewModel.updateError("Failed to fetch temperature after 3 attempts")
             viewModel.updateLastUpdateTime(System.currentTimeMillis())
-            updateWidget()
             Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
-            Result.failure()
         }
+        updateWidget(whichWorker)
+        Result.failure()
     }
 
-    private suspend fun updateWidget() {
+    private suspend fun updateWidget(worker: String?) {
         TemperatureWidget().updateAll(applicationContext)
-        Log.d(TAG, "Widget update triggered")
+        Log.d(TAG, "worker=$worker Widget update triggered")
     }
 
     private fun isOnSameLocalNetwork(context: Context, url: String): Boolean {
