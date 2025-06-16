@@ -52,8 +52,8 @@ object TemperatureUtils {
         )
     }
 
-    fun getStoredUrl(context: Context): String? {
-        return getSharedPrefs(context).getString("server_url", null)
+    fun getStoredUrl(context: Context): String {
+        return getSharedPrefs(context).getString("server_url", null) ?: SettingsActivity.DEFAULT_SERVER_URL
     }
 
     fun getStoredWidgetSize(context: Context, dimension: String): String? {

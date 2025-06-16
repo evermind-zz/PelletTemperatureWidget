@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.io.FileNotFoundException
 import java.net.URI
 import java.net.URL
 
@@ -31,11 +32,11 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private val backoffCount = AtomicInteger(0)
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+        val viewModel = TemperatureViewModel.getInstance()
+        val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER) ?: tags.toString()
         try {
             Log.d(TAG, "Starting worker execution: workId=${id}")
-            val viewModel = TemperatureViewModel.getInstance()
-            val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER)
-            var url = TemperatureUtils.getStoredUrl(applicationContext) ?: "http://192.168.178.4:4321/<PASSWORD>/all"
+            var url = TemperatureUtils.getStoredUrl(applicationContext)
             val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
             Log.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
@@ -45,7 +46,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 networkMutex.withLock {
                     viewModel.updateError("Max retries exceeded")
                 }
-                updateWidget()
+                updateWidget(whichWorker)
                 return@withContext Result.failure()
             }
 
@@ -56,7 +57,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                     viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 }
                 Log.e(TAG, "worker=$whichWorker Network mismatch")
-                updateWidget()
+                updateWidget(whichWorker)
                 return@withContext Result.failure()
             }
             Log.d(TAG, "worker=$whichWorker Attempting temperature fetch: url=$maskedUrl")
@@ -72,10 +73,11 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 }
             }
 
+            // Re-read URL to avoid stale value
+            url = TemperatureUtils.getStoredUrl(applicationContext)
+            val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+
             networkMutex.withLock {
-                // Re-read URL to avoid stale value
-                url = TemperatureUtils.getStoredUrl(applicationContext) ?: url
-                val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
                 Log.d(TAG, "worker=$whichWorker Refreshed URL: $refreshedMaskedUrl")
 
                 // Ping server
@@ -85,64 +87,86 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                     Log.e(TAG, "worker=$whichWorker Server ping failed", e)
                     viewModel.updateError("Server unreachable")
                     viewModel.updateLastUpdateTime(System.currentTimeMillis())
-                    updateWidget()
+                    updateWidget(whichWorker)
                     return@withContext Result.failure()
                 }
 
-                repeat(3) { attempt ->
+                val maxAttempts = 3
+                repeat(maxAttempts) { attempt ->
                     try {
                         viewModel.updateTemperature("Loading...")
                         val jsonString = URL(url).readText()
-                        accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
-                        val json = Json.parseToJsonElement(jsonString).jsonObject
-                        val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
-                        val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
-                        viewModel.updateTemperature(temp)
-                        viewModel.updateError(null)
-                        viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                        val temp = parseJsonAndUpdateViewModel(jsonString, viewModel)
                         backoffCount.set(0)
                         Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
-                        updateWidget()
+                        updateWidget(whichWorker)
                         return@withContext Result.success(workDataOf("temperature" to temp))
                     } catch (e: Exception) {
+                        maskExceptionMessageAndLogIt(e, url, whichWorker, attempt)
+                        if (attempt < maxAttempts - 1) delay(5000L) // Wait 5s before retry
+                    } finally {
                         accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
-                        val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
-                        val maskedException = when (e) {
-                            is java.io.FileNotFoundException -> java.io.FileNotFoundException(maskedOriginalMessage)
-                            else -> e.javaClass.getConstructor(String::class.java).newInstance(maskedOriginalMessage)
-                        }.apply { stackTrace = e.stackTrace }
-                        val maskedMessage = "worker=$whichWorker Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
-                        Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
-                        if (attempt < 2) delay(5000L) // Wait 5s before retry
                     }
                 }
 
                 // All retries failed
                 val currentBackoff = backoffCount.incrementAndGet()
                 viewModel.updateTemperature("Error")
-                viewModel.updateError("Failed to fetch temperature after 3 attempts")
+                viewModel.updateError("Failed to fetch temperature after $maxAttempts attempts")
                 viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
-                updateWidget()
+                updateWidget(whichWorker)
             }
             Result.failure()
         } catch (e: Exception) {
-            Log.e(TAG, "worker=${inputData.getString(TemperatureUtils.WHICH_WORKER)} Unexpected error in doWork", e)
+            Log.e(TAG, "worker=${whichWorker} Unexpected error in doWork", e)
             networkMutex.withLock {
-                TemperatureViewModel.getInstance().updateError("Worker failed: ${e.message}")
-                TemperatureViewModel.getInstance().updateLastUpdateTime(System.currentTimeMillis())
+                viewModel.updateError("Worker failed: ${e.message}")
+                viewModel.updateLastUpdateTime(System.currentTimeMillis())
             }
-            updateWidget()
+            updateWidget(whichWorker)
             Result.failure()
         }
     }
 
-    private suspend fun updateWidget() {
+    // remove the password from the url inside the exception message
+    private fun maskExceptionMessageAndLogIt(
+        e: Exception,
+        url: String,
+        whichWorker: String?,
+        attempt: Int
+    ) {
+        val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+        val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
+        val maskedException = when (e) {
+            is FileNotFoundException -> FileNotFoundException(maskedOriginalMessage)
+            else -> e.javaClass.getConstructor(String::class.java)
+                .newInstance(maskedOriginalMessage)
+        }.apply { stackTrace = e.stackTrace }
+        val maskedMessage =
+            "worker=$whichWorker Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
+        Log.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
+    }
+
+    private fun parseJsonAndUpdateViewModel(
+        jsonString: String,
+        viewModel: TemperatureViewModel
+    ): String {
+        val json = Json.parseToJsonElement(jsonString).jsonObject
+        val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
+        val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
+        viewModel.updateTemperature(temp)
+        viewModel.updateError(null)
+        viewModel.updateLastUpdateTime(System.currentTimeMillis())
+        return temp
+    }
+
+    private suspend fun updateWidget(whichWorker: String?) {
         try {
             TemperatureWidget().forceUpdateAll(applicationContext)
-            Log.d(TAG, "Widget update triggered")
+            Log.d(TAG, "worker=$whichWorker, Widget update triggered")
         } catch (e: Exception) {
-            Log.e(TAG, "Widget update failed", e)
+            Log.e(TAG, "worker=$whichWorker, Widget update failed", e)
         }
     }
 

@@ -46,12 +46,15 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
+    companion object {
+        val DEFAULT_SERVER_URL: String = "http://192.168.178.4:4321/<PASSWORD>/all"
+    }
 }
 
 @Composable
 fun SettingsScreen() {
     val context = LocalContext.current
-    var serverUrl by remember { mutableStateOf(TemperatureUtils.getStoredUrl(context) ?: "http://192.168.178.4:4321/<PASSWORD>/all") }
+    var serverUrl by remember { mutableStateOf(TemperatureUtils.getStoredUrl(context) ?: SettingsActivity.DEFAULT_SERVER_URL) }
     var widgetWidth by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "width") ?: "100") }
     var widgetHeight by remember { mutableStateOf(TemperatureUtils.getStoredWidgetSize(context, "height") ?: "100") }
     var backgroundColor by remember { mutableStateOf(TemperatureUtils.getStoredBackgroundColorHex(context) ?: "FFF3E5F5") }
