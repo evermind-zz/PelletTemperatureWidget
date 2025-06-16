@@ -52,7 +52,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
             if (!isOnSameLocalNetwork(applicationContext, url)) {
                 networkMutex.withLock {
-                    viewModel.updateTemperature("Wrong Network")
+                    viewModel.updateState("Wrong Network")
                     viewModel.updateError("Device not on the same network as the server")
                     viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 }
@@ -94,9 +94,10 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 val maxAttempts = 3
                 repeat(maxAttempts) { attempt ->
                     try {
-                        viewModel.updateTemperature("Loading...")
+                        viewModel.updateState("Loading...")
                         val jsonString = URL(url).readText()
-                        val temp = parseJsonAndUpdateViewModel(jsonString, viewModel)
+                        parseJsonAndUpdateViewModel(jsonString, viewModel)
+                        val temp = viewModel.temperature.value
                         backoffCount.set(0)
                         Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
                         updateWidget(whichWorker)
@@ -111,7 +112,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
                 // All retries failed
                 val currentBackoff = backoffCount.incrementAndGet()
-                viewModel.updateTemperature("Error")
+                viewModel.updateState("Error")
                 viewModel.updateError("Failed to fetch temperature after $maxAttempts attempts")
                 viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
@@ -151,14 +152,14 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private fun parseJsonAndUpdateViewModel(
         jsonString: String,
         viewModel: TemperatureViewModel
-    ): String {
+    ) {
         val json = Json.parseToJsonElement(jsonString).jsonObject
         val ambient = json["system"]?.jsonObject?.get("L_ambient")?.jsonPrimitive?.content
         val temp = ambient?.toDoubleOrNull()?.let { (it * 0.1).toString() } ?: "Error"
         viewModel.updateTemperature(temp)
         viewModel.updateError(null)
+        viewModel.updateState("Success")
         viewModel.updateLastUpdateTime(System.currentTimeMillis())
-        return temp
     }
 
     private suspend fun updateWidget(whichWorker: String?) {

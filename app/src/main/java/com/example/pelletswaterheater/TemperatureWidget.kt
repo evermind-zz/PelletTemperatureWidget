@@ -34,8 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class TemperatureWidget : GlanceAppWidget() {
 
@@ -70,13 +68,10 @@ class TemperatureWidget : GlanceAppWidget() {
         val rawTemperature by viewModel.temperature.collectAsState()
         val error by viewModel.error.collectAsState()
         val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
-        val temperature = when {
-            rawTemperature == "Error" || rawTemperature == "Wrong Network" -> rawTemperature
-            rawTemperature == null || rawTemperature == "Loading..." -> "Unknown"
-            else -> TemperatureUtils.formatTemperature(rawTemperature)
-        }
+        val state by viewModel.state.collectAsState()
+        val temperature = TemperatureUtils.formatTemperature(rawTemperature)
         val formattedTime = if (lastUpdateTime > 0) {
-            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(java.util.Date(lastUpdateTime))
+            TemperatureUtils.formatTimeStamp(lastUpdateTime)
         } else {
             ""
         }
@@ -114,6 +109,16 @@ class TemperatureWidget : GlanceAppWidget() {
                 Text(
                     text = "Last updated: $formattedTime",
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor), textAlign = TextAlign.Center),
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 4.dp)
+                )
+            }
+            if (state != null) {
+                Text(
+                    text = TemperatureUtils.formattedState(state),
+                    style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
                     modifier = GlanceModifier
                         .fillMaxWidth()
                         .wrapContentHeight()

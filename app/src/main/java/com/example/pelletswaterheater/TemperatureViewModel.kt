@@ -5,12 +5,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import android.util.Log
 import kotlinx.coroutines.flow.StateFlow
 
+private val TAG = TemperatureWorker::class.java.simpleName
+
 class TemperatureViewModel : ViewModel() {
-    private val _temperature = MutableStateFlow<String?>("Loading...")
+    private val _temperature = MutableStateFlow<String?>(null)
     val temperature: StateFlow<String?> = _temperature
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _state = MutableStateFlow<String?>("Loading...")
+    val state: StateFlow<String?> = _state
 
     init {
         Log.d("TemperatureViewModel", "Instance created: ${this.hashCode()}")
@@ -48,5 +53,11 @@ class TemperatureViewModel : ViewModel() {
     fun clearError() {
         Log.d("TemperatureViewModel", "Error cleared")
         _error.value = null
+    }
+
+    fun updateState(state: String) {
+        Log.d(TAG, "State updated: $state")
+        _state.value = state
+
     }
 }

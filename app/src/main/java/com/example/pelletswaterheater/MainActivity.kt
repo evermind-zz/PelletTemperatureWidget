@@ -2,7 +2,6 @@ package com.example.pelletswaterheater
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,19 +23,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.appwidget.updateAll
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         TemperatureUtils.appContext = applicationContext // Set app context
         reinitializeWidget()
+        TemperatureUtils.forceTemperatureUpdate(this)
         TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
         CoroutineScope(Dispatchers.Main).launch {
             TemperatureWidget().updateAll(this@MainActivity)
@@ -66,6 +60,7 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
     val temperatureState by viewModel.temperature.collectAsState()
     val error by viewModel.error.collectAsState()
     val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
+    val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
     error?.let {
@@ -81,12 +76,19 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = temperatureState?.let { TemperatureUtils.formatTemperature(it) } ?: "Unknown",
+            text = TemperatureUtils.formatTemperature(temperatureState),
             fontSize = 24.sp
         )
         if (lastUpdateTime > 0) {
             Text(
-                text = "Last updated: ${SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(lastUpdateTime))}",
+                text = "Last updated: ${TemperatureUtils.formatTimeStamp(lastUpdateTime)}",
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+        if (state != null) {
+            Text(
+                text = TemperatureUtils.formattedState(state),
                 fontSize = 12.sp,
                 modifier = Modifier.padding(top = 8.dp)
             )

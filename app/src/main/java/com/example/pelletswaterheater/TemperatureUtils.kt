@@ -19,6 +19,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object TemperatureUtils {
@@ -31,15 +34,22 @@ object TemperatureUtils {
 
     fun formatTemperature(rawValue: String?): String {
         return when {
-            rawValue == null || rawValue == "Loading..." -> "Loading..."
-            rawValue == "Error" || rawValue == "Wrong Network" -> rawValue
+            rawValue == null || rawValue == "Unknown" -> "Unknown"
             else -> try {
                 DecimalFormat("0.0").format(rawValue.toDouble()) + "°C"
             } catch (e: NumberFormatException) {
+                Log.d(TAG, e.message, e)
                 "Error"
             }
         }
     }
+
+    fun formatTimeStamp(lastUpdateTime: Long): String =
+        SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(lastUpdateTime))
+
+    fun formattedState(state: String?) =
+        "State: $state"
+
 
     fun getSharedPrefs(context: Context): SharedPreferences {
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
