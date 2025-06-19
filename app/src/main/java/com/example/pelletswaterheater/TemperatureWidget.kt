@@ -44,7 +44,7 @@ class TemperatureWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val viewModel = TemperatureViewModel.getInstance()
-            Log.d("TemperatureWidget", "provideGlance: glanceId=$id, viewModel=${viewModel.hashCode()}, temp=${viewModel.temperature.value}")
+            Log.d("TemperatureWidget", "provideGlance: glanceId=$id, viewModel=${viewModel.hashCode()}, temp=${viewModel.displayTemperature.value}")
             val width = TemperatureUtils.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
             val height = TemperatureUtils.getStoredWidgetSize(context, "height")?.toIntOrNull() ?: 100
             TemperatureWidgetContent(
@@ -65,11 +65,10 @@ class TemperatureWidget : GlanceAppWidget() {
         textColor: Color = Color.Black // Default black
     ) {
         val viewModel = TemperatureViewModel.getInstance()
-        val rawTemperature by viewModel.temperature.collectAsState()
+        val displayTemperature by viewModel.displayTemperature.collectAsState()
         val error by viewModel.error.collectAsState()
         val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
         val state by viewModel.state.collectAsState()
-        val temperature = TemperatureUtils.formatTemperature(rawTemperature)
         val formattedTime = if (lastUpdateTime > 0) {
             TemperatureUtils.formatTimeStamp(lastUpdateTime)
         } else {
@@ -85,7 +84,7 @@ class TemperatureWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Log.d("TemperatureWidget", "Rendering: temp=$temperature, rawTemp=$rawTemperature, time=$formattedTime, error=$error, bgColor=$backgroundColor, width=$width, height=$height")
+            Log.d("TemperatureWidget", "Rendering: temp=$displayTemperature, state=$state, error=$error, time=$formattedTime, bgColor=$backgroundColor, width=$width, height=$height")
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,7 +99,7 @@ class TemperatureWidget : GlanceAppWidget() {
                         .padding(end = 4.dp)
                 )
                 Text(
-                    text = temperature.toString(),
+                    text = displayTemperature,
                     style = TextStyle(fontSize = 20.sp, color = ColorProvider(textColor)),
                     modifier = GlanceModifier.wrapContentWidth()
                 )
@@ -115,7 +114,7 @@ class TemperatureWidget : GlanceAppWidget() {
                         .padding(top = 4.dp)
                 )
             }
-            if (state != null) {
+            if (state != "Success") {
                 Text(
                     text = TemperatureUtils.formattedState(state),
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),

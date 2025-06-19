@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ class MainActivity : ComponentActivity() {
         TemperatureUtils.forceTemperatureUpdate(this)
         TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
         CoroutineScope(Dispatchers.Main).launch {
-            TemperatureWidget().updateAll(this@MainActivity)
+            TemperatureWidget().forceUpdateAll(this@MainActivity)
         }
         setContent {
             TemperatureDisplay()
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity() {
         if (widgetIds.isNotEmpty()) {
             appWidgetManager.notifyAppWidgetViewDataChanged(widgetIds, 0)
             CoroutineScope(Dispatchers.Main).launch {
-                TemperatureWidget().updateAll(this@MainActivity)
+                TemperatureWidget().forceUpdateAll(this@MainActivity)
             }
         }
     }
@@ -57,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.getInstance()) {
-    val temperatureState by viewModel.temperature.collectAsState()
+    val displayTemperature by viewModel.displayTemperature.collectAsState()
     val error by viewModel.error.collectAsState()
     val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
     val state by viewModel.state.collectAsState()
@@ -76,7 +75,7 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = TemperatureUtils.formatTemperature(temperatureState),
+            text = displayTemperature,
             fontSize = 24.sp
         )
         if (lastUpdateTime > 0) {
@@ -86,7 +85,7 @@ fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.ge
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
-        if (state != null) {
+        if (state != "Success") {
             Text(
                 text = TemperatureUtils.formattedState(state),
                 fontSize = 12.sp,

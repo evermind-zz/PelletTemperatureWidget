@@ -45,6 +45,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 Log.e(TAG, "worker=$whichWorker Max retries exceeded")
                 networkMutex.withLock {
                     viewModel.updateError("Max retries exceeded")
+                    viewModel.updateState("Error")
                 }
                 updateWidget(whichWorker)
                 return@withContext Result.failure()
@@ -54,7 +55,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 networkMutex.withLock {
                     viewModel.updateState("Wrong Network")
                     viewModel.updateError("Device not on the same network as the server")
-                    viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 }
                 Log.e(TAG, "worker=$whichWorker Network mismatch")
                 updateWidget(whichWorker)
@@ -86,7 +86,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 } catch (e: Exception) {
                     Log.e(TAG, "worker=$whichWorker Server ping failed", e)
                     viewModel.updateError("Server unreachable")
-                    viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                    viewModel.updateState("Error")
                     updateWidget(whichWorker)
                     return@withContext Result.failure()
                 }
@@ -99,7 +99,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                         parseJsonAndUpdateViewModel(jsonString, viewModel)
                         val temp = viewModel.temperature.value
                         backoffCount.set(0)
-                        Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp, time=${viewModel.lastUpdateTime.value}")
+                        Log.d(TAG, "worker=$whichWorker Success: attempt=$attempt, temp=$temp")
                         updateWidget(whichWorker)
                         return@withContext Result.success(workDataOf("temperature" to temp))
                     } catch (e: Exception) {
@@ -114,7 +114,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
                 val currentBackoff = backoffCount.incrementAndGet()
                 viewModel.updateState("Error")
                 viewModel.updateError("Failed to fetch temperature after $maxAttempts attempts")
-                viewModel.updateLastUpdateTime(System.currentTimeMillis())
                 Log.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
                 updateWidget(whichWorker)
             }
@@ -123,7 +122,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             Log.e(TAG, "worker=${whichWorker} Unexpected error in doWork", e)
             networkMutex.withLock {
                 viewModel.updateError("Worker failed: ${e.message}")
-                viewModel.updateLastUpdateTime(System.currentTimeMillis())
+                viewModel.updateState("Error")
             }
             updateWidget(whichWorker)
             Result.failure()
@@ -159,7 +158,6 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         viewModel.updateTemperature(temp)
         viewModel.updateError(null)
         viewModel.updateState("Success")
-        viewModel.updateLastUpdateTime(System.currentTimeMillis())
     }
 
     private suspend fun updateWidget(whichWorker: String?) {

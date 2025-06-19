@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import java.net.URL
 
 object TemperatureUtils {
     private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
@@ -49,7 +50,6 @@ object TemperatureUtils {
 
     fun formattedState(state: String?) =
         "State: $state"
-
 
     fun getSharedPrefs(context: Context): SharedPreferences {
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -136,6 +136,16 @@ object TemperatureUtils {
             logMessage = "Enqueued force temperature update",
             workerName = ONETIME_WORK_NAME
         )
+    }
+
+    fun pingServer(url: String): Boolean {
+        return try {
+            URL(url).openConnection().apply { connectTimeout = 1000 }.connect()
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Ping failed: ${e.message}")
+            false
+        }
     }
 
     private inline fun <reified T : WorkRequest> enqueueWork(
