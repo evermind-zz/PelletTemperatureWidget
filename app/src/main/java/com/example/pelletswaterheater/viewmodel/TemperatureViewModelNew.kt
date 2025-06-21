@@ -112,15 +112,16 @@ class TemperatureViewModelNew(
         viewModelScope.launch {
             val metadata = _metadata.value ?: return@launch
             val converted = mutableMapOf<String, ConvertedValue>()
+            val keyOrder = rawData.keys.toList() // Preserve server order
             metadata.sections.forEach { (section, fields) ->
                 fields.forEach { (key, field) ->
-                    val rawValue = rawData["$section.$key"] ?: return@forEach
-                    converted["$section.$key"] =
-                        ValueConverter.convert("$section.$key", rawValue, field)
+                    val fullKey = "$section.$key"
+                    val rawValue = rawData[fullKey] ?: return@forEach
+                    converted[fullKey] = ValueConverter.convert(fullKey, rawValue, field)
                 }
             }
             _convertedValues.value = converted
-            temperatureLogger.logValues(converted)
+            temperatureLogger.logValues(converted, keyOrder)
         }
     }
 
