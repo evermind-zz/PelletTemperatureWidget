@@ -15,21 +15,37 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
+/**
+ * ViewModel for managing metadata and converted values, with injectable dependencies.
+ */
 class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val httpClient: OkHttpClient = OkHttpClient(),
     private val logger: ILogger = Logger
 ) : ViewModel() {
+    private val TAG = TemperatureViewModelNew::class.java.simpleName
+
     private val _metadata = MutableStateFlow<MetadataJson?>(null)
+    /**
+     * Flow of the current metadata state.
+     */
     val metadata: StateFlow<MetadataJson?> = _metadata
 
     private val _convertedValues = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
+    /**
+     * Flow of converted values (e.g., "system.L_ambient" to converted value).
+     */
     val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues
 
     init {
         loadCachedMetadata()
     }
 
+    /**
+     * Fetches metadata from the server and saves it to storage.
+     *
+     * @param serverUrl The URL of the server to fetch metadata from.
+     */
     fun fetchMetadata(serverUrl: String) {
         viewModelScope.launch {
             val url = "$serverUrl?"
@@ -37,10 +53,7 @@ class TemperatureViewModelNew(
             try {
                 httpClient.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) {
-                        logger.e(
-                            "TemperatureViewModelNew",
-                            "Metadata fetch failed: ${response.code}"
-                        )
+                        logger.e(TAG, "Metadata fetch failed: ${response.code}")
                         return@launch
                     }
                     val body = response.body?.string() ?: return@launch
@@ -49,16 +62,21 @@ class TemperatureViewModelNew(
                         contextProvider.saveMetadata(body)
                         _metadata.value = metadata
                     } else {
-                        logger.e("TemperatureViewModelNew", "Failed to parse server metadata")
+                        logger.e(TAG, "Failed to parse server metadata")
                     }
                 }
             } catch (e: Exception) {
-                logger.e("TemperatureViewModelNew", "Metadata fetch error: $e", e)
+                logger.e(TAG, "Metadata fetch error: $e", e)
                 loadCachedMetadata()
             }
         }
     }
 
+    /**
+     * Loads user-provided metadata JSON and merges it with existing metadata.
+     *
+     * @param jsonString The user-provided JSON string.
+     */
     fun loadUserMetadata(jsonString: String) {
         viewModelScope.launch {
             val userMetadata = MetadataUtils.parseUserJson(jsonString)
@@ -67,16 +85,26 @@ class TemperatureViewModelNew(
                 _metadata.value = MetadataUtils.mergeMetadata(_metadata.value, userMetadata)
                 _convertedValues.value = emptyMap() // Invalidate cache
             } else {
-                logger.e("TemperatureViewModelNew", "Failed to parse user metadata")
+                logger.e(TAG, "Failed to parse user metadata")
             }
         }
     }
 
+    /**
+     * Resets converted values and fetches fresh metadata from the server.
+     *
+     * @param serverUrl The URL of the server to fetch metadata from.
+     */
     fun resetMetadata(serverUrl: String) {
         _convertedValues.value = emptyMap() // Invalidate cache
         fetchMetadata(serverUrl)
     }
 
+    /**
+     * Updates converted values based on raw data and current metadata.
+     *
+     * @param rawData A map of raw values (e.g., "system.L_ambient" to "219").
+     */
     fun updateValues(rawData: Map<String, String>) {
         viewModelScope.launch {
             val metadata = _metadata.value ?: return@launch
@@ -92,6 +120,9 @@ class TemperatureViewModelNew(
         }
     }
 
+    /**
+     * Loads cached metadata from storage.
+     */
     private fun loadCachedMetadata() {
         viewModelScope.launch {
             val cachedJson = contextProvider.loadCachedMetadata()
@@ -100,7 +131,7 @@ class TemperatureViewModelNew(
                 _metadata.value = cached
             }
             if (_metadata.value == null) {
-                logger.w("TemperatureViewModelNew", "No cached metadata found")
+                logger.w(TAG, "No cached metadata found")
             }
         }
     }

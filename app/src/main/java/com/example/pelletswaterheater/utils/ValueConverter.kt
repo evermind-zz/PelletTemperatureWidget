@@ -1,9 +1,11 @@
 package com.example.pelletswaterheater.utils
 
-import android.util.Log
 import kotlinx.serialization.Serializable
 import java.text.DecimalFormatSymbols
 
+/**
+ * Data class representing a converted metadata value with its logical value, name, and unit.
+ */
 @Serializable
 data class ConvertedValue(
     val logical: String,
@@ -11,7 +13,20 @@ data class ConvertedValue(
     val unit: String? = null
 )
 
+/**
+ * Utility object for converting raw metadata values based on [MetadataField] attributes.
+ */
 object ValueConverter {
+    private val TAG = ValueConverter::class.java.simpleName
+
+    /**
+     * Converts a raw value using the provided metadata field.
+     *
+     * @param key The field key (e.g., "system.L_ambient").
+     * @param rawValue The raw value to convert.
+     * @param metadata The [MetadataField] containing conversion attributes.
+     * @return The [ConvertedValue] with logical value, name, and unit.
+     */
     fun convert(key: String, rawValue: String, metadata: MetadataField?): ConvertedValue {
         val name = metadata?.name ?: key
         if (metadata == null) {
@@ -48,7 +63,7 @@ object ValueConverter {
                     unit = metadata.unit
                 )
             } catch (e: NumberFormatException) {
-                Log.w("ValueConverter", "Invalid number format for $key: $rawValue")
+                Logger.w(TAG, "Invalid number format for $key: $rawValue")
                 return ConvertedValue(logical = rawValue, name = name, unit = metadata.unit)
             }
         }
