@@ -4,7 +4,7 @@ import android.content.Context
 import java.io.File
 
 /**
- * Interface for context-dependent operations, such as file storage.
+ * Interface for context-dependent operations, such as file storage and context access.
  */
 interface ContextProvider {
     /**
@@ -20,12 +20,19 @@ interface ContextProvider {
      * @return The cached JSON string or null if not found.
      */
     fun loadCachedMetadata(): String?
+
+    /**
+     * Provides the Android context for file operations.
+     *
+     * @return The application context.
+     */
+    fun getContext(): Context
 }
 
 /**
  * Implementation of [ContextProvider] using Android's [Context] for file operations.
  */
-class AndroidContextProvider(internal val context: Context) : ContextProvider {
+class AndroidContextProvider(private val context: Context) : ContextProvider {
     private val metadataFile = context.filesDir.resolve("metadata.json")
     private val TAG = AndroidContextProvider::class.java.simpleName
 
@@ -49,4 +56,6 @@ class AndroidContextProvider(internal val context: Context) : ContextProvider {
             null
         }
     }
+
+    override fun getContext(): Context = context
 }

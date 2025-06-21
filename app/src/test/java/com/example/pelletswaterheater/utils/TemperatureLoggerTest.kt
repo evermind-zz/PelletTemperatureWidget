@@ -18,6 +18,7 @@ class TemperatureLoggerTest {
     private lateinit var contextProvider: ContextProvider
     private lateinit var mockLogger: ILogger
     private lateinit var tempDir: File
+    private lateinit var mockContext: Context
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
@@ -27,18 +28,14 @@ class TemperatureLoggerTest {
             on { w(any(), any()) } doAnswer { /* Suppress */ }
         }
 
+        mockContext = mock<Context> {
+            on { filesDir } doAnswer { tempDir }
+        }
+
         contextProvider = mock<ContextProvider> {
             on { loadCachedMetadata() } doAnswer { null }
             on { saveMetadata(any()) } doAnswer { }
-        }
-        // Mock AndroidContextProvider's context field
-        (contextProvider as? AndroidContextProvider)?.apply {
-            javaClass.getDeclaredField("context").apply {
-                isAccessible = true
-                set(contextProvider, mock<Context> {
-                    on { filesDir } doAnswer { tempDir }
-                })
-            }
+            on { getContext() } doAnswer { mockContext }
         }
 
         logger = TemperatureLoggerImpl(contextProvider, mockLogger)

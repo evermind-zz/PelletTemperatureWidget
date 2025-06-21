@@ -42,8 +42,7 @@ class TemperatureLoggerImpl(
 
     override fun logValues(values: Map<String, ConvertedValue>) {
         try {
-            val context = (contextProvider as? AndroidContextProvider)?.context
-                ?: throw IllegalStateException("ContextProvider must be AndroidContextProvider")
+            val context = contextProvider.getContext()
             val logDir = File(context.filesDir, "logs")
             if (!logDir.exists()) logDir.mkdirs()
 
@@ -76,6 +75,7 @@ class TemperatureLoggerImpl(
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(Date())
     }
+
     override fun getLatestLogUri(context: Context): Uri? {
         return try {
             val logDir = File(context.filesDir, "logs")
