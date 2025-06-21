@@ -42,18 +42,22 @@ class TemperatureLoggerTest {
     }
 
     @Test
-    fun testLogValuesCreatesCsvFile() = runTest {
-        val values = mapOf(
-            "system.L_ambient" to ConvertedValue("21,90", "Außentemperatur", "°C"),
+    fun testLogValuesAppendsToSingleCsvFile() = runTest {
+        val values1 = mapOf(
+            "system.L_ambient" to ConvertedValue("21,90", "Außentemperatur", "°C")
+        )
+        val values2 = mapOf(
             "hk1.L_room_temp" to ConvertedValue("22,8", "Room Temp", "°C")
         )
 
-        logger.logValues(values)
+        logger.logValues(values1)
+        logger.logValues(values2)
 
         val logDir = File(tempDir, "logs")
         assertTrue(logDir.exists(), "Log directory should exist")
         val logFiles = logDir.listFiles()?.filter { it.name.endsWith(".csv") }
-        assertEquals(1, logFiles?.size, "One CSV file should be created")
+        assertEquals(1, logFiles?.size, "Only one CSV file should be created")
+        assertEquals("temp_log.csv", logFiles?.first()?.name, "File should be temp_log.csv")
 
         val content = logFiles?.first()?.readText()
         assertTrue(content?.contains("timestamp;section;key;logical;name;unit") ?: false, "CSV header should exist")
@@ -63,17 +67,19 @@ class TemperatureLoggerTest {
 
     @Test
     fun testLogValuesRotatesFileWhenOver5MB() = runTest {
-        val largeValue = ConvertedValue("1".repeat(1024), "Large", "unit")
+        val largeValue = ConvertedValue("1".repeat(1000), "Large", "unit")
         val values = mapOf("system.L_large" to largeValue)
 
-        // Simulate large file by logging repeatedly
+        // Log enough data to exceed 5MB
         repeat(5000) { logger.logValues(values) }
 
         val logDir = File(tempDir, "logs")
         val logFiles = logDir.listFiles()?.filter { it.name.endsWith(".csv") }
-        assertTrue((logFiles?.size ?: 0) > 1, "Multiple CSV files should be created due to rotation")
+        assertTrue((logFiles?.size ?: 0) >= 2, "At least two CSV files should be created due to rotation")
+        assertTrue(logFiles?.any { it.name == "temp_log.csv" } ?: false, "Current file should exist")
+        assertTrue(logFiles?.any { it.name.startsWith("temp_log_") } ?: false, "Rotated file should exist")
 
-        val latestFile = logFiles?.maxByOrNull { it.lastModified() }
-        assertTrue(latestFile?.length() ?: 0 < 5 * 1024 * 1024, "Latest file should be under 5MB")
+        val latestFile = logFiles?.find { it.name == "temp_log.csv" }
+        assertTrue(latestFile?.length() ?: 0 < 5 * 1024 * 1024, "Current file should be under 5MB")
     }
 }

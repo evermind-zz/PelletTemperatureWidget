@@ -97,15 +97,14 @@ class TemperatureLoggerImpl(
     }
 
     private fun getCurrentLogFile(logDir: File): File {
-        val timestamp = isoTimestamp()
-        return File(logDir, "temp_log_$timestamp.csv")
+        return File(logDir, "temp_log.csv")
     }
 
     private fun rotateLogFile(logDir: File, currentFile: File) {
         try {
             val index = logDir.listFiles()
                 ?.filter { it.name.startsWith("temp_log_") && it.name.endsWith(".csv") }
-                ?.map { it.name.substringAfterLast("_").substringBefore(".csv").toIntOrNull() ?: 0 }
+                ?.map { it.name.substringAfter("temp_log_").substringBefore(".csv").toIntOrNull() ?: 0 }
                 ?.maxOrNull() ?: 0
             val newFile = File(logDir, "temp_log_${index + 1}.csv")
             currentFile.renameTo(newFile)
