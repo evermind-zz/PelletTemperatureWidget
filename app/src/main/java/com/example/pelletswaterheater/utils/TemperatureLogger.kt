@@ -20,7 +20,7 @@ interface TemperatureLogger {
      *
      * @param values Map of field keys to converted values.
      * @param keyOrder List of keys in server order for consistent column ordering.
-     * @param timestamp The batch timestamp (ISO 8601 format, second-level). Only used for testing it is set internally
+     * @param timestamp The batch timestamp (ISO 8601 format, second-level). Only used for testing, set internally otherwise.
      */
     fun logValues(values: Map<String, ConvertedValue>, keyOrder: List<String>, timestamp: String? = null)
 
@@ -48,7 +48,8 @@ class TemperatureLoggerImpl(
     override fun logValues(
         values: Map<String, ConvertedValue>,
         keyOrder: List<String>,
-        timestamp: String?) {
+        timestamp: String?
+    ) {
         try {
             val actualTimestamp = timestamp ?: isoTimestamp()
             val context = contextProvider.getContext()
@@ -105,7 +106,10 @@ class TemperatureLoggerImpl(
 
     private fun writeHeaders(logFile: File, values: Map<String, ConvertedValue>, keyOrder: List<String>) {
         val sections = keyOrder.map { it.substringBeforeLast(".") }.distinct()
-        val sectionHeader = sections.joinToString(",,,") { ",$it" }
+        val sectionHeader = sections.joinToString("") { section ->
+            val fieldCount = keyOrder.count { it.startsWith("$section.") }
+            ",$section${",".repeat(fieldCount - 1)}"
+        }
         val fieldHeader = keyOrder.joinToString(",") { it.substringAfterLast(".") }
         val nameHeader = keyOrder.joinToString(",") { values[it]?.name ?: "" }
         val unitHeader = keyOrder.joinToString(",") { values[it]?.unit ?: "" }
