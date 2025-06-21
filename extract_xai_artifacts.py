@@ -36,23 +36,49 @@ def parse_xai_artifacts(data):
     pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)</xArtifact>'
     return re.findall(pattern, data, re.DOTALL)
 
+import re
+
 def parse_hash_blocks(data):
-    # Matches blocks like:
-    # ##############
-    # # path/to/file
-    # ##############
-    # ```kotlin
-    # code...
-    # ```
-    pattern = (
-        r'#{6,}\s*\n'               # line with at least 6 hashes
-        r'#\s*(.+?)\s*\n'           # line with filename starting with #
-        r'#{6,}\s*\n'               # another line with hashes
-        r'```(?:\w+)?\s*\n'         # opening backticks with optional language
-        r'(.*?)'                    # code (non-greedy)
-        r'```'                      # closing backticks
-    )
-    return re.findall(pattern, data, re.DOTALL)
+    blocks = []
+    lines = data.splitlines()
+
+    current_path = None
+    current_content = []
+
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Detect block start: ############## + # path + ##############
+        if re.match(r"^#{6,}$", line):
+            # Look ahead for the path line and another ##############
+            if i + 2 < len(lines):
+                path_line = lines[i + 1].strip()
+                next_delim = lines[i + 2].strip()
+                if path_line.startswith("# ") and re.match(r"^#{6,}$", next_delim):
+                    # Save current block before starting a new one
+                    if current_path and current_content:
+                        content = "\n".join(current_content).strip()
+                        blocks.append((current_path, content))
+                    current_path = path_line[2:].strip()
+                    current_content = []
+                    i += 3
+                    continue
+        # Collect content
+        if current_path is not None:
+            # Ignore code fences like ```kotlin or ```
+            if not line.startswith("```"):
+                current_content.append(lines[i])
+
+        i += 1
+
+    # Save last block
+    if current_path and current_content:
+        content = "\n".join(current_content).strip()
+        blocks.append((current_path, content))
+
+    return blocks
+
 
 def main():
     if len(sys.argv) != 2:
