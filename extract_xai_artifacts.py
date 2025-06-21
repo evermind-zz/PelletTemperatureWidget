@@ -15,11 +15,13 @@ mapping = {
 }
 
 def write_file(output_path, code):
-    try:
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    except Exception as e:
-        print(f"[ERROR] Failed to create directory for '{output_path}': {e}")
-        return False
+    directory = os.path.dirname(output_path)
+    if directory:
+        try:
+            os.makedirs(directory, exist_ok=True)
+        except Exception as e:
+            print(f"[ERROR] Failed to create directory for '{output_path}': {e}")
+            return False
     try:
         with open(output_path, "w", encoding="utf-8") as out_file:
             out_file.write(code)
