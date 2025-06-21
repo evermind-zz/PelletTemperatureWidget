@@ -25,14 +25,15 @@ interface ContextProvider {
 /**
  * Implementation of [ContextProvider] using Android's [Context] for file operations.
  */
-class AndroidContextProvider(private val context: Context) : ContextProvider {
+class AndroidContextProvider(internal val context: Context) : ContextProvider {
     private val metadataFile = context.filesDir.resolve("metadata.json")
+    private val TAG = AndroidContextProvider::class.java.simpleName
 
     override fun saveMetadata(jsonString: String) {
         try {
             metadataFile.writeText(jsonString)
         } catch (e: Exception) {
-            AndroidLogger.e("ContextProvider", "Metadata save error: $e", e)
+            Logger.e(TAG, "Metadata save error: $e", e)
         }
     }
 
@@ -44,7 +45,7 @@ class AndroidContextProvider(private val context: Context) : ContextProvider {
                 null
             }
         } catch (e: Exception) {
-            AndroidLogger.e("ContextProvider", "Cached metadata load error: $e", e)
+            Logger.e(TAG, "Cached metadata load error: $e", e)
             null
         }
     }

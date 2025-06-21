@@ -8,6 +8,8 @@ import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataUtils
+import com.example.pelletswaterheater.utils.TemperatureLogger
+import com.example.pelletswaterheater.utils.TemperatureLoggerImpl
 import com.example.pelletswaterheater.utils.ValueConverter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,12 +18,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 /**
- * ViewModel for managing metadata and converted values, with injectable dependencies.
+ * ViewModel for managing metadata, converted values, and logging, with injectable dependencies.
  */
 class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val httpClient: OkHttpClient = OkHttpClient(),
-    private val logger: ILogger = Logger
+    private val logger: ILogger = Logger,
+    private val temperatureLogger: TemperatureLogger = TemperatureLoggerImpl(contextProvider, logger)
 ) : ViewModel() {
     private val TAG = TemperatureViewModelNew::class.java.simpleName
 
@@ -101,7 +104,7 @@ class TemperatureViewModelNew(
     }
 
     /**
-     * Updates converted values based on raw data and current metadata.
+     * Updates converted values based on raw data and logs them.
      *
      * @param rawData A map of raw values (e.g., "system.L_ambient" to "219").
      */
@@ -117,6 +120,7 @@ class TemperatureViewModelNew(
                 }
             }
             _convertedValues.value = converted
+            temperatureLogger.logValues(converted)
         }
     }
 
