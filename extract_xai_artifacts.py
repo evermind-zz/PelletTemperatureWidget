@@ -2,6 +2,43 @@ import re
 import os
 import sys
 
+# script that can parse files that are provided by grok. It also features a
+# mapping as this format does not include the paths of the file just the
+# filename. See mapping = { ... }
+# This is the format that grok offers sometims (maybe it is just a glitch) but here you can see the format:
+#
+# <xaiArtifact artifact_id="7950cd7b-9d07-408a-ab48-7437afa87f04" artifact_version_id="53c06148-b36b-4128-8776-b395e48ed77d" title="Logger.kt" contentType="text/x-kotlin">
+# ```kotlin
+# whatever is inside here should be placed in the file name provided in title="..." if there is a mapping for Logger.kt -> /path/to/logger/Logger.kt use this file
+# ```
+# </xArtifact>
+#
+# <xaiArtifact artifact_id="7950cd7b-9d07-408a-ab48-7437afa87f05" artifact_version_id="53c06148-b36b-4128-8776-b395e48ed77d" title="Baga.kt" contentType="text/x-kotlin">
+# ```kotlin
+# whatever is inside here should be placed in the file name provided in title="..." if there is a mapping for Baga.kt -> /path/to/baga/Baga.kt use this file
+# ```
+# </xArtifact>
+#
+# -> Another format is also supported. It is custom, but grok gets it. Each
+#    files has a header with '#' around the filepath. This format works great
+#
+# ##############
+# # a/FileA.kt
+# ##############
+# ```kotlin
+# fun foo() = "bar"
+# ```
+# ##############
+# # a/FileB.kt
+# ##############
+# fun baz() = "qux"
+#
+# ##############
+# # a/FileC.kt
+# ##############
+# ```json
+# fun foo() = "bar"
+
 mapping = {
     "ContextProvider.kt": "app/src/main/java/com/example/pelletswaterheater/utils/ContextProvider.kt",
     "Logger.kt": "app/src/main/java/com/example/pelletswaterheater/utils/Logger.kt",
@@ -35,8 +72,6 @@ def parse_xai_artifacts(data):
     # Use your existing <xaiArtifact> parsing logic (note you had a small typo in the closing tag)
     pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)</xArtifact>'
     return re.findall(pattern, data, re.DOTALL)
-
-import re
 
 def parse_hash_blocks(data):
     blocks = []
