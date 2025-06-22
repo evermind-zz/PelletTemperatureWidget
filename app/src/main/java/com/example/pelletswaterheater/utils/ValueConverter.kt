@@ -51,7 +51,7 @@ object ValueConverter {
         // Numeric value (e.g., L_ambient: "219" → "21.9°C")
         metadata.factor?.let { factor ->
             val offset = metadata.offset ?: 0.0
-            val decimals = metadata.decimals?.coerceIn(0, 4) ?: 1 // Limit to 0–4
+            val decimals = metadata.decimals?.coerceIn(0, 4) ?: getDefaultDecimals(factor) // Limit to 0–4
             try {
                 val rawNum = rawValue.toDouble()
                 val logicalNum = (rawNum * factor) + offset
@@ -70,4 +70,7 @@ object ValueConverter {
 
         return ConvertedValue(logical = rawValue, name = name, unit = metadata.unit)
     }
+
+    fun getDefaultDecimals(factor: Double): Int = if (isFactorOne(factor)) 0 else 1
+    fun isFactorOne(factor: Double): Boolean = factor == 1.0
 }
