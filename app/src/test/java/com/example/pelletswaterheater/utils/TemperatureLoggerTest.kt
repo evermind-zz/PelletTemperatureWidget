@@ -45,12 +45,21 @@ class TemperatureLoggerTest {
         logger = TemperatureLoggerCsvImpl(contextProvider, mockLogger)
     }
 
+    data class TestData(
+        val timestamp: String,
+        val values: Map<String, ConvertedValue>,
+        val keyOrder: List<String>,
+        val expectedSectionHeader: String,
+        val expectedFieldHeader: String,
+        val expectedNameHeader: String,
+        val expectedUnitHeader: String,
+        val expectedDataRow: String
+    )
+
     @Test
-    fun testLogValuesAppendsToSingleCsvRow() = runTest {
-        val timestamp = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .withZone(ZoneOffset.UTC)
-            .format(Instant.now())
+    fun testLogValuesAppendsToSingleCsvRowThreeSystemValues() = runTest {
+        val timestamp = getTimestamp()
+
         val values = mapOf(
             "system.L_ambient" to ConvertedValue("22.5", "Außentemperatur", "°C"),
             "system.L_errors" to ConvertedValue("0", "", ""),
@@ -64,7 +73,53 @@ class TemperatureLoggerTest {
             "hk1.L_roomtemp_act"
         )
 
-        logger.logValues(values, keyOrder, timestamp)
+        val testData = TestData(
+            timestamp,
+            values,
+            keyOrder,
+            expectedSectionHeader = "Machine parts:,system,,,hk1",
+            expectedFieldHeader = ",L_ambient,L_errors,L_usb_stick,L_roomtemp_act",
+            expectedNameHeader = ",Außentemperatur,,,Raumtemperatur aktuell",
+            expectedUnitHeader = "timestamp,°C,,,°C",
+            expectedDataRow = "$timestamp,22.5,0,Aus,24.0"
+        )
+
+        testLogValuesAppendsToSingleCsvRowHelper(testData)
+    }
+
+    // this test is a slight variation of the previous test but  with only two system section values
+    // goal: to test the numbers of ',' between the sections in the section header
+    @Test
+    fun testLogValuesAppendsToSingleCsvRowTwoSystemValues() = runTest {
+        val timestamp = getTimestamp()
+
+        val values = mapOf(
+            "system.L_ambient" to ConvertedValue("22.5", "Außentemperatur", "°C"),
+            "system.L_errors" to ConvertedValue("0", "", ""),
+            "hk1.L_roomtemp_act" to ConvertedValue("24.0", "Raumtemperatur aktuell", "°C")
+        )
+        val keyOrder = listOf(
+            "system.L_ambient",
+            "system.L_errors",
+            "hk1.L_roomtemp_act"
+        )
+
+        val testData = TestData(
+            timestamp,
+            values,
+            keyOrder,
+            expectedSectionHeader = "Machine parts:,system,,hk1",
+            expectedFieldHeader = ",L_ambient,L_errors,L_roomtemp_act",
+            expectedNameHeader = ",Außentemperatur,,Raumtemperatur aktuell",
+            expectedUnitHeader = "timestamp,°C,,°C",
+            expectedDataRow = "$timestamp,22.5,0,24.0"
+        )
+
+        testLogValuesAppendsToSingleCsvRowHelper(testData)
+    }
+
+    fun testLogValuesAppendsToSingleCsvRowHelper(testData: TestData) {
+        logger.logValues(testData.values, testData.keyOrder, testData.timestamp)
 
         val logDir = File(tempDir, "logs")
         assertTrue(logDir.exists(), "Log directory should exist")
@@ -78,23 +133,23 @@ class TemperatureLoggerTest {
             "Comment header should exist"
         )
         assertTrue(
-            content?.contains(",SystemPart,system,,,hk1,") ?: false,
+            content?.contains(testData.expectedSectionHeader) ?: false,
             "Section header should exist"
         )
         assertTrue(
-            content?.contains(",,L_ambient,L_errors,L_usb_stick,L_roomtemp_act") ?: false,
+            content?.contains(testData.expectedFieldHeader) ?: false,
             "Field header should exist"
         )
         assertTrue(
-            content?.contains(",,Außentemperatur,,,Raumtemperatur aktuell") ?: false,
+            content?.contains(testData.expectedNameHeader) ?: false,
             "Name header should exist"
         )
         assertTrue(
-            content?.contains(",timestamp,°C,,,°C") ?: false,
+            content?.contains(testData.expectedUnitHeader) ?: false,
             "Unit header should exist"
         )
         assertTrue(
-            content?.contains(",$timestamp,22.5,0,Aus,24.0") ?: false,
+            content?.contains(testData.expectedDataRow) ?: false,
             "Data row should be logged"
         )
     }
@@ -124,7 +179,7 @@ class TemperatureLoggerTest {
 
         val content = logFiles?.first()?.readText()
         assertTrue(
-            content?.contains(",$timestamp,22.5,,,24.0") ?: false,
+            content?.contains("$timestamp,22.5,,,24.0") ?: false,
             "Missing fields should be empty"
         )
     }
@@ -135,12 +190,12 @@ class TemperatureLoggerTest {
             .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .withZone(ZoneOffset.UTC)
             .format(Instant.now())
-        val largeValue = ConvertedValue("1".repeat(1000), "Large", "unit")
+        val largeValue = ConvertedValue("1".repeat(1000), "Large", "unit") // each entry will result in 1022Bytes
         val values = mapOf("system.L_large" to largeValue)
         val keyOrder = listOf("system.L_large")
 
         // Log enough data to exceed 5MB
-        repeat(5000) { logger.logValues(values, keyOrder, timestamp) }
+        repeat(6000) { logger.logValues(values, keyOrder, timestamp) }
 
         val logDir = File(tempDir, "logs")
         val logFiles = logDir.listFiles()?.filter { it.name.endsWith(".csv") }
@@ -150,5 +205,13 @@ class TemperatureLoggerTest {
 
         val latestFile = logFiles?.find { it.name == "temp_log.csv" }
         assertTrue(latestFile?.length() ?: 0 < 5 * 1024 * 1024, "Current file should be under 5MB")
+    }
+
+    private fun getTimestamp(): String {
+        val timestamp = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .withZone(ZoneOffset.UTC)
+            .format(Instant.now())
+        return timestamp
     }
 }
