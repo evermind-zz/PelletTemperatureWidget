@@ -42,7 +42,7 @@ class TemperatureLoggerTest {
             on { getContext() } doAnswer { mockContext }
         }
 
-        logger = TemperatureLoggerImpl(contextProvider, mockLogger)
+        logger = TemperatureLoggerCsvImpl(contextProvider, mockLogger)
     }
 
     @Test

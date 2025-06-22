@@ -9,7 +9,7 @@ import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataUtils
 import com.example.pelletswaterheater.utils.TemperatureLogger
-import com.example.pelletswaterheater.utils.TemperatureLoggerImpl
+import com.example.pelletswaterheater.utils.TemperatureLoggerCsvImpl
 import com.example.pelletswaterheater.utils.ValueConverter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val httpClient: OkHttpClient = OkHttpClient(),
     private val logger: ILogger = Logger,
-    private val temperatureLogger: TemperatureLogger = TemperatureLoggerImpl(contextProvider, logger)
+    private val temperatureLogger: TemperatureLogger = TemperatureLoggerCsvImpl(contextProvider, logger)
 ) : ViewModel() {
     private val TAG = TemperatureViewModelNew::class.java.simpleName
 
