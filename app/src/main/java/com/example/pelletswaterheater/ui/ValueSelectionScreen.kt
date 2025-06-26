@@ -33,146 +33,121 @@ fun ValueSelectionScreen(
 ) {
     val values = viewModel.convertedValues.collectAsState(initial = emptyMap())
     val selections = viewModel.selections.collectAsState(initial = emptyList())
-    // Convert map to list of entries and group by section
     val groupedValues = values.value.entries.groupBy { it.key.substringBeforeLast(".") }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = "Log",
-            fontSize = 14.sp,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = "Widget",
-            fontSize = 14.sp,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = "Data",
-            fontSize = 14.sp,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = "Section+Name",
-            fontSize = 14.sp,
-            style = MaterialTheme.typography.labelMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-    }
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Checkbox(
-                    checked = selections.value.all { it.log },
-                    onCheckedChange = { viewModel.toggleAllLog(it) },
-                    modifier = Modifier.weight(1f)
-                )
-                Checkbox(
-                    checked = selections.value.all { it.widget },
-                    onCheckedChange = { viewModel.toggleAllWidget(it) },
-                    modifier = Modifier.weight(1f)
-                )
-                Checkbox(
-                    checked = selections.value.all { it.showData },
-                    onCheckedChange = { viewModel.toggleAllShowData(it) },
-                    modifier = Modifier.weight(1f)
-                )
-                Checkbox(
-                    checked = selections.value.all { it.showSectionName },
-                    onCheckedChange = { viewModel.toggleAllSectionName(it) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+    val columnWidth = 80.dp
+
+    Column(modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+
+        // Header Row (Fixed)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Log", modifier = Modifier.width(columnWidth), textAlign = TextAlign.Center)
+            Text("Widget", modifier = Modifier.width(columnWidth), textAlign = TextAlign.Center)
+            Text("Data", modifier = Modifier.width(columnWidth), textAlign = TextAlign.Center)
+            Text("Section+Name", modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
         }
 
-        groupedValues.forEach { (section, entries) ->
-            item {
-                Text(
-                    text = section.replaceFirstChar { it.uppercase() },
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-            items(entries) { entry ->
-                val key = entry.key
-                val value = entry.value
-                val selection = selections.value.find { it.key == key } ?: return@items
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, bottom = 4.dp)
-                ) {
+        // Select-All Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Checkbox(
+                checked = selections.value.all { it.log },
+                onCheckedChange = { viewModel.toggleAllLog(it) },
+                modifier = Modifier.width(columnWidth)
+            )
+            Checkbox(
+                checked = selections.value.all { it.widget },
+                onCheckedChange = { viewModel.toggleAllWidget(it) },
+                modifier = Modifier.width(columnWidth)
+            )
+            Checkbox(
+                checked = selections.value.all { it.showData },
+                onCheckedChange = { viewModel.toggleAllShowData(it) },
+                modifier = Modifier.width(columnWidth)
+            )
+            Checkbox(
+                checked = selections.value.all { it.showSectionName },
+                onCheckedChange = { viewModel.toggleAllSectionName(it) },
+                modifier = Modifier.width(columnWidth)
+            )
+        }
+
+        Divider()
+
+        // Scrollable List
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            groupedValues.forEach { (section, entries) ->
+                item {
                     Text(
-                        text = "${value.logical} ${value.unit} (${section}.${key.substringAfterLast(".")} ${value.name})",
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 0.dp)
+                        text = section.replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp, top = 0.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Checkbox(
-                            checked = selection.log,
-                            onCheckedChange = { viewModel.updateSelection(key, log = it) },
-                            modifier = Modifier.weight(1f)
+                }
+
+                items(entries) { entry ->
+                    val key = entry.key
+                    val value = entry.value
+                    val selection = selections.value.find { it.key == key } ?: return@items
+
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "${value.logical} ${value.unit} (${section}.${key.substringAfterLast(".")} ${value.name})",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
                         )
-                        Checkbox(
-                            checked = selection.widget,
-                            onCheckedChange = { viewModel.updateSelection(key, widget = it) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        Checkbox(
-                            checked = selection.showData,
-                            onCheckedChange = { viewModel.updateSelection(key, showData = it) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        Checkbox(
-                            checked = selection.showSectionName,
-                            onCheckedChange = { viewModel.updateSelection(key, showSectionName = it) },
-                            modifier = Modifier.weight(1f)
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Checkbox(
+                                checked = selection.log,
+                                onCheckedChange = { viewModel.updateSelection(key, log = it) },
+                                modifier = Modifier.width(columnWidth)
+                            )
+                            Checkbox(
+                                checked = selection.widget,
+                                onCheckedChange = { viewModel.updateSelection(key, widget = it) },
+                                modifier = Modifier.width(columnWidth)
+                            )
+                            Checkbox(
+                                checked = selection.showData,
+                                onCheckedChange = { viewModel.updateSelection(key, showData = it) },
+                                modifier = Modifier.width(columnWidth)
+                            )
+                            Checkbox(
+                                checked = selection.showSectionName,
+                                onCheckedChange = { viewModel.updateSelection(key, showSectionName = it) },
+                                modifier = Modifier.width(columnWidth)
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { TemperatureUtils.appContext?.let {
-                        TemperatureUtils.forceTemperatureUpdate(
-                            it
-                        )
-                    } },
-                    modifier = Modifier.weight(1f)
+                    onClick = {
+                        TemperatureUtils.appContext?.let {
+                            TemperatureUtils.forceTemperatureUpdate(it)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Refresh")
                 }
