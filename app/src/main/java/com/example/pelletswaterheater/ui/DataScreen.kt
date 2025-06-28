@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
@@ -49,14 +50,28 @@ fun DataScreen(
                 ) {
                     val displayUnit = value.convertedValue.unit?.takeIf { it.isNotBlank() } ?: ""
                     val nameSuffix = if (value.showSectionName) {
-                        " ${value.section}.${value.convertedValue.name}"
+                        "${value.section}.${value.convertedValue.name}"
                     } else {
                         ""
                     }
+
+                    // First column: logical value + unit
                     Text(
-                        text = "${value.convertedValue.logical} $displayUnit$nameSuffix",
+                        text = "${value.convertedValue.logical}${if (displayUnit.isNotEmpty()) " $displayUnit" else ""}",
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                    )
+
+                    // Second column: section.name (if showSectionName)
+                    Text(
+                        text = nameSuffix,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                        textAlign = TextAlign.Start
                     )
                 }
             }
