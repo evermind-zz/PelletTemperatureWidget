@@ -1,108 +1,87 @@
 package com.example.pelletswaterheater
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.pelletswaterheater.ui.AboutScreen
+import com.example.pelletswaterheater.ui.DataScreen
+import com.example.pelletswaterheater.ui.DonateScreen
+import com.example.pelletswaterheater.ui.DrawerContent
+import com.example.pelletswaterheater.ui.LogsScreen
+import com.example.pelletswaterheater.ui.SettingsScreen
+import com.example.pelletswaterheater.ui.ValueSelectionScreen
+import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        TemperatureUtils.appContext = applicationContext // Set app context
-        reinitializeWidget()
-        TemperatureUtils.forceTemperatureUpdate(this)
-        TemperatureUtils.schedulePeriodicTemperatureUpdate(this)
+        TemperatureUtils.forceTemperatureUpdate()
+        TemperatureUtils.schedulePeriodicTemperatureUpdate()
         CoroutineScope(Dispatchers.Main).launch {
             TemperatureWidget().forceUpdateAll(this@MainActivity)
         }
-        setContent {
-            TemperatureDisplay()
-        }
-    }
 
-    private fun reinitializeWidget() {
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val componentName = ComponentName(this, TemperatureWidgetReceiver::class.java)
-        val widgetIds = appWidgetManager.getAppWidgetIds(componentName)
-        if (widgetIds.isNotEmpty()) {
-            appWidgetManager.notifyAppWidgetViewDataChanged(widgetIds, 0)
-            CoroutineScope(Dispatchers.Main).launch {
-                TemperatureWidget().forceUpdateAll(this@MainActivity)
+        setContent {
+            PelletsWaterHeaterTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavigation()
+                }
             }
         }
     }
 }
 
 @Composable
-fun TemperatureDisplay(viewModel: TemperatureViewModel = TemperatureViewModel.getInstance()) {
-    val displayTemperature by viewModel.displayTemperature.collectAsState()
-    val error by viewModel.error.collectAsState()
-    val lastUpdateTime by viewModel.lastUpdateTime.collectAsState()
-    val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
+fun AppNavigation() {
+    val navController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    error?.let {
-        Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-        viewModel.clearError()
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    ModalNavigationDrawer(
+        drawerContent = {
+            DrawerContent(
+                onItemClick = { route ->
+                    navController.navigate(route)
+                    coroutineScope.launch { drawerState.close() }
+                }
+            )
+        },
+        drawerState = drawerState
     ) {
-        Text(
-            text = displayTemperature,
-            fontSize = 24.sp
-        )
-        if (lastUpdateTime > 0) {
-            Text(
-                text = "Last updated: ${TemperatureUtils.formatTimeStamp(lastUpdateTime)}",
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-        if (state != "Success") {
-            Text(
-                text = TemperatureUtils.formattedState(state),
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                TemperatureUtils.forceTemperatureUpdate(context)
+        Scaffold { padding ->
+            NavHost(
+                navController = navController,
+                startDestination = "data",
+                modifier = Modifier.padding(padding)
+            ) {
+                composable("data") {  DataScreen() }
+                composable("selection") { ValueSelectionScreen() }
+                composable("logs") { LogsScreen() }
+                composable("settings") { SettingsScreen() }
+                composable("about") { AboutScreen() }
+                composable("donate") { DonateScreen() }
             }
-        ) {
-            Text("Refresh")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { context.startActivity(android.content.Intent(context, SettingsActivity::class.java)) }) {
-            Text("Settings")
         }
     }
 }
