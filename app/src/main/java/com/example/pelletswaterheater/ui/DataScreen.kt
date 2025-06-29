@@ -24,6 +24,7 @@ import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import org.koin.java.KoinJavaComponent.inject
 
+
 @Composable
 fun DataScreen(
     showTestButton: Boolean = true // Pass true to show the test button
@@ -48,16 +49,9 @@ fun DataScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val displayUnit = value.convertedValue.unit?.takeIf { it.isNotBlank() } ?: ""
-                    val nameSuffix = if (value.showSectionName) {
-                        "${value.section}.${value.convertedValue.name}"
-                    } else {
-                        ""
-                    }
-
                     // First column: logical value + unit
                     Text(
-                        text = "${value.convertedValue.logical}${if (displayUnit.isNotEmpty()) " $displayUnit" else ""}",
+                        text = TemperatureUtils.getLogicalValueWithUnit(value.convertedValue),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .weight(1f)
@@ -66,7 +60,7 @@ fun DataScreen(
 
                     // Second column: section.name (if showSectionName)
                     Text(
-                        text = nameSuffix,
+                        text = TemperatureUtils.getNameSuffix(value),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .weight(1f)

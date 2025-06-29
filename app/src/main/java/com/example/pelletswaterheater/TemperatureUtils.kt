@@ -19,6 +19,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
+import com.example.pelletswaterheater.utils.ConvertedValue
+import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew.ConvertedValueWrapper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,6 +45,20 @@ object TemperatureUtils {
                 "Error"
             }
         }
+    }
+
+    fun getLogicalValueWithUnit(convertedValue: ConvertedValue) : String {
+        val displayUnit = convertedValue.unit?.takeIf { it.isNotBlank() } ?: ""
+        return "${convertedValue.logical}${if (displayUnit.isNotEmpty()) " $displayUnit" else ""}"
+    }
+
+    fun getNameSuffix(value: ConvertedValueWrapper) : String {
+        val nameSuffix = if (value.showSectionName) {
+            "${value.section}.${value.convertedValue.name}"
+        } else {
+            ""
+        }
+        return nameSuffix
     }
 
     fun formatTimeStamp(lastUpdateTime: Long): String =
