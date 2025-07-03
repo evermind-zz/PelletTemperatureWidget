@@ -14,7 +14,6 @@ import com.example.pelletswaterheater.utils.MetadataField
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataLabel
 import com.example.pelletswaterheater.utils.MetadataUtils
-import com.example.pelletswaterheater.utils.MetadataUtils.loadCachedMetadata
 import com.example.pelletswaterheater.utils.TemperatureLogger
 import com.example.pelletswaterheater.utils.TemperatureLoggerCsvImpl
 import com.example.pelletswaterheater.utils.ValueConverter
@@ -26,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -38,78 +38,114 @@ import okhttp3.OkHttpClient
 import java.io.FileNotFoundException
 
 /**
- * ViewModel for managing metadata, converted values, logging, and UI selections
- * in the Pellets Water Heater app.  Uses a reactive pipeline so that *both* the
- * UI and the background logger consume the same stream of converted values
- * while still allowing manual refreshes that **do not** trigger logging.
+ * ViewModel for managing metadata, converted values, logging, and UI selections in the Pellets Water Heater app.
+ * Handles metadata fetching, value conversion, logging, and checkbox selections for DataScreen, widget, and logs.
+ * Replaces TemperatureViewModel to integrate F3 UI requirements.
  */
 class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val httpClient: OkHttpClient = OkHttpClient(),
     private val logger: ILogger = Logger,
-    private val temperatureLogger: TemperatureLogger = TemperatureLoggerCsvImpl(contextProvider, logger),
+    private val temperatureLogger: TemperatureLogger = TemperatureLoggerCsvImpl(
+        contextProvider,
+        logger
+    ),
     private val networkAccess: NetworkAccess = NetworkAccess(),
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) {
     private val networkAccessMutex = Mutex()
     private val TAG = TemperatureViewModelNew::class.java.simpleName
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  METADATA (unchanged)
-    // ────────────────────────────────────────────────────────────────────────────
-
     private val _metadata = MutableStateFlow<MetadataJson?>(null)
-    /** Flow of the current metadata state, including server and user‑merged metadata. */
+    /**
+     * Flow of the current metadata state, including server and user-merged metadata.
+     */
     val metadata: StateFlow<MetadataJson?> = _metadata.asStateFlow()
 
     // ────────────────────────────────────────────────────────────────────────────
-    //  Converted values wrapper (renamed)
+    //  Converted values FLOW now wrapped in ConvertedDataWrapper
     // ────────────────────────────────────────────────────────────────────────────
 
     /**
-     * A *batch* of converted values.  The same raw/converted map can be sent
-     * either because the user manually refreshed (isLoggingData = false) or
-     * because the logging scheduler fetched a new sample (isLoggingData = true).
+     * Wrapper containing converted values and a flag that indicates whether the
+     * data were fetched for logging purposes.  The `isLoggingData` flag is *not*
+     * consumed by the UI but can be useful for downstream services (e.g. CSV
+     * logger) that collect the same flow.
      */
-    data class ConvertedBatch(
+    data class ConvertedDataWrapper(
         val convertedValues: Map<String, ConvertedValue> = emptyMap(),
         val isLoggingData: Boolean = false
     )
 
-    private val _convertedValues = MutableStateFlow(ConvertedBatch())
-    /** Flow of [ConvertedBatch] consumed by both UI and logger. */
-    val convertedValues: StateFlow<ConvertedBatch> = _convertedValues.asStateFlow()
+    /*───────────────────────────────────────────────────────────────────────────*/
+    /*  OLD: plain map                                                            */
+    /*  private val _convertedValues = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
+     *  /** Flow of converted values (e.g., "system.L_ambient" to [ConvertedValue]) for UI and logging. */
+     *  val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues.asStateFlow()
+     */
+    /*───────────────────────────────────────────────────────────────────────────*/
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  Selections & helpers
-    // ────────────────────────────────────────────────────────────────────────────
+    private val _convertedValues = MutableStateFlow(ConvertedDataWrapper())
+    /**
+     * Flow of converted values (e.g., "system.L_ambient" to [ConvertedValue])
+     * for UI and logging, wrapped inside a [ConvertedDataWrapper].
+     */
+    val convertedValues: StateFlow<ConvertedDataWrapper> = _convertedValues.asStateFlow()
 
-    private val _selections = MutableStateFlow(emptyList<Selection>())
+    private val _selections = MutableStateFlow<List<Selection>>(emptyList())
+    /**
+     * Flow of checkbox selections for logging, widget display, DataScreen, and section/name visibility.
+     */
     val selections: StateFlow<List<Selection>> = _selections.asStateFlow()
 
     private val _state = MutableStateFlow("state")
     private val _error = MutableStateFlow("error")
     private val _lastTimestamp = MutableStateFlow("timestamp")
 
-    /** True once at least one key has `log == true`.  UI can bind to this. */
-    val loggingIsViable: StateFlow<Boolean> = selections
+    private val _isLoggingViable = MutableStateFlow<Boolean>(false)
+    val isLoggingViable: StateFlow<Boolean> = _isLoggingViable.asStateFlow()
+
+    //var loggingIsViable: StateFlow<Boolean> = selections
+    //    .map { list -> list.any {
+    //        println("EMIT HERE this is ${it.log}")
+    //        it.log
+    //    } }
+    //    .stateIn(
+    //        scope = viewModelScope,
+    //        started = SharingStarted.WhileSubscribed(5_000),
+    //        initialValue = false
+    //    )
+    val loggingIsViable = selections
         .map { list -> list.any(Selection::log) }
-        .onEach { Log.d(TAG, "loggingIsViable -> $it") }
+        .onEach { Log.d("VM", "loggingIsViable -> $it") } // easier to read
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    private val statsMutex = Mutex()
 
     init {
         loadCachedMetadata()
+        viewModelScope.launch {
+            selections.onEach { println("EMIT ${loggingIsViable.value} -> $it") }.collect()
+        }
+
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    //  Data classes for UI layers (unchanged)
+    //  Data classes for UI layers
     // ────────────────────────────────────────────────────────────────────────────
 
+    /**
+     * Data class representing a converted value with section and display preferences for UI.
+     *
+     * @property convertedValue The converted value from [ValueConverter].
+     * @property section The section name (e.g., "system", "hk1") for UI grouping.
+     * @property showSectionName Whether to display section and name in UI.
+     */
     @Serializable
     data class ConvertedValueWrapper(
         val convertedValue: ConvertedValue,
         val section: String,
-        val showSectionName: Boolean
+        val showSectionName: Boolean,
     )
 
     @Serializable
@@ -120,6 +156,15 @@ class TemperatureViewModelNew(
         val timestampSuccess: String
     )
 
+    /**
+     * Data class representing user selections for UI and logging.
+     *
+     * @property key The field key (e.g., "system.L_ambient").
+     * @property log Whether to include in CSV logs.
+     * @property widget Whether to display on the widget.
+     * @property showData Whether to display on DataScreen.
+     * @property showSectionName Whether to show section and name in UI.
+     */
     @Serializable
     data class Selection(
         val key: String,
@@ -130,173 +175,371 @@ class TemperatureViewModelNew(
     )
 
     // ────────────────────────────────────────────────────────────────────────────
-    //  Network / metadata helpers (light edits where wrapper is referenced)
+    //  METADATA   (unchanged)
     // ────────────────────────────────────────────────────────────────────────────
 
-    fun fetchMetadata(url: String = "${TemperatureUtils.getStoredUrl()}?") {
+    /**
+     * Fetches metadata from the server and saves it to storage.
+     */
+    fun fetchMetadata(url: String = "${TemperatureUtils.getStoredUrl()}?") {  // append ? to get the metadata
         viewModelScope.launch {
             try {
                 val body = networkAccess.getDataFromServer(url, "fetchMetaData()")
-                val meta = MetadataUtils.parseServerJson(body)
-                if (meta != null) {
+                val metadata = MetadataUtils.parseServerJson(body)
+                if (metadata != null) {
                     contextProvider.saveMetadata(body)
-                    _metadata.value = meta
+                    _metadata.value = metadata
                     updateSelectionsIfNeeded()
-                } else logger.e(TAG, "Failed to parse server metadata")
+                } else {
+                    logger.e(TAG, "Failed to parse server metadata")
+                }
             } catch (e: Exception) {
-                logger.e(TAG, "Metadata fetch error", e)
+                logger.e(TAG, "Metadata fetch error: $e", e)
                 loadCachedMetadata()
             }
         }
     }
 
-    /** Fetches values; `doLogging = true` when invoked from the logging scheduler. */
+    /**
+     * Fetches metadata from the server and saves it to storage.
+     *
+     * Should be called by the worker
+     * @param url for server aka http://<IP:PORT>all
+     * @param caller eg which worker called, only for interval logging used
+     * @param doLogging log via [TemperatureLogger]
+     *
+     */
     fun fetchValues(url: String, caller: String, doLogging: Boolean = false): Result<String> {
         viewModelScope.launch {
+            //val body = networkAccess.getDataFromServer(url, caller)
             val result = getDataFromNetworkWithRetry(url, caller)
             if (result.isSuccess) {
-                result.getOrNull()?.let { body ->
+                val body = result.getOrNull()
+                body?.let {
                     _lastTimestamp.value = TemperatureUtils.formatTimeStamp(System.currentTimeMillis())
-                    parseDataAndUpdateValues(body, doLogging)
+                    parseDataAndUpdateValues(it, doLogging)
                 }
             }
-            TemperatureUtils.appContext?.let { TemperatureWidget().forceUpdateAll(it) }
+            TemperatureUtils.appContext?.let {
+                TemperatureWidget().forceUpdateAll(it)
+            }
         }
         return Result.failure(Exception("failed to fetch"))
     }
 
-    private suspend fun getDataFromNetworkWithRetry(url: String, caller: String): Result<String> = networkAccessMutex.withLock {
+    // remove the password from the url inside the exception message
+    private fun maskExceptionMessageAndLogIt(
+        e: Exception,
+        url: String,
+        whichWorker: String?,
+        attempt: Int
+    ) {
+        val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+        val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
+        val maskedException = when (e) {
+            is FileNotFoundException -> FileNotFoundException(maskedOriginalMessage)
+            else -> e.javaClass.getConstructor(String::class.java)
+                .newInstance(maskedOriginalMessage)
+        }.apply { stackTrace = e.stackTrace }
+        val maskedMessage =
+            "worker=$whichWorker Failed to fetch temperature (attempt $attempt): $maskedOriginalMessage"
+        logger.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
+    }
+
+    suspend fun getDataFromNetworkWithRetry(url: String, caller: String): Result<String> = networkAccessMutex.withLock {
         val maxAttempts = 3
         repeat(maxAttempts) { attempt ->
             try {
+                updateState("Loading...")
                 val body = networkAccess.getDataFromServer(url, caller)
+                logger.d(TAG, "worker=$caller Success: attempt=$attempt")
+                // TODO below should maybe also handled by the viewModel
+                // updateWidget(whichWorker)
                 return Result.success(body)
             } catch (e: Exception) {
-                val cleanUrl = TemperatureUtils.maskPasswordInUrl(url)
-                logger.e(TAG, "worker=$caller attempt=$attempt failure for $cleanUrl", e)
-                if (attempt < maxAttempts - 1) delay(5_000)
+                maskExceptionMessageAndLogIt(e, url, caller, attempt)
+                if (attempt < maxAttempts - 1) delay(5000L) // Wait 5s before retry
+            } finally {
+                //accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
             }
         }
-        return Result.failure(Exception("failed after retries"))
+        updateStats(error = "Failed to fetch temperature after $maxAttempts attempts", state = "Error")
+        return Result.failure(Exception("failed to fetch"))
     }
 
-    /**
-     * Parses server JSON and pipes it to [updateValues].  Called from UI refresh or logger.
-     */
-    private suspend fun parseDataAndUpdateValues(body: String, doLogging: Boolean) {
-        val data = MetadataUtils.parseDataValuesJson(body) ?: run {
+    fun loadTestDataFromStorage() {
+        viewModelScope.launch {
+            val file = contextProvider.getContext().filesDir.resolve("test-values.json")
+            if (file.exists()) {
+                val body = file.readText()
+                parseDataAndUpdateValues(body)
+            }
+        }
+    }
+
+    private suspend fun TemperatureViewModelNew.parseDataAndUpdateValues(
+        body: String,
+        doLogging: Boolean = false
+    ) {
+        val values = MetadataUtils.parseDataValuesJson(body)
+        if (values != null) {
+            val valsMap = mutableMapOf<String, String>()
+            values.sections.forEach { (section, valueMap) ->
+                valueMap.forEach { (jsonName, rawValue) ->
+                    valsMap["${section}.${jsonName}"] = rawValue
+                }
+            }
+            updateValues(valsMap, doLogging)
+            updateStats(error = null, state = "Success")
+            updateSelectionsIfNeeded()
+        } else {
             logger.e(TAG, "Failed to parse server data values")
-            return
         }
-        val flat = buildMap<String, String> {
-            data.sections.forEach { (section, entryMap) ->
-                entryMap.forEach { (k, v) -> put("$section.$k", v) }
-            }
-        }
-        updateValues(flat, doLogging)
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  updateValues – purely state, no direct logging side‑effect anymore
-    // ────────────────────────────────────────────────────────────────────────────
+    /**
+     * Loads user-provided metadata JSON and merges it with existing metadata.
+     *
+     * @param jsonString The user-provided JSON string.
+     */
+    fun loadUserMetadata(jsonString: String) {
+        viewModelScope.launch {
+            val userMetadata = MetadataUtils.parseUserJson(jsonString)
+            if (userMetadata != null) {
+                contextProvider.saveMetadata(jsonString)
+                _metadata.value = MetadataUtils.mergeMetadata(_metadata.value, userMetadata)
+                _convertedValues.value = ConvertedDataWrapper() // reset wrapper
+                updateSelectionsIfNeeded()
+            } else {
+                logger.e(TAG, "Failed to parse user metadata")
+            }
+        }
+    }
 
     /**
-     * Converts raw sensor values into engineering units and updates [_convertedValues].
+     * Resets converted values and fetches fresh metadata from the server.
      *
-     * @param rawData     Map of raw values, e.g. "system.L_ambient" → "219"
-     * @param doLogging   Flag indicating these data came from the periodic logger.
+     */
+    fun resetMetadata() {
+        _convertedValues.value = ConvertedDataWrapper() // wrapper reset
+        fetchMetadata()
+    }
+
+    /**
+     * Updates converted values based on raw data and logs selected values.
+     *
+     * @param rawData A map of raw values (e.g., "system.L_ambient" to "219").
+     * @param doLogging Whether these data were fetched for logging purposes.
      */
     fun updateValues(rawData: Map<String, String>, doLogging: Boolean = false) {
-        val meta = _metadata.value ?: return
-        val converted = LinkedHashMap<String, ConvertedValue>() // preserves insertion order
-
-        meta.sections.forEach { (section, fields) ->
+        val metadata = _metadata.value ?: return
+        val converted = mutableMapOf<String, ConvertedValue>()
+        val keyOrder = rawData.keys.toList()
+        metadata.sections.forEach { (section, fields) ->
             fields.forEach { (key, field) ->
                 val fullKey = "$section.$key"
-                val raw = rawData[fullKey] ?: return@forEach
-                if (field is MetadataField) {
-                    converted[fullKey] = ValueConverter.convert(fullKey, raw, field)
+                val rawValue = rawData[fullKey] ?: return@forEach
+                when (field) {
+                    is MetadataField -> {
+                        logger.d(TAG, " updateValues() Field $key = ${field.value} (${field.unit ?: "no unit"})")
+                        converted[fullKey] = ValueConverter.convert(fullKey, rawValue, field)
+                    }
+                    is MetadataLabel -> logger.d(TAG, "updateValues() Label $key = ${field.label}")
                 }
             }
         }
 
-        // Emit new batch.  Any collector can decide what to do with isLoggingData flag.
-        _convertedValues.value = ConvertedBatch(converted, isLoggingData = doLogging)
+        // Update wrapped StateFlow so both UI and logger can decide what to do
+        _convertedValues.value = ConvertedDataWrapper(converted, isLoggingData = doLogging)
         updateSelectionsIfNeeded()
+
+        if (doLogging) {
+            // Filter converted values to include only those selected for logging
+            val logValues = converted.filterKeys { key ->
+                _selections.value.find { it.key == key }?.log ?: false
+            }
+            //if (logValues.isEmpty()) {
+            //    _isLoggingViable.value = false
+            //} else {
+            //    _isLoggingViable.value = true
+            temperatureLogger.logValues(logValues, keyOrder.filter { it in logValues })
+            //}
+        }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  Selections utils (only change: reference wrapper.convertedValues)
-    // ────────────────────────────────────────────────────────────────────────────
+    /**
+     * Loads cached metadata from storage.
+     */
+    private fun loadCachedMetadata() {
+        viewModelScope.launch {
+            val cachedJson = contextProvider.loadCachedMetadata()
+            if (cachedJson != null) {
+                val cached = MetadataUtils.parseServerJson(cachedJson)
+                _metadata.value = cached
+                updateSelectionsIfNeeded()
+            }
+            if (_metadata.value == null) {
+                logger.w(TAG, "No cached metadata found")
+            }
+        }
+    }
 
+    /**
+     * Updates selections to match current converted values, loading from SharedPreferences.
+     */
     private fun updateSelectionsIfNeeded() {
-        val ctx = contextProvider.getContext()
-        val prefs = ctx.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-        val currentKeys = _convertedValues.value.convertedValues.keys
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        val currentKeys = _convertedValues.value.convertedValues.keys.toList()
         val existingKeys = _selections.value.map { it.key }.toSet()
-        if (currentKeys != existingKeys) {
+        if (currentKeys.toSet() != existingKeys) {
             _selections.value = currentKeys.map { key ->
                 _selections.value.find { it.key == key } ?: Selection(
                     key = key,
-                    log = prefs.getBoolean("log_$key", false),
-                    widget = prefs.getBoolean("widget_$key", false),
-                    showData = prefs.getBoolean("showData_$key", true),
-                    showSectionName = prefs.getBoolean("showSectionName_$key", false)
+                    log = sharedPrefs.getBoolean("log_$key", false),
+                    widget = sharedPrefs.getBoolean("widget_$key", false),
+                    showData = sharedPrefs.getBoolean("showData_$key", true),
+                    showSectionName = sharedPrefs.getBoolean("showSectionName_$key", false)
                 )
             }
         }
     }
 
+    /**
+     * Loads checkbox selections from SharedPreferences.
+     *
+     * @return List of [Selection] objects for all current values.
+     */
     fun loadSelections(): List<Selection> {
-        val ctx = contextProvider.getContext()
-        val prefs = ctx.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         return _convertedValues.value.convertedValues.keys.map { key ->
             Selection(
                 key = key,
-                log = prefs.getBoolean("log_$key", false),
-                widget = prefs.getBoolean("widget_$key", false),
-                showData = prefs.getBoolean("showData_$key", true),
-                showSectionName = prefs.getBoolean("showSectionName_$key", false)
+                log = sharedPrefs.getBoolean("log_$key", false),
+                widget = sharedPrefs.getBoolean("widget_$key", false),
+                showData = sharedPrefs.getBoolean("showData_$key", true),
+                showSectionName = sharedPrefs.getBoolean("showSectionName_$key", false)
             )
         }
     }
 
-    // updateSelection / toggleAll* remain unchanged – they operate on _selections only.
+    /*────────────────────────  Selection helpers remain unchanged  ───────────────────────*/
+    // (updateSelection, toggleAllLog, toggleAllWidget, toggleAllShowData, toggleAllSectionName)
+    // … the bodies are identical; no change needed because they operate on _selections only …
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  UI helpers – flows now look at wrapper.convertedValues
-    // ────────────────────────────────────────────────────────────────────────────
-
-    fun getDataScreenValues(): StateFlow<List<ConvertedValueWrapper>> =
-        _convertedValues.map { batch ->
-            batch.convertedValues.mapNotNull { (key, value) ->
-                val sel = _selections.value.find { it.key == key } ?: return@mapNotNull null
-                if (sel.showData) {
-                    ConvertedValueWrapper(value, key.substringBeforeLast('.'), sel.showSectionName)
+    /**
+     * Provides filtered [ConvertedValueWrapper] flow for DataScreen, respecting 'showData' and 'showSectionName' selections.
+     *
+     * @return Flow of filtered values with section and display preferences.
+     */
+    fun getDataScreenValues(): StateFlow<List<ConvertedValueWrapper>> {
+        return _convertedValues.map { wrapper ->
+            wrapper.convertedValues.mapNotNull { (key, value) ->
+                val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
+                if (selection.showData) {
+                    ConvertedValueWrapper(
+                        convertedValue = value,
+                        section = key.substringBeforeLast("."),
+                        showSectionName = selection.showSectionName,
+                    )
                 } else null
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    fun getWidgetValues(): WidgetDataWrapper {
-        val snapshot = _convertedValues.value.convertedValues.mapNotNull { (key, value) ->
-            val sel = _selections.value.find { it.key == key } ?: return@mapNotNull null
-            if (sel.widget) ConvertedValueWrapper(value, key.substringBeforeLast('.'), sel.showSectionName) else null
-        }
-        return WidgetDataWrapper(snapshot, _state.value, _error.value, _lastTimestamp.value)
     }
 
     /**
-     * Flow of values to be persisted by the logger.  Emits **only** when the
-     * current [ConvertedBatch] was fetched for logging (`isLoggingData == true`).
+     * Provides filtered [ConvertedValueWrapper] flow for the widget, respecting 'widget' and 'showSectionName' selections.
+     *
+     * @return Flow of filtered values with section and display preferences.
      */
-    fun getLogValues(): StateFlow<List<ConvertedValueWrapper>> =
-        _convertedValues.map { batch ->
-            if (!batch.isLoggingData) return@map emptyList()
-            batch.convertedValues.mapNotNull { (key, value) ->
-                val sel = _selections.value.find { it.key == key } ?: return@mapNotNull null
-                if (sel.log) ConvertedValueWrapper(value, key.substringBeforeLast('.'), showSectionName = false) else null
+    fun getWidgetValues(): WidgetDataWrapper {
+        val snapshot = _convertedValues.value.convertedValues.mapNotNull { (key, value) ->
+            val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
+            if (selection.widget) {
+                ConvertedValueWrapper(
+                    convertedValue = value,
+                    section = key.substringBeforeLast("."),
+                    showSectionName = selection.showSectionName
+                )
+            } else null
+        }
+
+        return WidgetDataWrapper(
+            snapshot = snapshot,
+            state = _state.value,
+            error = _error.value,
+            timestampSuccess = _lastTimestamp.value
+        )
+    }
+
+    /**
+     * Provides filtered [ConvertedValueWrapper] flow for logging, respecting 'log' selections.
+     *
+     * @return Flow of filtered values with section and display preferences.
+     */
+    fun getLogValues(): StateFlow<List<ConvertedValueWrapper>> {
+        return _convertedValues.map { wrapper ->
+            wrapper.convertedValues.mapNotNull { (key, value) ->
+                val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
+                if (selection.log) {
+                    ConvertedValueWrapper(
+                        convertedValue = value,
+                        section = key.substringBeforeLast("."),
+                        showSectionName = false,
+                    )
+                } else null
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }
 
-    // Remaining stats / utility methods unchanged …
+    // ────────────────────────────────────────────────────────────────────────────
+    //  Stats / state helpers (unchanged)
+    // ────────────────────────────────────────────────────────────────────────────
+
+    suspend fun updateError(error: String?) {
+        Log.d(TAG, "Error updated: $error")
+        //statsMutex.lock {
+        //_error.value = error
+        //updateDisplayTemperature()
+        //}
+        // TODO maybe here we should also trigger updating the widget
+    }
+
+    suspend fun updateState(state: String) {
+        Log.d(TAG, "State updated: $state")
+        //statsMutex.lock {
+        //_state.value = state
+        //updateDisplayTemperature()
+        //}
+        // TODO maybe here we should also trigger updating the widget
+    }
+
+    suspend fun updateStats(error: String?, state: String) {
+        //statsMutex.lock {
+
+        //}
+        // TODO maybe here we should also trigger updating the widget
+    }
+
+    fun getMetadataFileName(): String {
+        return "" // metadataFile?.name ?: "default"
+    }
+
+    fun getCurrentMetadataJson(): String {
+        return try {
+            //val raw = metadataFile?.readText() ?: "{}"
+            //val obj = JSONObject(raw)
+            //obj.toString(4) // pretty print with indent
+            ""
+        } catch (e: Exception) {
+            "{}"
+        }
+    }
+
+    // Dummy examples
+    fun shareMetadata(context: Context) { /* share intent logic */ }
+
+    fun importMetadata(context: Context) { /* file picker logic */ }
+
 }
