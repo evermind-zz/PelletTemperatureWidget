@@ -24,7 +24,7 @@ interface TemperatureLogger {
      * @param keyOrder List of keys in server order for consistent column ordering.
      * @param timestamp The batch timestamp (ISO 8601 format, second-level). Only used for testing, set internally otherwise.
      */
-    fun logValues(values: Map<String, ConvertedValue>, keyOrder: List<String>, timestamp: String? = null)
+    fun logValues(values: Map<String, ConvertedValue>, timestamp: String? = null)
 
     /**
      * Retrieves the URI of the latest log file for sharing.
@@ -63,7 +63,6 @@ class TemperatureLoggerCsvImpl(
 
     override fun logValues(
         values: Map<String, ConvertedValue>,
-        keyOrder: List<String>,
         timestamp: String?
     ) {
         try {
@@ -74,17 +73,17 @@ class TemperatureLoggerCsvImpl(
 
             val logFile = getCurrentLogFile(logDir)
             // Check file size and rotate if needed
-            if (logFile.length() >= maxFileSizeBytes || keyOrderListChanged(keyOrder)) {
-                rotateLogFile(logDir, logFile, values, keyOrder)
+            if (logFile.length() >= maxFileSizeBytes || keyOrderListChanged(values.keys)) {
+                rotateLogFile(logDir, logFile, values)
             }
 
             if (!logFile.exists()) {
-                writeHeaders(logFile, values, keyOrder)
+                writeHeaders(logFile, values, values.keys)
                 updateLogFiles()
             }
 
             // Write values as a single row
-            val csvRow = buildCsvRow(actualTimestamp, values, keyOrder)
+            val csvRow = buildCsvRow(actualTimestamp, values, values.keys)
             logFile.appendText(csvRow, Charsets.UTF_8)
         } catch (e: Exception) {
             logger.e(TAG, "Failed to log values: $e", e)
@@ -92,7 +91,7 @@ class TemperatureLoggerCsvImpl(
     }
 
     // eg. new eleemnts are selected to be logged
-    private fun keyOrderListChanged(keyOrder: List<String>): Boolean {
+    private fun keyOrderListChanged(keyOrder: Set<String>): Boolean {
         val previousHash = TemperatureUtils.getStoredLoggerHeaderHash()
         val currentHash = keyOrder.hashCode()
         if (previousHash != currentHash) {
@@ -175,7 +174,7 @@ class TemperatureLoggerCsvImpl(
         }
     }
 
-    private fun writeHeaders(logFile: File, values: Map<String, ConvertedValue>, keyOrder: List<String>) {
+    private fun writeHeaders(logFile: File, values: Map<String, ConvertedValue>, keyOrder: Set<String>) {
         val sections = keyOrder.map { it.substringBeforeLast(".") }.distinct()
         val sectionHeader = sections.joinToString("") { section ->
             val fieldCount = keyOrder.count { it.startsWith("$section.") }
@@ -192,7 +191,6 @@ class TemperatureLoggerCsvImpl(
         logDir: File,
         currentFile: File,
         values: Map<String, ConvertedValue>,
-        keyOrder: List<String>
     ) {
         try {
             val index = logDir.listFiles()
@@ -206,7 +204,7 @@ class TemperatureLoggerCsvImpl(
         }
     }
 
-    private fun buildCsvRow(timestamp: String, values: Map<String, ConvertedValue>, keyOrder: List<String>): String {
+    private fun buildCsvRow(timestamp: String, values: Map<String, ConvertedValue>, keyOrder: Set<String>): String {
         val fields = keyOrder.map { key ->
             val value = values[key]
             if (value == null) {
