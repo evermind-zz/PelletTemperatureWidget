@@ -52,7 +52,7 @@ class TemperatureViewModelNew(
     ),
     private val networkAccess: NetworkAccess = NetworkAccess(),
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-) {
+)  {
     private val networkAccessMutex = Mutex()
     private val TAG = TemperatureViewModelNew::class.java.simpleName
 
@@ -62,35 +62,11 @@ class TemperatureViewModelNew(
      */
     val metadata: StateFlow<MetadataJson?> = _metadata.asStateFlow()
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  Converted values FLOW now wrapped in ConvertedDataWrapper
-    // ────────────────────────────────────────────────────────────────────────────
-
+    private val _convertedValues = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
     /**
-     * Wrapper containing converted values and a flag that indicates whether the
-     * data were fetched for logging purposes.  The `isLoggingData` flag is *not*
-     * consumed by the UI but can be useful for downstream services (e.g. CSV
-     * logger) that collect the same flow.
+     * Flow of converted values (e.g., "system.L_ambient" to [ConvertedValue]) for UI and logging.
      */
-    data class ConvertedDataWrapper(
-        val convertedValues: Map<String, ConvertedValue> = emptyMap(),
-        val isLoggingData: Boolean = false
-    )
-
-    /*───────────────────────────────────────────────────────────────────────────*/
-    /*  OLD: plain map                                                            */
-    /*  private val _convertedValues = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
-     *  /** Flow of converted values (e.g., "system.L_ambient" to [ConvertedValue]) for UI and logging. */
-     *  val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues.asStateFlow()
-     */
-    /*───────────────────────────────────────────────────────────────────────────*/
-
-    private val _convertedValues = MutableStateFlow(ConvertedDataWrapper())
-    /**
-     * Flow of converted values (e.g., "system.L_ambient" to [ConvertedValue])
-     * for UI and logging, wrapped inside a [ConvertedDataWrapper].
-     */
-    val convertedValues: StateFlow<ConvertedDataWrapper> = _convertedValues.asStateFlow()
+    val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues.asStateFlow()
 
     private val _selections = MutableStateFlow<List<Selection>>(emptyList())
     /**
@@ -98,9 +74,9 @@ class TemperatureViewModelNew(
      */
     val selections: StateFlow<List<Selection>> = _selections.asStateFlow()
 
-    private val _state = MutableStateFlow("state")
-    private val _error = MutableStateFlow("error")
-    private val _lastTimestamp = MutableStateFlow("timestamp")
+    private val _state = MutableStateFlow<String>("state")
+    private val _error = MutableStateFlow<String>("error")
+    private val _lastTimestamp = MutableStateFlow<String>("timestamp")
 
     private val _isLoggingViable = MutableStateFlow<Boolean>(false)
     val isLoggingViable: StateFlow<Boolean> = _isLoggingViable.asStateFlow()
@@ -129,10 +105,6 @@ class TemperatureViewModelNew(
         }
 
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    //  Data classes for UI layers
-    // ────────────────────────────────────────────────────────────────────────────
 
     /**
      * Data class representing a converted value with section and display preferences for UI.
@@ -174,10 +146,6 @@ class TemperatureViewModelNew(
         val showSectionName: Boolean
     )
 
-    // ────────────────────────────────────────────────────────────────────────────
-    //  METADATA   (unchanged)
-    // ────────────────────────────────────────────────────────────────────────────
-
     /**
      * Fetches metadata from the server and saves it to storage.
      */
@@ -209,7 +177,7 @@ class TemperatureViewModelNew(
      * @param doLogging log via [TemperatureLogger]
      *
      */
-    fun fetchValues(url: String, caller: String, doLogging: Boolean = false): Result<String> {
+    fun fetchValues(url: String, caller: String, doLogging: Boolean = false) : Result<String> {
         viewModelScope.launch {
             //val body = networkAccess.getDataFromServer(url, caller)
             val result = getDataFromNetworkWithRetry(url, caller)
@@ -246,6 +214,7 @@ class TemperatureViewModelNew(
         logger.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
     }
 
+
     suspend fun getDataFromNetworkWithRetry(url: String, caller: String): Result<String> = networkAccessMutex.withLock {
         val maxAttempts = 3
         repeat(maxAttempts) { attempt ->
@@ -266,6 +235,7 @@ class TemperatureViewModelNew(
         updateStats(error = "Failed to fetch temperature after $maxAttempts attempts", state = "Error")
         return Result.failure(Exception("failed to fetch"))
     }
+
 
     fun loadTestDataFromStorage() {
         viewModelScope.launch {
@@ -308,7 +278,7 @@ class TemperatureViewModelNew(
             if (userMetadata != null) {
                 contextProvider.saveMetadata(jsonString)
                 _metadata.value = MetadataUtils.mergeMetadata(_metadata.value, userMetadata)
-                _convertedValues.value = ConvertedDataWrapper() // reset wrapper
+                _convertedValues.value = emptyMap()
                 updateSelectionsIfNeeded()
             } else {
                 logger.e(TAG, "Failed to parse user metadata")
@@ -321,7 +291,7 @@ class TemperatureViewModelNew(
      *
      */
     fun resetMetadata() {
-        _convertedValues.value = ConvertedDataWrapper() // wrapper reset
+        _convertedValues.value = emptyMap()
         fetchMetadata()
     }
 
@@ -329,7 +299,6 @@ class TemperatureViewModelNew(
      * Updates converted values based on raw data and logs selected values.
      *
      * @param rawData A map of raw values (e.g., "system.L_ambient" to "219").
-     * @param doLogging Whether these data were fetched for logging purposes.
      */
     fun updateValues(rawData: Map<String, String>, doLogging: Boolean = false) {
         val metadata = _metadata.value ?: return
@@ -349,10 +318,10 @@ class TemperatureViewModelNew(
             }
         }
 
-        // Update wrapped StateFlow so both UI and logger can decide what to do
-        _convertedValues.value = ConvertedDataWrapper(converted, isLoggingData = doLogging)
-        updateSelectionsIfNeeded()
 
+
+        _convertedValues.value = converted
+        updateSelectionsIfNeeded()
         if (doLogging) {
             // Filter converted values to include only those selected for logging
             val logValues = converted.filterKeys { key ->
@@ -362,7 +331,7 @@ class TemperatureViewModelNew(
             //    _isLoggingViable.value = false
             //} else {
             //    _isLoggingViable.value = true
-            temperatureLogger.logValues(logValues, keyOrder.filter { it in logValues })
+                temperatureLogger.logValues(logValues, keyOrder.filter { it in logValues })
             //}
         }
     }
@@ -390,7 +359,7 @@ class TemperatureViewModelNew(
     private fun updateSelectionsIfNeeded() {
         val context = contextProvider.getContext()
         val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-        val currentKeys = _convertedValues.value.convertedValues.keys.toList()
+        val currentKeys = _convertedValues.value.keys.toList()
         val existingKeys = _selections.value.map { it.key }.toSet()
         if (currentKeys.toSet() != existingKeys) {
             _selections.value = currentKeys.map { key ->
@@ -413,7 +382,7 @@ class TemperatureViewModelNew(
     fun loadSelections(): List<Selection> {
         val context = contextProvider.getContext()
         val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-        return _convertedValues.value.convertedValues.keys.map { key ->
+        return _convertedValues.value.keys.map { key ->
             Selection(
                 key = key,
                 log = sharedPrefs.getBoolean("log_$key", false),
@@ -424,9 +393,154 @@ class TemperatureViewModelNew(
         }
     }
 
-    /*────────────────────────  Selection helpers remain unchanged  ───────────────────────*/
-    // (updateSelection, toggleAllLog, toggleAllWidget, toggleAllShowData, toggleAllSectionName)
-    // … the bodies are identical; no change needed because they operate on _selections only …
+    /**
+     * Updates a single selection for a specific key.
+     *
+     * @param key The value key to update.
+     * @param log Whether to log the value (optional).
+     * @param widget Whether to show on widget (optional).
+     * @param showData Whether to show on DataScreen (optional).
+     * @param showSectionName Whether to show section and name in UI (optional).
+     */
+    fun updateSelectionOld(
+        key: String,
+        log: Boolean? = null,
+        widget: Boolean? = null,
+        showData: Boolean? = null,
+        showSectionName: Boolean? = null
+    ) {
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        _selections.value = _selections.value.map { sel ->
+            if (sel.key == key) {
+                val newSel = sel.copy(
+                    log = log ?: sel.log,
+                    widget = widget ?: sel.widget,
+                    showData = showData ?: sel.showData,
+                    showSectionName = showSectionName ?: sel.showSectionName
+                )
+                sharedPrefs.edit {
+                    putBoolean("log_$key", newSel.log)
+                    putBoolean("widget_$key", newSel.widget)
+                    putBoolean("showData_$key", newSel.showData)
+                    putBoolean("showSectionName_$key", newSel.showSectionName)
+                }
+                newSel
+            } else sel
+        }
+    }
+
+    /**
+     * Updates a single selection for a specific key.
+     *
+     * @param key The value key to update.
+     * @param log Whether to log the value (optional).
+     * @param widget Whether to show on widget (optional).
+     * @param showData Whether to show on DataScreen (optional).
+     * @param showSectionName Whether to show section and name in UI (optional).
+     */
+    fun updateSelection(
+        key: String,
+        log: Boolean? = null,
+        widget: Boolean? = null,
+        showData: Boolean? = null,
+        showSectionName: Boolean? = null
+    ) {
+        // 1) Atomically update _selections and capture the new Selection if it changed
+        var changedItem: Selection? = null          // will stay null if nothing really changed
+
+        _selections.update { list ->
+            list.map { sel ->
+                if (sel.key == key) {
+                    val newSel = sel.copy(
+                        log = log ?: sel.log,
+                        widget = widget ?: sel.widget,
+                        showData = showData ?: sel.showData,
+                        showSectionName = showSectionName ?: sel.showSectionName
+                    )
+                    if (newSel != sel) changedItem = newSel   // mark that we need to persist
+                    newSel
+                } else sel
+            }
+        }
+        // If at least one property differs, the *new list* is not equal to the old one,
+        // so MutableStateFlow emits automatically.
+
+        // 2) Persist only when a change really happened
+        changedItem?.let { sel ->
+            val prefs = contextProvider
+                .getContext()
+                .getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+
+            prefs.edit {
+                putBoolean("log_$key",            sel.log)
+                putBoolean("widget_$key",         sel.widget)
+                putBoolean("showData_$key",       sel.showData)
+                putBoolean("showSectionName_$key", sel.showSectionName)
+            }
+        }
+    }
+
+
+    /**
+     * Toggles the 'log' selection for all values.
+     *
+     * @param checked Whether to enable logging for all values.
+     */
+    fun toggleAllLog(checked: Boolean) {
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        _selections.value = _selections.value.map {
+            val newSel = it.copy(log = checked)
+            sharedPrefs.edit { putBoolean("log_${it.key}", checked) }
+            newSel
+        }
+    }
+
+    /**
+     * Toggles the 'widget' selection for all values.
+     *
+     * @param checked Whether to show all values on the widget.
+     */
+    fun toggleAllWidget(checked: Boolean) {
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        _selections.value = _selections.value.map {
+            val newSel = it.copy(widget = checked)
+            sharedPrefs.edit { putBoolean("widget_${it.key}", checked) }
+            newSel
+        }
+    }
+
+    /**
+     * Toggles the 'showData' selection for all values.
+     *
+     * @param checked Whether to show all values on DataScreen.
+     */
+    fun toggleAllShowData(checked: Boolean) {
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        _selections.value = _selections.value.map {
+            val newSel = it.copy(showData = checked)
+            sharedPrefs.edit { putBoolean("showData_${it.key}", checked) }
+            newSel
+        }
+    }
+
+    /**
+     * Toggles the 'showSectionName' selection for all values.
+     *
+     * @param checked Whether to show section and name for all values in UI.
+     */
+    fun toggleAllSectionName(checked: Boolean) {
+        val context = contextProvider.getContext()
+        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+        _selections.value = _selections.value.map {
+            val newSel = it.copy(showSectionName = checked)
+            sharedPrefs.edit { putBoolean("showSectionName_${it.key}", checked) }
+            newSel
+        }
+    }
 
     /**
      * Provides filtered [ConvertedValueWrapper] flow for DataScreen, respecting 'showData' and 'showSectionName' selections.
@@ -434,8 +548,8 @@ class TemperatureViewModelNew(
      * @return Flow of filtered values with section and display preferences.
      */
     fun getDataScreenValues(): StateFlow<List<ConvertedValueWrapper>> {
-        return _convertedValues.map { wrapper ->
-            wrapper.convertedValues.mapNotNull { (key, value) ->
+        return _convertedValues.map { values ->
+            values.mapNotNull { (key, value) ->
                 val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
                 if (selection.showData) {
                     ConvertedValueWrapper(
@@ -445,7 +559,7 @@ class TemperatureViewModelNew(
                     )
                 } else null
             }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, emptyList())
     }
 
     /**
@@ -453,8 +567,26 @@ class TemperatureViewModelNew(
      *
      * @return Flow of filtered values with section and display preferences.
      */
+    //fun getWidgetValuesOld(): WidgetDataWrapper {
+    //    return WidgetDataWrapper((_convertedValues.map { values ->
+    //        values.mapNotNull { (key, value) ->
+    //            val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
+    //            if (selection.widget) {
+    //                ConvertedValueWrapper(
+    //                    convertedValue = value,
+    //                    section = key.substringBeforeLast("."),
+    //                    showSectionName = selection.showSectionName
+    //                )
+    //            } else null
+    //        }
+    //    }),
+    //            state = _state.value,
+    //        error = _error.value,
+    //        timestampSuccess = _lastTimestamp.value
+    //}
+
     fun getWidgetValues(): WidgetDataWrapper {
-        val snapshot = _convertedValues.value.convertedValues.mapNotNull { (key, value) ->
+        val snapshot = _convertedValues.value.mapNotNull { (key, value) ->
             val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
             if (selection.widget) {
                 ConvertedValueWrapper(
@@ -473,14 +605,15 @@ class TemperatureViewModelNew(
         )
     }
 
+
     /**
      * Provides filtered [ConvertedValueWrapper] flow for logging, respecting 'log' selections.
      *
      * @return Flow of filtered values with section and display preferences.
      */
     fun getLogValues(): StateFlow<List<ConvertedValueWrapper>> {
-        return _convertedValues.map { wrapper ->
-            wrapper.convertedValues.mapNotNull { (key, value) ->
+        return _convertedValues.map { values ->
+            values.mapNotNull { (key, value) ->
                 val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
                 if (selection.log) {
                     ConvertedValueWrapper(
@@ -490,18 +623,14 @@ class TemperatureViewModelNew(
                     )
                 } else null
             }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, emptyList())
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    //  Stats / state helpers (unchanged)
-    // ────────────────────────────────────────────────────────────────────────────
 
     suspend fun updateError(error: String?) {
         Log.d(TAG, "Error updated: $error")
         //statsMutex.lock {
-        //_error.value = error
-        //updateDisplayTemperature()
+            //_error.value = error
+            //updateDisplayTemperature()
         //}
         // TODO maybe here we should also trigger updating the widget
     }
@@ -509,8 +638,8 @@ class TemperatureViewModelNew(
     suspend fun updateState(state: String) {
         Log.d(TAG, "State updated: $state")
         //statsMutex.lock {
-        //_state.value = state
-        //updateDisplayTemperature()
+            //_state.value = state
+            //updateDisplayTemperature()
         //}
         // TODO maybe here we should also trigger updating the widget
     }
@@ -521,7 +650,6 @@ class TemperatureViewModelNew(
         //}
         // TODO maybe here we should also trigger updating the widget
     }
-
     fun getMetadataFileName(): String {
         return "" // metadataFile?.name ?: "default"
     }
