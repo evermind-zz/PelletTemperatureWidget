@@ -32,9 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -54,7 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.pelletswaterheater.SettingsViewModel
-import com.example.pelletswaterheater.ui.misc.combinePadding
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -103,266 +100,261 @@ fun SettingsScreen(
         settingsViewModel.initialize(context)
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        ) { innerPadding ->
-        val combinedPadding = combinePadding(innerPadding, 16.dp)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(combinedPadding)
-                .imePadding()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .imePadding()
+    ) {
+        val context = LocalContext.current
+
+        // SECTION 1: Metadata Controls
+        Text("Metadata File", style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.height(8.dp))
+
+        Text("Current File: ${viewModel.getMetadataFileName()}")
+        Spacer(Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val context = LocalContext.current
-
-            // SECTION 1: Metadata Controls
-            Text("Metadata File", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(8.dp))
-
-            Text("Current File: ${viewModel.getMetadataFileName()}")
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        metadataJson = viewModel.getCurrentMetadataJson()
-                        showEditDialog = true
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(4.dp)
-                ) {
-                    Text("Edit")
-                }
-                Button(
-                    onClick = { viewModel.shareMetadata(context) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(4.dp)
-                ) {
-                    Text("Share")
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = { viewModel.resetMetadata() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(4.dp)
-
-                ) {
-                    Text("Reset to Default")
-                }
-                Button(
-                    onClick = {
-                        launcher.launch("application/json")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(4.dp)
-                ) {
-                    Text("Import New")
-                }
-            }
-
-            Spacer(Modifier.height(24.dp))
-
-            // SECTION 2: Logging Toggle
-            Text("Logging", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(8.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                //Column(modifier = Modifier.padding(16.dp)) {
-                OutlinedTextField(
-                    value = intervalInput,
-                    onValueChange = { intervalInput = it },
-                    label = { Text("Interval in milliseconds") },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp)
-                )
-                Button(
-                    onClick = {
-                        val interval = intervalInput.toLongOrNull() ?: 5000L
-                        settingsViewModel.setLoggingInterval(interval)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp)
-                ) {
-                    Text("Set Interval")
-                }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Switch(
-                    checked = isLoggingEnabled,
-                    onCheckedChange = { settingsViewModel.toggleLogging() }
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(if (isLoggingEnabled) "Logging is ON" else "Logging is OFF")
-            }
-
-            if (showBatteryOptimizationDialog) {
-                ShowBatteryOptimizeDialog(
-                    LocalContext.current,
-                    settingsViewModel,
-                    snackbarHostState,
-                    coroutineScope
-                )
-            }
-
-            Spacer(Modifier.height(32.dp))
-
-            // SECTION 3: Server & Appearance
-            Text("Server Settings", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = serverUrl,
-                onValueChange = { settingsViewModel.updateServerUrl(it) },
-                label = { Text("Server URL") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = errorMessage2 != null
-            )
-
-            Button(
-                onClick = { settingsViewModel.testServerUrl(context) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Test URL")
-            }
-
-            testResult?.let {
-                Text(
-                    text = it,
-                    color = if (it == "Server reachable") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            Spacer(Modifier.height(24.dp))
-            Text("Widget Appearance", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(8.dp))
-
-            /* we do not set the widget size anymore - but leave for later (delete or reuse:))
-            OutlinedTextField(
-                value = widgetWidth,
-                onValueChange = { settingsViewModel.updateWidgetWidth(it) },
-                label = { Text("Widget Width (dp)") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = errorMessage2 != null
-            )
-            OutlinedTextField(
-                value = widgetHeight,
-                onValueChange = { settingsViewModel.updateWidgetHeight(it) },
-                label = { Text("Widget Height (dp)") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = errorMessage2 != null
-            )
-            */
-
-            Text("Background Color", style = MaterialTheme.typography.bodyLarge)
-            DropdownMenuContent(
-                selectedOption = backgroundColorSelection,
-                options = predefinedColors.map { it.first } + "Custom",
-                onOptionSelected = { settingsViewModel.updateBackgroundColorSelection(it) }
-            )
-            if (backgroundColorSelection == "Custom") {
-                OutlinedTextField(
-                    value = backgroundColor,
-                    onValueChange = { settingsViewModel.updateBackgroundColor(it) },
-                    label = { Text("Hex Background Color") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Text("Text Color", style = MaterialTheme.typography.bodyLarge)
-            DropdownMenuContent(
-                selectedOption = textColorSelection,
-                options = predefinedColors.map { it.first }
-                    .filter { it != "Transparent" } + "Custom",
-                onOptionSelected = { settingsViewModel.updateTextColorSelection(it) }
-            )
-            if (textColorSelection == "Custom") {
-                OutlinedTextField(
-                    value = textColor,
-                    onValueChange = { settingsViewModel.updateTextColor(it) },
-                    label = { Text("Hex Text Color") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if (settingsViewModel.saveSettings(context)) {
-                        Toast.makeText(context, "Settings saved", Toast.LENGTH_SHORT).show()
-                    }
+                    metadataJson = viewModel.getCurrentMetadataJson()
+                    showEditDialog = true
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(4.dp)
             ) {
-                Text("Save Settings")
+                Text("Edit")
+            }
+            Button(
+                onClick = { viewModel.shareMetadata(context) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(4.dp)
+            ) {
+                Text("Share")
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { viewModel.resetMetadata() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(4.dp)
+
+            ) {
+                Text("Reset to Default")
+            }
+            Button(
+                onClick = {
+                    launcher.launch("application/json")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(4.dp)
+            ) {
+                Text("Import New")
             }
         }
 
-        // METADATA EDIT DIALOG
-        if (showEditDialog) {
-            AlertDialog(
-                onDismissRequest = { showEditDialog = false },
-                title = { Text("Edit Metadata JSON") },
-                text = {
-                    Column {
-                        OutlinedTextField(
-                            value = metadataJson,
-                            onValueChange = {
-                                metadataJson = it
-                                editError = null
-                            },
-                            label = { Text("Metadata") },
-                            isError = editError != null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                        )
-                        editError?.let {
-                            Text(
-                                text = it,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
+        Spacer(Modifier.height(24.dp))
+
+        // SECTION 2: Logging Toggle
+        Text("Logging", style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            //Column(modifier = Modifier.padding(16.dp)) {
+            OutlinedTextField(
+                value = intervalInput,
+                onValueChange = { intervalInput = it },
+                label = { Text("Interval in milliseconds") },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+            )
+            Button(
+                onClick = {
+                    val interval = intervalInput.toLongOrNull() ?: 5000L
+                    settingsViewModel.setLoggingInterval(interval)
                 },
-                confirmButton = {
-                    TextButton(onClick = {
-                        try {
-                            viewModel.loadUserMetadata(metadataJson)
-                            showEditDialog = false
-                        } catch (e: Exception) {
-                            editError = "Invalid JSON: ${e.message}"
-                        }
-                    }) {
-                        Text("Apply")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showEditDialog = false }) {
-                        Text("Cancel")
-                    }
-                }
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+            ) {
+                Text("Set Interval")
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = isLoggingEnabled,
+                onCheckedChange = { settingsViewModel.toggleLogging() }
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(if (isLoggingEnabled) "Logging is ON" else "Logging is OFF")
+        }
+
+        if (showBatteryOptimizationDialog) {
+            ShowBatteryOptimizeDialog(
+                LocalContext.current,
+                settingsViewModel,
+                snackbarHostState,
+                coroutineScope
             )
         }
+
+        Spacer(Modifier.height(32.dp))
+
+        // SECTION 3: Server & Appearance
+        Text("Server Settings", style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = serverUrl,
+            onValueChange = { settingsViewModel.updateServerUrl(it) },
+            label = { Text("Server URL") },
+            modifier = Modifier.fillMaxWidth(),
+            isError = errorMessage2 != null
+        )
+
+        Button(
+            onClick = { settingsViewModel.testServerUrl(context) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Test URL")
+        }
+
+        testResult?.let {
+            Text(
+                text = it,
+                color = if (it == "Server reachable") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+        Text("Widget Appearance", style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.height(8.dp))
+
+        /* we do not set the widget size anymore - but leave for later (delete or reuse:))
+        OutlinedTextField(
+            value = widgetWidth,
+            onValueChange = { settingsViewModel.updateWidgetWidth(it) },
+            label = { Text("Widget Width (dp)") },
+            modifier = Modifier.fillMaxWidth(),
+            isError = errorMessage2 != null
+        )
+        OutlinedTextField(
+            value = widgetHeight,
+            onValueChange = { settingsViewModel.updateWidgetHeight(it) },
+            label = { Text("Widget Height (dp)") },
+            modifier = Modifier.fillMaxWidth(),
+            isError = errorMessage2 != null
+        )
+        */
+
+        Text("Background Color", style = MaterialTheme.typography.bodyLarge)
+        DropdownMenuContent(
+            selectedOption = backgroundColorSelection,
+            options = predefinedColors.map { it.first } + "Custom",
+            onOptionSelected = { settingsViewModel.updateBackgroundColorSelection(it) }
+        )
+        if (backgroundColorSelection == "Custom") {
+            OutlinedTextField(
+                value = backgroundColor,
+                onValueChange = { settingsViewModel.updateBackgroundColor(it) },
+                label = { Text("Hex Background Color") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Text("Text Color", style = MaterialTheme.typography.bodyLarge)
+        DropdownMenuContent(
+            selectedOption = textColorSelection,
+            options = predefinedColors.map { it.first }
+                .filter { it != "Transparent" } + "Custom",
+            onOptionSelected = { settingsViewModel.updateTextColorSelection(it) }
+        )
+        if (textColorSelection == "Custom") {
+            OutlinedTextField(
+                value = textColor,
+                onValueChange = { settingsViewModel.updateTextColor(it) },
+                label = { Text("Hex Text Color") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = {
+                if (settingsViewModel.saveSettings(context)) {
+                    Toast.makeText(context, "Settings saved", Toast.LENGTH_SHORT).show()
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Save Settings")
+        }
+    }
+
+    // METADATA EDIT DIALOG
+    if (showEditDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditDialog = false },
+            title = { Text("Edit Metadata JSON") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = metadataJson,
+                        onValueChange = {
+                            metadataJson = it
+                            editError = null
+                        },
+                        label = { Text("Metadata") },
+                        isError = editError != null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                    editError?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    try {
+                        viewModel.loadUserMetadata(metadataJson)
+                        showEditDialog = false
+                    } catch (e: Exception) {
+                        editError = "Invalid JSON: ${e.message}"
+                    }
+                }) {
+                    Text("Apply")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
