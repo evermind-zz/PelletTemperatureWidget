@@ -6,6 +6,7 @@ import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
+import android.text.method.ScrollingMovementMethod
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
@@ -34,7 +35,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 @Composable
 fun CodeEditorDialog(
@@ -46,13 +46,12 @@ fun CodeEditorDialog(
 ) {
     var editorText by remember { mutableStateOf(initialText) }
     var searchText by remember { mutableStateOf("") }
-    var currentMatchIndex by remember { mutableStateOf(0) }
     val editTextRef = remember { mutableStateOf<EditText?>(null) }
     var showSaveAsDialog by remember { mutableStateOf(false) }
 
-    val searchHelper = SearchHelper()
-    val noOfSearchMatches = searchHelper.noOfSearchMatches.collectAsState()
-    val currentSearchMatch = searchHelper.currentSearchMatch.collectAsState()
+    val searchHelper = remember { SearchHelper() }
+    val noOfSearchMatches by searchHelper.noOfSearchMatches.collectAsState()
+    val currentSearchMatch by searchHelper.currentSearchMatch.collectAsState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -65,16 +64,14 @@ fun CodeEditorDialog(
                         value = searchText,
                         onValueChange = {
                             searchText = it
-                            currentMatchIndex = 0
                             searchHelper.highlightAllMatches(editTextRef.value, it)
                         },
                         label = { Text("Search") },
                         modifier = Modifier.weight(1f)
                     )
-                    Spacer(Modifier.width(1.dp))
-                    Text(
-                        text = "${currentSearchMatch.value}/${noOfSearchMatches.value}",
-                    )
+                    Spacer(Modifier.width(4.dp))
+                    val displayIndex = if (noOfSearchMatches == 0) 0 else currentSearchMatch + 1
+                    Text(text = "$displayIndex/$noOfSearchMatches")
                     Spacer(Modifier.width(8.dp))
                     Button(onClick = {
                         searchHelper.jumpToNextMatch(editTextRef.value, searchText, forward = false)
@@ -87,27 +84,25 @@ fun CodeEditorDialog(
 
                 Spacer(Modifier.height(8.dp))
 
-                // Editable Area
+                // Editable Text Area
                 AndroidView(
                     factory = { context ->
                         EditText(context).apply {
                             setText(initialText)
                             isSingleLine = false
+                            setHorizontallyScrolling(false)
+                            gravity = Gravity.TOP or Gravity.START
                             inputType =
                                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-                            gravity = Gravity.TOP or Gravity.START
                             setBackgroundColor(Color.WHITE)
                             setTextColor(Color.BLACK)
-                            setPadding(16, 16, 16, 16)
-                            setHorizontallyScrolling(false)
                             setLineSpacing(1.2f, 1.2f)
-                            setText(text)
-                            //setTextWithLineNumbers(this, text.toString())
+                            movementMethod = ScrollingMovementMethod()
+                            setPadding(16, 16, 16, 16)
 
                             addTextChangedListener(object : TextWatcher {
                                 override fun afterTextChanged(s: Editable?) {
                                     editorText = s.toString()
-                                    //setTextWithLineNumbers(this@apply, s.toString())
                                     searchHelper.highlightAllMatches(this@apply, searchText)
                                 }
 
@@ -166,23 +161,31 @@ fun CodeEditorDialog(
 
 class SearchHelper {
 
-    private val _noOfSearchMatches = MutableStateFlow<Int>(0)
+    private val _noOfSearchMatches = MutableStateFlow(0)
     val noOfSearchMatches: StateFlow<Int> = _noOfSearchMatches.asStateFlow()
 
-    private val _currentSearchMatch = MutableStateFlow<Int>(0)
+    private val _currentSearchMatch = MutableStateFlow(0)
     val currentSearchMatch: StateFlow<Int> = _currentSearchMatch.asStateFlow()
 
-    fun highlightAllMatches(editText: EditText?, query: String) {
-        if (editText == null || query.isEmpty()) return
+    private var matchPositions: List<Int> = emptyList()
 
-        val spannable = editText.text as Spannable
-        spannable.removeSpans<BackgroundColorSpan>()
+    fun highlightAllMatches(editText: EditText?, query: String) {
+        if (editText == null || query.isEmpty()) {
+            editText?.let {
+                castToSpannableAndRemoveSpans(editText)
+            }
+            clearMatches()
+            return
+        }
+
+        val spannable = castToSpannableAndRemoveSpans(editText)
 
         val text = spannable.toString()
-        var index = text.indexOf(query, ignoreCase = true)
+        val found = mutableListOf<Int>()
 
-        var count = 0
+        var index = text.indexOf(query, ignoreCase = true)
         while (index >= 0) {
+            found.add(index)
             spannable.setSpan(
                 BackgroundColorSpan(Color.YELLOW),
                 index,
@@ -190,41 +193,43 @@ class SearchHelper {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             index = text.indexOf(query, startIndex = index + query.length, ignoreCase = true)
-            count++;
         }
 
-        _noOfSearchMatches.value = count
+        matchPositions = found
+        _noOfSearchMatches.value = matchPositions.size
+        _currentSearchMatch.value = 0
+
+        if (matchPositions.isNotEmpty()) {
+            val start = matchPositions[0]
+            editText.setSelection(start, start + query.length)
+        }
+    }
+
+    private fun castToSpannableAndRemoveSpans(editText: EditText) : Spannable{
+        val spannable = editText.text as Spannable
+        spannable.removeSpans<BackgroundColorSpan>()
+        return spannable
     }
 
     fun jumpToNextMatch(editText: EditText?, query: String, forward: Boolean) {
-        if (editText == null || query.isEmpty()) return
+        if (editText == null || query.isEmpty() || matchPositions.isEmpty()) return
 
-        val text = editText.text.toString()
-        val cursor = editText.selectionStart
-
+        val count = matchPositions.size
         val nextIndex = if (forward) {
-            _currentSearchMatch.update {
-                if (_noOfSearchMatches.value >= (it + 1)) {
-                    it + 1
-                } else {
-                    it
-                }
-            }
-            text.indexOf(query, startIndex = cursor + 1, ignoreCase = true)
+            (_currentSearchMatch.value + 1) % count
         } else {
-            _currentSearchMatch.update {
-                if ((it - 1 >= 0)) {
-                    it - 1
-                } else {
-                    it
-                }
-            }
-            text.lastIndexOf(query, startIndex = cursor - 1, ignoreCase = true)
+            (_currentSearchMatch.value - 1 + count) % count
         }
 
-        if (nextIndex >= 0) {
-            editText.setSelection(nextIndex, nextIndex + query.length)
-        }
+        _currentSearchMatch.value = nextIndex
+        val pos = matchPositions[nextIndex]
+        editText.setSelection(pos, pos + query.length)
+    }
+
+    fun clearMatches() {
+        matchPositions = emptyList()
+        _noOfSearchMatches.value = 0
+        _currentSearchMatch.value = 0
     }
 
     inline fun <reified T> Spannable.removeSpans() {
@@ -248,7 +253,6 @@ class SearchHelper {
         editText.setText(spannable)
         editText.setSelection(editText.text.length)
     }
-
 }
 
 @Composable
