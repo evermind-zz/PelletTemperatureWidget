@@ -51,6 +51,9 @@ fun CodeEditorDialog(
     var showSaveAsDialog by remember { mutableStateOf(false) }
 
     val searchHelper = SearchHelper()
+    val noOfSearchMatches = searchHelper.noOfSearchMatches.collectAsState()
+    val currentSearchMatch = searchHelper.currentSearchMatch.collectAsState()
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
@@ -67,6 +70,10 @@ fun CodeEditorDialog(
                         },
                         label = { Text("Search") },
                         modifier = Modifier.weight(1f)
+                    )
+                    Spacer(Modifier.width(1.dp))
+                    Text(
+                        text = "${currentSearchMatch.value}/${noOfSearchMatches.value}",
                     )
                     Spacer(Modifier.width(8.dp))
                     Button(onClick = {
@@ -225,6 +232,12 @@ fun CodeEditorDialog(
 
 class SearchHelper() {
 
+    private val _noOfSearchMatches = MutableStateFlow<Int>(0)
+    val noOfSearchMatches: StateFlow<Int> = _noOfSearchMatches.asStateFlow()
+
+    private val _currentSearchMatch = MutableStateFlow<Int>(0)
+    val currentSearchMatch: StateFlow<Int> = _currentSearchMatch.asStateFlow()
+
     fun highlightAllMatches(editText: EditText?, query: String) {
         if (editText == null || query.isEmpty()) return
 
@@ -234,6 +247,7 @@ class SearchHelper() {
         val text = spannable.toString()
         var index = text.indexOf(query, ignoreCase = true)
 
+        var count = 0
         while (index >= 0) {
             spannable.setSpan(
                 BackgroundColorSpan(Color.YELLOW),
@@ -242,7 +256,10 @@ class SearchHelper() {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             index = text.indexOf(query, startIndex = index + query.length, ignoreCase = true)
+            count++;
         }
+
+        _noOfSearchMatches.value = count
     }
 
     fun jumpToNextMatch(editText: EditText?, query: String, forward: Boolean) {
@@ -252,8 +269,22 @@ class SearchHelper() {
         val cursor = editText.selectionStart
 
         val nextIndex = if (forward) {
+            _currentSearchMatch.update {
+                if (_noOfSearchMatches.value >= (it + 1)) {
+                    it + 1
+                } else {
+                    it
+                }
+            }
             text.indexOf(query, startIndex = cursor + 1, ignoreCase = true)
         } else {
+            _currentSearchMatch.update {
+                if ((it - 1 >= 0)) {
+                    it - 1
+                } else {
+                    it
+                }
+            }
             text.lastIndexOf(query, startIndex = cursor - 1, ignoreCase = true)
         }
 
