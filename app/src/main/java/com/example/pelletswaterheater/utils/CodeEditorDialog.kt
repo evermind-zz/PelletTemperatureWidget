@@ -164,7 +164,7 @@ fun CodeEditorDialog(
     }
 }
 
-class SearchHelper() {
+class SearchHelper {
 
     private val _noOfSearchMatches = MutableStateFlow<Int>(0)
     val noOfSearchMatches: StateFlow<Int> = _noOfSearchMatches.asStateFlow()
