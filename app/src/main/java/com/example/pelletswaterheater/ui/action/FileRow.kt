@@ -1,5 +1,10 @@
 package com.example.pelletswaterheater.ui.action
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,7 +45,7 @@ fun FileRow(
     filename: String,
     actions: List<FileRowAction>,
     modifier: Modifier = Modifier,
-    isDefault: Boolean = false
+    isDefault: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -55,7 +60,12 @@ fun FileRow(
             .fillMaxWidth()
             .background(backgroundColor)
     ) {
-        if (isDefault) {
+        // Animated label
+        AnimatedVisibility(
+            visible = isDefault,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { -20 }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { -20 })
+        ) {
             DefaultLabel()
         }
 
@@ -103,11 +113,17 @@ fun FileRow(
 
 @Composable
 private fun DefaultLabel() {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(
+        modifier = Modifier
+            .padding(start = 2.dp, top = 2.dp, bottom = 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             imageVector = Icons.Default.Check,
             contentDescription = "Default",
-            modifier = Modifier.size(12.dp)
+            modifier = Modifier.size(12.dp),
+            tint = MaterialTheme.colorScheme.primary
         )
         Text(
             text = "Default",
