@@ -1,6 +1,7 @@
 package com.example.pelletswaterheater.ui.action
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -49,11 +50,14 @@ fun FileRow(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val backgroundColor = if (isDefault) {
-        MaterialTheme.colorScheme.surfaceVariant
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isDefault) {
+            MaterialTheme.colorScheme.surfaceVariant
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
+        label = "Background Color Animation"
+    )
 
     Column(
         modifier = modifier
