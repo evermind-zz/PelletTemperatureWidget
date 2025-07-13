@@ -46,7 +46,7 @@ fun FileRow(
     filename: String,
     actions: List<FileRowAction>,
     modifier: Modifier = Modifier,
-    isDefault: Boolean = true
+    isDefault: Boolean = false
 ) {
     var expanded by remember { mutableStateOf(false) }
 
