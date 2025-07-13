@@ -72,10 +72,7 @@ fun FileRow(
 
             // Wrap IconButton in a Box aligned to the end to have the
             // DropDownMenu also align to the End aka right side
-            Box(
-                modifier = Modifier.align(Alignment.Top),
-                contentAlignment = Alignment.TopEnd
-            ) {
+            Box(contentAlignment = Alignment.TopEnd) {
                 IconButton(onClick = { expanded = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "More actions")
                 }
