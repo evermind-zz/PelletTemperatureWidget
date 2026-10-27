@@ -27,7 +27,8 @@ fun DonateScreen(
         DonateComponent(
             name = "PayPal",
             isCopyable = false,
-            link = "https://paypal.me/youraccount",
+            // TODO: Replace with actual PayPal.me URL
+            link = "https://paypal.me/YourPayPalAccount",
             address = null
         ),
         DonateComponent(
