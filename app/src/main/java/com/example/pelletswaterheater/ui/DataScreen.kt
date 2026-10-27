@@ -48,7 +48,7 @@ fun DataScreen(
 ) {
     val viewModel: TemperatureViewModelNew = koinInject()
     val settingsViewModel: SettingsViewModel = koinViewModel()
-    val values = viewModel.getDataScreenValues().collectAsState(initial = emptyList())
+    val values = viewModel.dataScreenValues.collectAsState(initial = emptyList())
     val groupedValues = values.value.groupBy { it.section }
     val expandedSections = remember { mutableStateMapOf<String, Boolean>() }
 

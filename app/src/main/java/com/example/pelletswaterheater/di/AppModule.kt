@@ -4,6 +4,18 @@ import com.example.pelletswaterheater.NetworkAccess
 import com.example.pelletswaterheater.SettingsViewModel
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.preferences.PreferencesRepositoryImpl
+import com.example.pelletswaterheater.repository.LoggingRepository
+import com.example.pelletswaterheater.repository.LoggingRepositoryImpl
+import com.example.pelletswaterheater.repository.MetadataRepository
+import com.example.pelletswaterheater.repository.MetadataRepositoryImpl
+import com.example.pelletswaterheater.repository.NetworkRepository
+import com.example.pelletswaterheater.repository.NetworkRepositoryImpl
+import com.example.pelletswaterheater.repository.SelectionRepository
+import com.example.pelletswaterheater.repository.SelectionRepositoryImpl
+import com.example.pelletswaterheater.repository.StateRepository
+import com.example.pelletswaterheater.repository.StateRepositoryImpl
+import com.example.pelletswaterheater.repository.ValueRepository
+import com.example.pelletswaterheater.repository.ValueRepositoryImpl
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.AndroidContextProvider
 import com.example.pelletswaterheater.utils.ILogger
@@ -39,12 +51,20 @@ val appModule = module {
     // Provide PreferencesRepository (DataStore)
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
+    // Provide Repositories
+    single<MetadataRepository> { MetadataRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<ValueRepository> { ValueRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<SelectionRepository> { SelectionRepositoryImpl(get(), get(), get()) }
+    single<LoggingRepository> { LoggingRepositoryImpl(get(), get()) }
+    single<NetworkRepository> { NetworkRepositoryImpl(get()) }
+    single<StateRepository> { StateRepositoryImpl(get()) }
+
     //single<SharedPreferences> {
     //    get<Context>().getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
     //}
 
     // Provide TemperatureViewModelNew
-    single { TemperatureViewModelNew(get(), get(), get()) }
+    single { TemperatureViewModelNew(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     single { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }
