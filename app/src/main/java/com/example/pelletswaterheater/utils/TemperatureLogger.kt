@@ -91,10 +91,11 @@ class TemperatureLoggerCsvImpl(
         }
     }
 
-    // eg. new eleemnts are selected to be logged
+    // eg. new elements are selected to be logged
     private fun keyOrderListChanged(keyOrder: List<String>): Boolean {
         val previousHash = TemperatureUtils.getStoredLoggerHeaderHash()
-        val currentHash = keyOrder.hashCode()
+        // Use content-based hash (stable across JVM runs), not List.hashCode()
+        val currentHash = keyOrder.joinToString(",").hashCode()
         if (previousHash != currentHash) {
             val context = contextProvider.getContext()
             TemperatureUtils.setStoredLoggerHeaderHash(context, currentHash)
