@@ -6,6 +6,7 @@ import androidx.core.content.edit
 import com.example.pelletswaterheater.NetworkAccess
 import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.TemperatureWidget
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.utils.ILogger
@@ -43,6 +44,7 @@ import java.io.FileNotFoundException
 class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val logger: ILogger = Logger,
+    private val preferencesRepository: PreferencesRepository,
 
     private val temperatureLogger: TemperatureLogger = TemperatureLoggerCsvImpl(
         contextProvider,
@@ -151,6 +153,24 @@ class TemperatureViewModelNew(
         val showData: Boolean,
         val showSectionName: Boolean
     )
+
+    // JSON helpers for selections persistence
+    private val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+
+    private suspend fun loadSelectionsFromDataStore(): List<Selection> {
+        val jsonStr = preferencesRepository.selectionsJson.first() ?: "[]"
+        return try {
+            json.decodeFromString<List<Selection>>(jsonStr)
+        } catch (e: Exception) {
+            logger.e(TAG, "Failed to decode selections JSON: $e", e)
+            emptyList()
+        }
+    }
+
+    private suspend fun saveSelectionsToDataStore(selections: List<Selection>) {
+        val jsonStr = json.encodeToString(selections)
+        preferencesRepository.setSelectionsJson(jsonStr)
+    }
 
     /**
      * Fetches metadata from the server and saves it to storage.
@@ -388,13 +408,11 @@ class TemperatureViewModelNew(
     }
 
     /**
-     * Updates selections to match current converted values, loading from SharedPreferences.
+     * Updates selections to match current converted values, loading from DataStore.
      */
-    private fun updateSelectionsIfNeeded(
+    private suspend fun updateSelectionsIfNeeded(
         converted: Map<String, ConvertedValue> = _convertedValues.value
     ) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         val currentKeys = converted.keys
         val existingKeys = _selections.value.map { it.key }.toSet()
 
@@ -402,7 +420,6 @@ class TemperatureViewModelNew(
         var availableCurrentKeys: Set<String> = if (currentKeys.isEmpty() && _metadata.value != null) {
             _metadata.value!!
                 .sections.flatMap { (sectionKey, sectionValuesMap) ->
-                    // create a List<String> like "system.L_ambient"
                     sectionValuesMap.keys.map { valuesKey -> "$sectionKey.$valuesKey" }
                 }
                 .toSet()
@@ -410,39 +427,42 @@ class TemperatureViewModelNew(
             currentKeys
         }
         if (availableCurrentKeys != existingKeys) {
+            val storedSelections = loadSelectionsFromDataStore()
+            val storedMap = storedSelections.associateBy { it.key }
             _selections.value = availableCurrentKeys.map { key ->
-                _selections.value.find { it.key == key } ?: Selection(
+                storedMap[key] ?: Selection(
                     key = key,
-                    log = sharedPrefs.getBoolean("log_$key", false),
-                    widget = sharedPrefs.getBoolean("widget_$key", false),
-                    showData = sharedPrefs.getBoolean("showData_$key", true),
-                    showSectionName = sharedPrefs.getBoolean("showSectionName_$key", false)
+                    log = false,
+                    widget = false,
+                    showData = true,
+                    showSectionName = false
                 )
             }
         }
     }
 
     /**
-     * Loads checkbox selections from SharedPreferences.
+     * Loads checkbox selections from DataStore.
      *
      * @return List of [Selection] objects for all current values.
      */
-    fun loadSelections(): List<Selection> {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
+    suspend fun loadSelections(): List<Selection> {
+        val storedSelections = loadSelectionsFromDataStore()
+        val storedMap = storedSelections.associateBy { it.key }
         return _convertedValues.value.keys.map { key ->
-            Selection(
+            storedMap[key] ?: Selection(
                 key = key,
-                log = sharedPrefs.getBoolean("log_$key", false),
-                widget = sharedPrefs.getBoolean("widget_$key", false),
-                showData = sharedPrefs.getBoolean("showData_$key", true),
-                showSectionName = sharedPrefs.getBoolean("showSectionName_$key", false)
+                log = false,
+                widget = false,
+                showData = true,
+                showSectionName = false
             )
         }
     }
 
     /**
-     * Updates a single selection for a specific key.
+     * Updates a single selection for a specific key (legacy method using SharedPreferences).
+     * Kept for backward compatibility - use updateSelection instead.
      *
      * @param key The value key to update.
      * @param log Whether to log the value (optional).
@@ -457,8 +477,6 @@ class TemperatureViewModelNew(
         showData: Boolean? = null,
         showSectionName: Boolean? = null
     ) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         _selections.value = _selections.value.map { sel ->
             if (sel.key == key) {
                 val newSel = sel.copy(
@@ -467,12 +485,8 @@ class TemperatureViewModelNew(
                     showData = showData ?: sel.showData,
                     showSectionName = showSectionName ?: sel.showSectionName
                 )
-                sharedPrefs.edit {
-                    putBoolean("log_$key", newSel.log)
-                    putBoolean("widget_$key", newSel.widget)
-                    putBoolean("showData_$key", newSel.showData)
-                    putBoolean("showSectionName_$key", newSel.showSectionName)
-                }
+                // Persist to DataStore
+                viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
                 newSel
             } else sel
         }
@@ -495,7 +509,7 @@ class TemperatureViewModelNew(
         showSectionName: Boolean? = null
     ) {
         // 1) Atomically update _selections and capture the new Selection if it changed
-        var changedItem: Selection? = null          // will stay null if nothing really changed
+        var changedItem: Selection? = null
 
         _selections.update { list ->
             list.map { sel ->
@@ -506,26 +520,15 @@ class TemperatureViewModelNew(
                         showData = showData ?: sel.showData,
                         showSectionName = showSectionName ?: sel.showSectionName
                     )
-                    if (newSel != sel) changedItem = newSel   // mark that we need to persist
+                    if (newSel != sel) changedItem = newSel
                     newSel
                 } else sel
             }
         }
-        // If at least one property differs, the *new list* is not equal to the old one,
-        // so MutableStateFlow emits automatically.
 
         // 2) Persist only when a change really happened
         changedItem?.let { sel ->
-            val prefs = contextProvider
-                .getContext()
-                .getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-
-            prefs.edit {
-                putBoolean("log_$key",            sel.log)
-                putBoolean("widget_$key",         sel.widget)
-                putBoolean("showData_$key",       sel.showData)
-                putBoolean("showSectionName_$key", sel.showSectionName)
-            }
+            viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
         }
     }
 
@@ -535,13 +538,10 @@ class TemperatureViewModelNew(
      * @param checked Whether to enable logging for all values.
      */
     fun toggleAllLog(checked: Boolean) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         _selections.value = _selections.value.map {
-            val newSel = it.copy(log = checked)
-            sharedPrefs.edit { putBoolean("log_${it.key}", checked) }
-            newSel
+            it.copy(log = checked)
         }
+        viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     /**
@@ -550,13 +550,10 @@ class TemperatureViewModelNew(
      * @param checked Whether to show all values on the widget.
      */
     fun toggleAllWidget(checked: Boolean) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         _selections.value = _selections.value.map {
-            val newSel = it.copy(widget = checked)
-            sharedPrefs.edit { putBoolean("widget_${it.key}", checked) }
-            newSel
+            it.copy(widget = checked)
         }
+        viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     /**
@@ -565,13 +562,10 @@ class TemperatureViewModelNew(
      * @param checked Whether to show all values on DataScreen.
      */
     fun toggleAllShowData(checked: Boolean) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         _selections.value = _selections.value.map {
-            val newSel = it.copy(showData = checked)
-            sharedPrefs.edit { putBoolean("showData_${it.key}", checked) }
-            newSel
+            it.copy(showData = checked)
         }
+        viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     /**
@@ -580,13 +574,10 @@ class TemperatureViewModelNew(
      * @param checked Whether to show section and name for all values in UI.
      */
     fun toggleAllSectionName(checked: Boolean) {
-        val context = contextProvider.getContext()
-        val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
         _selections.value = _selections.value.map {
-            val newSel = it.copy(showSectionName = checked)
-            sharedPrefs.edit { putBoolean("showSectionName_${it.key}", checked) }
-            newSel
+            it.copy(showSectionName = checked)
         }
+        viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     /**

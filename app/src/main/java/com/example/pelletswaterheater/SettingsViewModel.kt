@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.pelletswaterheater.service.LoggingService
 import com.example.pelletswaterheater.ui.misc.UiEvent
 import com.example.pelletswaterheater.ui.misc.UiState
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.NetworkFingerprint
@@ -39,6 +40,7 @@ class SettingsViewModel(
     private val dataRepository: TemperatureViewModelNew,
     private val nnetworkFingerprint: NetworkFingerprint = NetworkFingerprint,
     private val okHttpClient: OkHttpClient = OkHttpClient(),
+    private val preferencesRepository: PreferencesRepository = PreferencesRepositoryImpl(contextProvider.getContext()),
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) : ViewModel() {
 
@@ -347,8 +349,7 @@ class SettingsViewModel(
             _networkFingerprint.value = fingerprint
             logger.d(TAG, "Gateway fingerprint: $fingerprint")
             fingerprint?.let {
-                val prefs = contextProvider.getContext().getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-                prefs.edit().putString("gateway_fingerprint", it).apply()
+                viewModelScope.launch { preferencesRepository.setGatewayFingerprint(it) }
             }
         }
     }

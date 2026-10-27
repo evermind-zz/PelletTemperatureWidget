@@ -1,11 +1,8 @@
 package com.example.pelletswaterheater
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.ui.graphics.Color
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -18,6 +15,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew.ConvertedValueWrapper
 import java.net.URL
@@ -26,13 +24,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 object Settings {
     const val KEY_METADATA_DEFAULT_FILE = "key_metadata_default_file"
     const val METADATA_DEFAULT_FILE = "metadata_en.json"
 }
 
-object TemperatureUtils {
+object TemperatureUtils : KoinComponent {
     private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
     private const val ONETIME_WORK_NAME = "onetime_temperature_update"
     const val WHICH_WORKER = "which_worker"
@@ -40,6 +41,7 @@ object TemperatureUtils {
     private const val TAG = "TemperatureUtils"
     var appContext: Context? = null // Set in Application or MainActivity
 
+    private val preferencesRepository: PreferencesRepository by inject()
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -73,56 +75,43 @@ object TemperatureUtils {
     fun formattedState(state: String?) =
         "State: $state"
 
-    fun getSharedPrefs(context: Context): SharedPreferences {
-        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-        return EncryptedSharedPreferences.create(
-            "secure_prefs",
-            masterKeyAlias,
-            context,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    }
-
+    // Synchronous getters for backward compatibility (blocking)
     fun getStoredUrl(): String {
-        return appContext?.let { getSharedPrefs(it).getString("server_url", null) }
-            ?: SettingsViewModel.DEFAULT_SERVER_URL
+        return runBlocking { preferencesRepository.serverUrl.first() } ?: SettingsViewModel.DEFAULT_SERVER_URL
     }
 
     fun getStoredLoggerHeaderHash(): Int {
-        return appContext?.let { getSharedPrefs(it).getInt("storedOrderHash", -1) } ?: -1
+        return runBlocking { preferencesRepository.storedOrderHash.first() } ?: -1
     }
 
     fun setStoredLoggerHeaderHash(context: Context, hash: Int) {
-        with(getSharedPrefs(context).edit()) {
-            putInt("storedOrderHash", hash)
-            apply()
-        }
+        runBlocking { preferencesRepository.setStoredOrderHash(hash) }
     }
 
     fun getStoredWidgetSize(context: Context, dimension: String): String? {
-        return getSharedPrefs(context).getString("widget_$dimension", null)
+        return when (dimension) {
+            "width" -> runBlocking { preferencesRepository.widgetWidth.first() }
+            "height" -> runBlocking { preferencesRepository.widgetHeight.first() }
+            else -> null
+        }
     }
 
     fun getStoredBackgroundColor(context: Context): Color {
-        val colorHex =
-            getSharedPrefs(context).getString("background_color", "FFF3E5F5") // Default purple
-        return if (colorHex == "TRANSPARENT") Color.Transparent else Color(
-            colorHex?.toLong(16) ?: 0xFFF3E5F5
-        )
+        val colorHex = runBlocking { preferencesRepository.backgroundColor.first() } ?: "FFF3E5F5"
+        return if (colorHex == "TRANSPARENT") Color.Transparent else Color(colorHex.toLong(16))
     }
 
     fun getStoredBackgroundColorHex(context: Context): String? {
-        return getSharedPrefs(context).getString("background_color", "FFF3E5F5") // Default purple
+        return runBlocking { preferencesRepository.backgroundColor.first() }
     }
 
     fun getStoredTextColor(context: Context): Color {
-        val colorHex = getSharedPrefs(context).getString("text_color", "FF000000") // Default black
-        return Color(colorHex?.toLong(16) ?: 0xFF000000)
+        val colorHex = runBlocking { preferencesRepository.textColor.first() } ?: "FF000000"
+        return Color(colorHex.toLong(16))
     }
 
     fun getStoredTextColorHex(context: Context): String? {
-        return getSharedPrefs(context).getString("text_color", "FF000000") // Default black
+        return runBlocking { preferencesRepository.textColor.first() }
     }
 
     fun saveSettings(
@@ -133,17 +122,9 @@ object TemperatureUtils {
         backgroundColor: String,
         textColor: String
     ) {
-        val previousUrl = getStoredUrl()
-        with(getSharedPrefs(context).edit()) {
-            putString("server_url", url)
-            putString("widget_width", width)
-            putString("widget_height", height)
-            putString("background_color", backgroundColor)
-            putString("text_color", textColor)
-            apply()
-        }
+        val urlChanged = runBlocking { preferencesRepository.updateAllSettings(url, width, height, backgroundColor, textColor) }
         // Cancel and reschedule workers on URL change
-        if (previousUrl != url) {
+        if (urlChanged) {
             WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG)
             schedulePeriodicTemperatureUpdate()
             forceTemperatureUpdate()
@@ -237,45 +218,10 @@ object TemperatureUtils {
     }
 
     fun setCurrentMetadataFile(string: String) {
-            putPref(Settings.KEY_METADATA_DEFAULT_FILE, Settings.METADATA_DEFAULT_FILE)
+        runBlocking { preferencesRepository.setMetadataDefaultFile(Settings.METADATA_DEFAULT_FILE) }
     }
 
-    fun getCurrentMetadataFile() : String {
-        return getPref(Settings.KEY_METADATA_DEFAULT_FILE, Settings.METADATA_DEFAULT_FILE)
+    fun getCurrentMetadataFile(): String {
+        return runBlocking { preferencesRepository.metadataDefaultFile.first() } ?: Settings.METADATA_DEFAULT_FILE
     }
-
-    inline fun <reified T> getPref(key: String, default: T): T {
-        val sharedPrefs = getSharedPrefs(appContext!!)
-        return sharedPrefs.run {
-            when (T::class) {
-                String::class -> getString(key, default as? String) as T
-                Int::class -> getInt(key, default as? Int ?: -1) as T
-                Boolean::class -> getBoolean(key, default as? Boolean ?: false) as T
-                Float::class -> getFloat(key, default as? Float ?: -1f) as T
-                Long::class -> getLong(key, default as? Long ?: -1L) as T
-                else -> throw IllegalArgumentException("Unsupported type")
-            }
-        }
-    }
-
-    inline fun <reified T> putPref(key: String, value: T) {
-        val editor = getSharedPrefs(appContext!!).edit()
-        editor.apply {
-            when (T::class) {
-                String::class -> putString(key, value as String)
-                Int::class -> putInt(key, value as Int)
-                Boolean::class -> putBoolean(key, value as Boolean)
-                Float::class -> putFloat(key, value as Float)
-                Long::class -> putLong(key, value as Long)
-                Set::class -> {
-                    @Suppress("UNCHECKED_CAST")
-                    editor.putStringSet(key, value as? Set<String>)
-                }
-
-                else -> throw IllegalArgumentException("Unsupported type: ${T::class}")
-            }
-        }.apply()
-    }
-
-
 }
