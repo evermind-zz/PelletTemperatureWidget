@@ -10,9 +10,12 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 import java.io.File
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -119,7 +122,7 @@ class TemperatureLoggerTest {
     }
 
     fun testLogValuesAppendsToSingleCsvRowHelper(testData: TestData) {
-        logger.logValues(testData.values, testData.keyOrder, testData.timestamp)
+        logger.logValues(testData.values, testData.keyOrder, isoTimestampToMillis(testData.timestamp))
 
         val logDir = File(tempDir, "logs")
         assertTrue(logDir.exists(), "Log directory should exist")
@@ -153,6 +156,19 @@ class TemperatureLoggerTest {
             "Data row should be logged"
         )
     }
+/**
+ * Parses an ISO‑8601 UTC timestamp of the form
+ * "yyyy-MM-dd'T'HH:mm:ss'Z'" and returns epoch‑milliseconds.
+ *
+ * @throws ParseException if the string is not in the expected format.
+ */
+@Throws(java.text.ParseException::class)
+fun isoTimestampToMillis(iso: String): Long {
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    return sdf.parse(iso)?.time
+        ?: throw IllegalArgumentException("Unable to parse timestamp: $iso")
+}
 
     @Test
     fun testLogValuesHandlesMissingFields() = runTest {
@@ -171,7 +187,7 @@ class TemperatureLoggerTest {
             "hk1.L_roomtemp_act"
         )
 
-        logger.logValues(values, keyOrder, timestamp)
+        logger.logValues(values, keyOrder, isoTimestampToMillis(timestamp))
 
         val logDir = File(tempDir, "logs")
         val logFiles = logDir.listFiles()?.filter { it.name.endsWith(".csv") }
@@ -195,7 +211,7 @@ class TemperatureLoggerTest {
         val keyOrder = listOf("system.L_large")
 
         // Log enough data to exceed 5MB
-        repeat(6000) { logger.logValues(values, keyOrder, timestamp) }
+        repeat(6000) { logger.logValues(values, keyOrder, isoTimestampToMillis(timestamp)) }
 
         val logDir = File(tempDir, "logs")
         val logFiles = logDir.listFiles()?.filter { it.name.endsWith(".csv") }

@@ -71,6 +71,10 @@ def write_file(output_path, code):
 def parse_xai_artifacts(data):
     # Use your existing <xaiArtifact> parsing logic (note you had a small typo in the closing tag)
     pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)</xArtifact>'
+    #pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)\(</xArtifact>|```$'
+    #pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)(?:</xArtifact>|```$)'
+    #pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>(.*?)\s*(?:</xArtifact>|```)'  # ← no $!
+    #pattern = r'<xaiArtifact[^>]*title="([^"]+)"[^>]*>\s*(?:```(?:\w+)?\n)?(.*?)(?:```|</xArtifact>)'
     return re.findall(pattern, data, re.DOTALL)
 
 def parse_hash_blocks(data):
@@ -137,7 +141,9 @@ def main():
     if not artifact_blocks:
         print("[WARNING] No <xaiArtifact> entries found in the input file.")
 
+    #print(artifact_blocks)
     for title, content in artifact_blocks:
+        #print(content)
         code_match = re.search(r'```.*?\n(.*?)```', content, re.DOTALL)
         if not code_match:
             print(f"[!] No code block found in artifact: '{title}'. Skipping.")

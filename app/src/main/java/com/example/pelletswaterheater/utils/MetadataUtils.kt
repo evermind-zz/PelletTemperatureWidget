@@ -2,6 +2,7 @@ package com.example.pelletswaterheater.utils
 
 import android.content.Context
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -12,29 +13,24 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.put
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.serializersModuleOf
 
 /**
- * Represents JSON metadata with dynamic sections and an optional error field.
- * Uses a custom serializer to handle root-level sections (e.g., "system", "hk1").
+ * Represents either a structured field or a simple string label.
  */
-@Serializable(with = MetadataJsonSerializer::class)
-data class MetadataJson(
-    val sections: Map<String, Map<String, MetadataField>> = emptyMap(),
-    val error: String? = null
-)
+@Serializable
+sealed class MetadataEntry
 
 /**
  * Represents a metadata field with value and optional attributes like unit, factor, etc.
  */
 @Serializable
+@SerialName("field")
 data class MetadataField(
+    @SerialName("val")
     val value: String,
     val unit: String? = null,
     val factor: Double? = null,
@@ -44,70 +40,94 @@ data class MetadataField(
     val min: String? = null,
     val max: String? = null,
     val decimals: Int? = null
-)
+) : MetadataEntry()
 
 /**
- * Custom serializer for [MetadataJson] to handle JSON with root-level sections.
- * Deserializes dynamic keys (e.g., "system", "hk1") as sections and "error" as a field.
- * Serializes sections as root-level keys and includes "error" if present.
+ * Represents a simple metadata label (plain string).
  */
+@Serializable
+@SerialName("label")
+data class MetadataLabel(val label: String) : MetadataEntry()
+
+/**
+ * Represents JSON metadata with dynamic sections and an optional error field.
+ * Uses a custom serializer to handle root-level sections (e.g., "system", "hk1").
+ */
+@Serializable(with = MetadataJsonSerializer::class)
+data class MetadataJson(
+    val sections: Map<String, Map<String, MetadataEntry>> = emptyMap(),
+    val error: String? = null
+)
+
 object MetadataJsonSerializer : KSerializer<MetadataJson> {
+    private val serializerClass = MetadataJsonSerializer::class.java.simpleName
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("MetadataJson")
 
-    // Custom serializer needed because JSON has no root object; sections (e.g., "system", "hk1") are top-level keys.
     override fun serialize(encoder: Encoder, value: MetadataJson) {
-        require(encoder is JsonEncoder) { "MetadataJsonSerializer requires JsonEncoder" }
+        require(encoder is JsonEncoder) { "$serializerClass requires JsonEncoder" }
         val jsonObject = buildJsonObject {
             value.sections.forEach { (section, fields) ->
                 put(
                     section,
                     encoder.json.encodeToJsonElement(
-                        MapSerializer(String.serializer(), MetadataField.serializer()),
-                        fields
+                        MapSerializer(
+                            String.serializer(),
+                            MetadataEntry.serializer()
+                        ), fields
                     )
                 )
             }
-            value.error?.let { put("error", it) }
+            value.error?.let { put("error", JsonPrimitive(it)) }
         }
         encoder.encodeJsonElement(jsonObject)
     }
 
     override fun deserialize(decoder: Decoder): MetadataJson {
-        require(decoder is JsonDecoder) { "MetadataJsonSerializer requires JsonDecoder" }
+        require(decoder is JsonDecoder) { "$serializerClass requires JsonDecoder" }
         val jsonObject = decoder.decodeJsonElement().jsonObject
+
+        val sections = mutableMapOf<String, Map<String, MetadataEntry>>()
         var error: String? = null
-        val sections = mutableMapOf<String, Map<String, MetadataField>>()
 
         // Parse each root-level key; treat non-"error" keys as sections.
-        jsonObject.forEach { (key, value) ->
-            if (key == "error") {
-                error = value.jsonPrimitive.contentOrNull
-            } else {
-                try {
-                    sections[key] = decoder.json.decodeFromJsonElement(
-                        MapSerializer(String.serializer(), MetadataField.serializer()),
-                        value
-                    )
-                } catch (e: Exception) {
-                    Logger.e("MetadataJsonSerializer", "Failed to deserialize section $key: $e", e)
-                }
+        jsonObject.forEach { (sectionKey, sectionValue) ->
+            if (sectionKey == "error") {
+                // TODO Better handling if error becomes structured in the future
+                error = sectionValue.toString()
+                //error = sectionValue.jsonPrimitive.contentOrNull ?: sectionValue.toString()
+                return@forEach
             }
+
+            val fieldMap = mutableMapOf<String, MetadataEntry>()
+
+            sectionValue.jsonObject.forEach { (fieldKey, fieldValue) ->
+                val entry: MetadataEntry = try {
+                    if (fieldValue is JsonPrimitive && fieldValue.isString) {
+                        MetadataLabel(fieldValue.content)
+                    } else {
+                        decoder.json.decodeFromJsonElement(MetadataField.serializer(), fieldValue)
+                    }
+                } catch (e: Exception) {
+                    Logger.e(serializerClass, "Failed to parse entry $sectionKey.$fieldKey", e)
+                    return@forEach
+                }
+                fieldMap[fieldKey] = entry
+            }
+
+            sections[sectionKey] = fieldMap
         }
 
-        return MetadataJson(sections, error)
+        return MetadataJson(sections = sections, error = error)
     }
 }
 
-/**
- * Utility object for parsing, saving, and merging metadata JSON.
- */
 object MetadataUtils {
     private val TAG = MetadataUtils::class.java.simpleName
     private const val METADATA_FILE = "metadata.json"
     private val json = Json {
         ignoreUnknownKeys = true
         serializersModule = SerializersModule {
-            serializersModuleOf(MapSerializer(String.serializer(), MetadataField.serializer()))
+            // Not strictly needed now, since we're using @Serializable on MetadataEntry
         }
     }
 
@@ -186,28 +206,49 @@ object MetadataUtils {
         if (user == null) return server ?: MetadataJson()
         if (server == null) return user
 
-        val merged = mutableMapOf<String, Map<String, MetadataField>>()
-        val allSections = (server.sections.keys + user.sections.keys).distinct()
-        allSections.forEach { section ->
+        val mergedSections = mutableMapOf<String, Map<String, MetadataEntry>>()
+        val allSectionNames = (server.sections.keys + user.sections.keys).distinct()
+
+        for (section in allSectionNames) {
             val serverSection = server.sections[section]
             val userSection = user.sections[section]
+
+            val mergedFieldMap = mutableMapOf<String, MetadataEntry>()
+
             if (userSection != null) {
-                val mergedSection = mutableMapOf<String, MetadataField>()
-                userSection.forEach { (key, value) ->
-                    mergedSection[key] = value
-                }
+                // Copy all user fields (overwrite)
+                mergedFieldMap.putAll(userSection)
+
+                // Optionally warn about dropped server fields
                 serverSection?.forEach { (key, _) ->
-                    if (!mergedSection.containsKey(key)) {
+                    if (!mergedFieldMap.containsKey(key)) {
                         Logger.w(TAG, "Dropped unmapped field: $section.$key")
                     }
                 }
-                if (mergedSection.isNotEmpty()) {
-                    merged[section] = mergedSection
+
+                if (mergedFieldMap.isNotEmpty()) {
+                    mergedSections[section] = mergedFieldMap
                 }
             } else if (serverSection != null) {
-                merged[section] = serverSection
+                mergedSections[section] = serverSection
             }
         }
-        return MetadataJson(sections = merged, error = server.error ?: user.error)
+
+        return MetadataJson(
+            sections = mergedSections,
+            error = server.error ?: user.error
+        )
+    }
+
+    /**
+     * Parses server data (value-focused) JSON into [DataValuesJson].
+     */
+    fun parseDataValuesJson(jsonString: String): DataValuesJson? {
+        return try {
+            json.decodeFromString<DataValuesJson>(jsonString)
+        } catch (e: Exception) {
+            Logger.e(TAG, "Data JSON parse error: $e", e)
+            null
+        }
     }
 }

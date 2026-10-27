@@ -7,6 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 
+sealed class UiEvent {
+    data class ShowSnackbar(val message: String) : UiEvent()
+}
+
+data class UiState(
+    val input: String = "",
+    val isError: Boolean = false,
+    val canSubmit: Boolean = false,
+)
 @Composable
 fun combinePadding(innerPadding: PaddingValues, dp: Dp): PaddingValues {
     val combinedPadding = PaddingValues(

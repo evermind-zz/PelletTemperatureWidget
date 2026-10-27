@@ -20,35 +20,59 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.pelletswaterheater.SettingsViewModel
 import com.example.pelletswaterheater.TemperatureUtils
+import com.example.pelletswaterheater.ui.misc.UiEvent
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DataScreen(
+    snackbarHostState: SnackbarHostState,
     showTestButton: Boolean = true // Pass true to show the test button
 ) {
-    val viewModel: TemperatureViewModelNew by inject(TemperatureViewModelNew::class.java)
+    val viewModel: TemperatureViewModelNew = koinInject()
+    val settingsViewModel: SettingsViewModel = koinViewModel()
     val values = viewModel.getDataScreenValues().collectAsState(initial = emptyList())
     val groupedValues = values.value.groupBy { it.section }
     val expandedSections = remember { mutableStateMapOf<String, Boolean>() }
 
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        settingsViewModel.initialize(context)
+
+        // Collect the event and show snackbar
+        settingsViewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 12.dp)
     ) {
+        StatsBarWrapper(viewModel)
         // Scrollable content
         LazyColumn(
             modifier = Modifier
@@ -127,7 +151,6 @@ fun DataScreen(
         ) {
             Text("Refresh")
         }
-
         // Optional TestData button
         if (showTestButton) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -138,5 +161,11 @@ fun DataScreen(
                 Text("TestData")
             }
         }
+
+        LoggingSwitchSection(
+            settingsViewModel,
+            snackbarHostState,
+        )
     }
 }
+

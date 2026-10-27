@@ -27,6 +27,13 @@ interface ContextProvider {
      * @return The application context.
      */
     fun getContext(): Context
+
+    /**
+     * @filename relative to matadata's dir the filename of the current metadata
+     *
+     * @return the content of the current metadata
+     */
+    fun getMetadata(filename: String): String?
 }
 
 /**
@@ -58,4 +65,18 @@ class AndroidContextProvider(private val context: Context) : ContextProvider {
     }
 
     override fun getContext(): Context = context
+
+    override fun getMetadata(filename: String): String? {
+        val metadataFile = File(context.filesDir, "metadata/${filename}")
+        return try {
+            if (metadataFile.exists()) {
+                metadataFile.readText()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Logger.e(TAG, "Cached metadata load error: $e", e)
+            null
+        }
+    }
 }

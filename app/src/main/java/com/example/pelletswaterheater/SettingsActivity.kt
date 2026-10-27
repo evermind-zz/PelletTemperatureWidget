@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import org.koin.android.ext.android.inject
 
 class SettingsActivity : ComponentActivity() {
-    private val viewModel: SettingsViewModel by viewModels()
+    private val viewModel: SettingsViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,29 +32,25 @@ class SettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SettingsScreen(viewModel)
+                    SettingsScreener(viewModel)
                 }
             }
         }
     }
-
-    companion object {
-        val DEFAULT_SERVER_URL: String = "http://192.168.178.4:4321/<PASSWORD>/all"
-    }
 }
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreener(settingsViewModel: SettingsViewModel) {
     val context = LocalContext.current
-    val serverUrl by viewModel.serverUrl.collectAsState()
-    val widgetWidth by viewModel.widgetWidth.collectAsState()
-    val widgetHeight by viewModel.widgetHeight.collectAsState()
-    val backgroundColor by viewModel.backgroundColor.collectAsState()
-    val textColor by viewModel.textColor.collectAsState()
-    val backgroundColorSelection by viewModel.backgroundColorSelection.collectAsState()
-    val textColorSelection by viewModel.textColorSelection.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val testResult by viewModel.testResult.collectAsState()
+    val serverUrl by settingsViewModel.serverUrl.collectAsState()
+    val widgetWidth by settingsViewModel.widgetWidth.collectAsState()
+    val widgetHeight by settingsViewModel.widgetHeight.collectAsState()
+    val backgroundColor by settingsViewModel.backgroundColor.collectAsState()
+    val textColor by settingsViewModel.textColor.collectAsState()
+    val backgroundColorSelection by settingsViewModel.backgroundColorSelection.collectAsState()
+    val textColorSelection by settingsViewModel.textColorSelection.collectAsState()
+    val errorMessage by settingsViewModel.errorMessage.collectAsState()
+    val testResult by settingsViewModel.testResult.collectAsState()
     val predefinedColors = listOf(
         "Purple" to "FFF3E5F5",
         "White" to "FFFFFFFF",
@@ -63,7 +59,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     )
 
     LaunchedEffect(Unit) {
-        viewModel.initialize(context)
+        settingsViewModel.initialize(context)
     }
 
     Column(
@@ -82,13 +78,13 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         )
         OutlinedTextField(
             value = serverUrl,
-            onValueChange = { viewModel.updateServerUrl(it) },
+            onValueChange = { settingsViewModel.updateServerUrl(it) },
             label = { Text("Server URL") },
             modifier = Modifier.fillMaxWidth(),
             isError = errorMessage != null
         )
         Button(
-            onClick = { viewModel.testServerUrl(context) },
+            onClick = { settingsViewModel.testServerUrl(context) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Test URL")
@@ -103,14 +99,14 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         }
         OutlinedTextField(
             value = widgetWidth,
-            onValueChange = { viewModel.updateWidgetWidth(it) },
+            onValueChange = { settingsViewModel.updateWidgetWidth(it) },
             label = { Text("Widget Width (dp)") },
             modifier = Modifier.fillMaxWidth(),
             isError = errorMessage != null
         )
         OutlinedTextField(
             value = widgetHeight,
-            onValueChange = { viewModel.updateWidgetHeight(it) },
+            onValueChange = { settingsViewModel.updateWidgetHeight(it) },
             label = { Text("Widget Height (dp)") },
             modifier = Modifier.fillMaxWidth(),
             isError = errorMessage != null
@@ -119,12 +115,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         DropdownMenu(
             selectedOption = backgroundColorSelection,
             options = predefinedColors.map { it.first } + "Custom",
-            onOptionSelected = { viewModel.updateBackgroundColorSelection(it) }
+            onOptionSelected = { settingsViewModel.updateBackgroundColorSelection(it) }
         )
         if (backgroundColorSelection == "Custom") {
             OutlinedTextField(
                 value = backgroundColor,
-                onValueChange = { viewModel.updateBackgroundColor(it) },
+                onValueChange = { settingsViewModel.updateBackgroundColor(it) },
                 label = { Text("Background Color (Hex, e.g., FFF3E5F5)") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = errorMessage != null
@@ -134,12 +130,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         DropdownMenu(
             selectedOption = textColorSelection,
             options = predefinedColors.map { it.first }.filter { it != "Transparent" } + "Custom",
-            onOptionSelected = { viewModel.updateTextColorSelection(it) }
+            onOptionSelected = { settingsViewModel.updateTextColorSelection(it) }
         )
         if (textColorSelection == "Custom") {
             OutlinedTextField(
                 value = textColor,
-                onValueChange = { viewModel.updateTextColor(it) },
+                onValueChange = { settingsViewModel.updateTextColor(it) },
                 label = { Text("Text Color (Hex, e.g., FF000000)") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = errorMessage != null
@@ -154,7 +150,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         }
         Button(
             onClick = {
-                if (viewModel.saveSettings(context)) {
+                if (settingsViewModel.saveSettings(context)) {
                     Toast.makeText(context, "Settings saved", Toast.LENGTH_SHORT).show()
                 }
             },

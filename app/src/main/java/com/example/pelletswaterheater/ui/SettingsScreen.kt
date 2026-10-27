@@ -1,10 +1,8 @@
 package com.example.pelletswaterheater.ui
 
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,8 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -32,9 +30,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -48,13 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.example.pelletswaterheater.SettingsViewModel
+import com.example.pelletswaterheater.ui.misc.UiEvent
+import com.example.pelletswaterheater.ui.dialog.CodeEditorDialog
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -78,6 +74,7 @@ fun SettingsScreen(
     val textColorSelection by settingsViewModel.textColorSelection.collectAsState()
     val errorMessage2 by settingsViewModel.errorMessage.collectAsState()
     val testResult by settingsViewModel.testResult.collectAsState()
+    val rawMetadata by settingsViewModel.rawMetadata.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -87,10 +84,11 @@ fun SettingsScreen(
         "Black" to "FF000000",
         "Transparent" to "TRANSPARENT"
     )
-    val isLoggingEnabled by settingsViewModel.isLoggingEnabled.collectAsState()
-    val showBatteryOptimizationDialog by settingsViewModel.showBatteryOptimizationDialog.collectAsState()
     val loggingInterval by settingsViewModel.loggingInterval.collectAsState()
-    var intervalInput by remember { mutableStateOf(loggingInterval.toString()) }
+
+    val uiLoggingIntervalState by settingsViewModel.uiLoggingIntervalState.collectAsState()
+
+    val networkFingerprint by settingsViewModel.networkFingerprint.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -98,6 +96,15 @@ fun SettingsScreen(
 
     LaunchedEffect(Unit) {
         settingsViewModel.initialize(context)
+
+        // Collect the event and show snackbar
+        settingsViewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
     }
 
     Column(
@@ -123,6 +130,7 @@ fun SettingsScreen(
             Button(
                 onClick = {
                     metadataJson = viewModel.getCurrentMetadataJson()
+                    settingsViewModel.getRawMetadata()
                     showEditDialog = true
                 },
                 modifier = Modifier
@@ -171,25 +179,29 @@ fun SettingsScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // SECTION 2: Logging Toggle
+        // SECTION 2: Logging interval + Toggle
         Text("Logging", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            //Column(modifier = Modifier.padding(16.dp)) {
             OutlinedTextField(
-                value = intervalInput,
-                onValueChange = { intervalInput = it },
+                value = uiLoggingIntervalState.input,
+                onValueChange = settingsViewModel::onLoggingIntervalInputChanged,
                 label = { Text("Interval in milliseconds") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = uiLoggingIntervalState.isError,           // turns the border red
+                supportingText = {
+                    if (uiLoggingIntervalState.isError) {
+                        Text("Must be at least ${SettingsViewModel.LOGGING_INTERVAL_MIN_VAL_IN_MS}")
+                    }
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(4.dp)
             )
             Button(
-                onClick = {
-                    val interval = intervalInput.toLongOrNull() ?: 5000L
-                    settingsViewModel.setLoggingInterval(interval)
-                },
+                enabled = uiLoggingIntervalState.canSubmit,
+                onClick = settingsViewModel::onLoggingIntervalSubmit,
                 modifier = Modifier
                     .weight(1f)
                     .padding(4.dp)
@@ -197,23 +209,11 @@ fun SettingsScreen(
                 Text("Set Interval")
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Switch(
-                checked = isLoggingEnabled,
-                onCheckedChange = { settingsViewModel.toggleLogging() }
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(if (isLoggingEnabled) "Logging is ON" else "Logging is OFF")
-        }
 
-        if (showBatteryOptimizationDialog) {
-            ShowBatteryOptimizeDialog(
-                LocalContext.current,
-                settingsViewModel,
-                snackbarHostState,
-                coroutineScope
-            )
-        }
+        LoggingSwitchSection(
+            settingsViewModel,
+            snackbarHostState
+        )
 
         Spacer(Modifier.height(32.dp))
 
@@ -242,6 +242,13 @@ fun SettingsScreen(
                 color = if (it == "Server reachable") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
+        }
+
+        Button(onClick = { settingsViewModel.updateNetworkFingerprint() }) {
+            Text("Update Gateway Fingerprint")
+        }
+        networkFingerprint?.let {
+            Text("Gateway Fingerprint: $it")
         }
 
         Spacer(Modifier.height(24.dp))
@@ -311,100 +318,71 @@ fun SettingsScreen(
 
     // METADATA EDIT DIALOG
     if (showEditDialog) {
-        AlertDialog(
-            onDismissRequest = { showEditDialog = false },
-            title = { Text("Edit Metadata JSON") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = metadataJson,
-                        onValueChange = {
-                            metadataJson = it
-                            editError = null
-                        },
-                        label = { Text("Metadata") },
-                        isError = editError != null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                    editError?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
+        CodeEditorDialog(
+        "Edit Metadata",
+            initialText = rawMetadata ?: "",
+            onDismiss = { showEditDialog = false },
+            onSave = {
+                showEditDialog = false
+                viewModel.saveUserMetadata(it)
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    try {
-                        viewModel.loadUserMetadata(metadataJson)
-                        showEditDialog = false
-                    } catch (e: Exception) {
-                        editError = "Invalid JSON: ${e.message}"
-                    }
-                }) {
-                    Text("Apply")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditDialog = false }) {
-                    Text("Cancel")
-                }
+            onSaveAs = { filename ,saveText ->
+                // handle the filename and save logic
+                Log.d("SaveAs", "Save as $filename with content: $saveText")
+                // Save file etc...
+                showEditDialog = false
             }
         )
+        //AlertDialog(
+        //    onDismissRequest = { showEditDialog = false },
+        //    title = { Text("Edit Metadata JSON") },
+        //    text = {
+        //        Column {
+        //            OutlinedTextField(
+        //                //value = metadataJson,
+        //                value = rawMetadata ?: "",
+        //                onValueChange = {
+        //                    metadataJson = it
+        //                    editError = null
+        //                },
+        //                label = { Text("Metadata") },
+        //                isError = editError != null,
+        //                modifier = Modifier
+        //                    .fillMaxWidth()
+        //                    .height(200.dp)
+        //            )
+        //            editError?.let {
+        //                Text(
+        //                    text = it,
+        //                    color = MaterialTheme.colorScheme.error,
+        //                    style = MaterialTheme.typography.bodySmall
+        //                )
+        //            }
+        //        }
+        //    },
+        //    confirmButton = {
+        //        TextButton(onClick = {
+        //            try {
+        //                viewModel.loadUserMetadata(metadataJson)
+        //                showEditDialog = false
+        //            } catch (e: Exception) {
+        //                editError = "Invalid JSON: ${e.message}"
+        //            }
+        //        }) {
+        //            Text("Apply")
+        //        }
+        //    },
+        //    dismissButton = {
+        //        TextButton(onClick = { showEditDialog = false }) {
+        //            Text("Cancel")
+        //        }
+        //    }
+        //)
     }
 }
 
 @Composable
-private fun ShowBatteryOptimizeDialog(
-    context: Context,
-    settingsViewModel: SettingsViewModel,
-    snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope
-) {
-    AlertDialog(
-        onDismissRequest = { settingsViewModel.hideBatteryOptimizationDialog() },
-        title = { Text("Disable Battery Optimization") },
-        text = {
-            Text(
-                "To ensure reliable logging, please disable battery optimization for this app. " +
-                        "Android may kill the logging service if optimization is enabled."
-            )
-        },
-        confirmButton = {
-            Button(onClick = {
-                settingsViewModel.onBatteryOptimizationDialogConfirmed(true)
-                try {
-                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                    ContextCompat.startActivity(context, intent, null)
-                } catch (e: ActivityNotFoundException) {
-                    // Show snackbar if system blocks or intent fails
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Could not open battery optimization settings. Please open it manually.",
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-            }) {
-                Text("Open Settings")
-            }
-        },
-        dismissButton = {
-            Button(onClick = { settingsViewModel.onBatteryOptimizationDialogConfirmed(false) }) {
-                Text("Continue Anyway")
-            }
-        }
-    )
-}
-
-@Composable
-private fun createManagedLauncher(
+public fun createManagedLauncher(
     context: Context,
     viewModel: TemperatureViewModelNew
 ): ManagedActivityResultLauncher<String, Uri?> {

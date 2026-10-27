@@ -24,7 +24,7 @@ interface TemperatureLogger {
      * @param keyOrder List of keys in server order for consistent column ordering.
      * @param timestamp The batch timestamp (ISO 8601 format, second-level). Only used for testing, set internally otherwise.
      */
-    fun logValues(values: Map<String, ConvertedValue>, keyOrder: List<String>, timestamp: String? = null)
+    fun logValues(values: Map<String, ConvertedValue>, keyOrder: List<String>, timestamp: Long)
 
     /**
      * Retrieves the URI of the latest log file for sharing.
@@ -64,10 +64,10 @@ class TemperatureLoggerCsvImpl(
     override fun logValues(
         values: Map<String, ConvertedValue>,
         keyOrder: List<String>,
-        timestamp: String?
+        timestamp: Long
     ) {
         try {
-            val actualTimestamp = timestamp ?: isoTimestamp()
+            val actualTimestamp = isoTimestamp(timestamp)
             val context = contextProvider.getContext()
             val logDir = File(context.filesDir, logDirName)
             if (!logDir.exists()) logDir.mkdirs()
@@ -103,10 +103,10 @@ class TemperatureLoggerCsvImpl(
         return false
     }
 
-    fun isoTimestamp(): String {
+    fun isoTimestamp(timestampMillis: Long): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
         sdf.timeZone = TimeZone.getTimeZone("UTC")
-        return sdf.format(Date())
+        return sdf.format(Date(timestampMillis))
     }
 
     override fun getLatestLogUri(): Uri? {

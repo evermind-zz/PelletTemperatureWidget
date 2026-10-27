@@ -2,30 +2,35 @@ package com.example.pelletswaterheater
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import androidx.work.BackoffPolicy
+import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import java.text.DecimalFormat
-import android.util.Log
-import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
 import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew.ConvertedValueWrapper
+import java.net.URL
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import java.net.URL
+
+object Settings {
+    const val KEY_METADATA_DEFAULT_FILE = "key_metadata_default_file"
+    const val METADATA_DEFAULT_FILE = "metadata_en.json"
+}
 
 object TemperatureUtils {
     private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
@@ -34,6 +39,7 @@ object TemperatureUtils {
     private const val WORK_TAG = "temperature_update"
     private const val TAG = "TemperatureUtils"
     var appContext: Context? = null // Set in Application or MainActivity
+
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -47,12 +53,12 @@ object TemperatureUtils {
         }
     }
 
-    fun getLogicalValueWithUnit(convertedValue: ConvertedValue) : String {
+    fun getLogicalValueWithUnit(convertedValue: ConvertedValue): String {
         val displayUnit = convertedValue.unit?.takeIf { it.isNotBlank() } ?: ""
         return "${convertedValue.logical}${if (displayUnit.isNotEmpty()) " $displayUnit" else ""}"
     }
 
-    fun getNameSuffix(value: ConvertedValueWrapper) : String {
+    fun getNameSuffix(value: ConvertedValueWrapper): String {
         val nameSuffix = if (value.showSectionName) {
             "${value.section}.${value.convertedValue.name}"
         } else {
@@ -78,8 +84,20 @@ object TemperatureUtils {
         )
     }
 
-    fun getStoredUrl(context: Context): String {
-        return getSharedPrefs(context).getString("server_url", null) ?: SettingsActivity.DEFAULT_SERVER_URL
+    fun getStoredUrl(): String {
+        return appContext?.let { getSharedPrefs(it).getString("server_url", null) }
+            ?: SettingsViewModel.DEFAULT_SERVER_URL
+    }
+
+    fun getStoredLoggerHeaderHash(): Int {
+        return appContext?.let { getSharedPrefs(it).getInt("storedOrderHash", -1) } ?: -1
+    }
+
+    fun setStoredLoggerHeaderHash(context: Context, hash: Int) {
+        with(getSharedPrefs(context).edit()) {
+            putInt("storedOrderHash", hash)
+            apply()
+        }
     }
 
     fun getStoredWidgetSize(context: Context, dimension: String): String? {
@@ -87,8 +105,11 @@ object TemperatureUtils {
     }
 
     fun getStoredBackgroundColor(context: Context): Color {
-        val colorHex = getSharedPrefs(context).getString("background_color", "FFF3E5F5") // Default purple
-        return if (colorHex == "TRANSPARENT") Color.Transparent else Color(colorHex?.toLong(16) ?: 0xFFF3E5F5)
+        val colorHex =
+            getSharedPrefs(context).getString("background_color", "FFF3E5F5") // Default purple
+        return if (colorHex == "TRANSPARENT") Color.Transparent else Color(
+            colorHex?.toLong(16) ?: 0xFFF3E5F5
+        )
     }
 
     fun getStoredBackgroundColorHex(context: Context): String? {
@@ -112,7 +133,7 @@ object TemperatureUtils {
         backgroundColor: String,
         textColor: String
     ) {
-        val previousUrl = getStoredUrl(context)
+        val previousUrl = getStoredUrl()
         with(getSharedPrefs(context).edit()) {
             putString("server_url", url)
             putString("widget_width", width)
@@ -124,31 +145,47 @@ object TemperatureUtils {
         // Cancel and reschedule workers on URL change
         if (previousUrl != url) {
             WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG)
-            schedulePeriodicTemperatureUpdate(context)
-            forceTemperatureUpdate(context)
+            schedulePeriodicTemperatureUpdate()
+            forceTemperatureUpdate()
         }
     }
 
-    fun schedulePeriodicTemperatureUpdate(context: Context) {
+    fun cancelPeriodicWorker(context: Context = appContext!!) {
         WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
+    }
+
+    fun schedulePeriodicTemperatureUpdate(context: Context = appContext!!) {
+        cancelPeriodicWorker(context)
         enqueueWork<PeriodicWorkRequest>(
             context,
-            configure = { builder -> 
+            configure = { builder ->
                 builder.setRequiresDeviceIdle(false)
                 builder.setRequiresBatteryNotLow(false) // Allow in Doze mode
             },
-            enqueue = { wm, request -> wm.enqueueUniquePeriodicWork(PERIODIC_WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request as PeriodicWorkRequest) },
+            enqueue = { wm, request ->
+                wm.enqueueUniquePeriodicWork(
+                    PERIODIC_WORK_NAME,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    request as PeriodicWorkRequest
+                )
+            },
             logMessage = "Scheduled periodic temperature update (10 min)",
             workerName = PERIODIC_WORK_NAME
         )
     }
 
-    fun forceTemperatureUpdate(context: Context) {
+    fun forceTemperatureUpdate(context: Context = appContext!!) {
         TemperatureWorker.resetBackoffCount()
         enqueueWork<OneTimeWorkRequest>(
             context,
             configure = { /* No additional config needed */ },
-            enqueue = { wm, request -> wm.enqueueUniqueWork(ONETIME_WORK_NAME, ExistingWorkPolicy.REPLACE, request as OneTimeWorkRequest) },
+            enqueue = { wm, request ->
+                wm.enqueueUniqueWork(
+                    ONETIME_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
+                    request as OneTimeWorkRequest
+                )
+            },
             logMessage = "Enqueued force temperature update",
             workerName = ONETIME_WORK_NAME
         )
@@ -176,7 +213,13 @@ object TemperatureUtils {
         configure(constraintsBuilder)
 
         val builder = when (T::class) {
-            PeriodicWorkRequest::class -> PeriodicWorkRequestBuilder<TemperatureWorker>(10, TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+            PeriodicWorkRequest::class -> PeriodicWorkRequestBuilder<TemperatureWorker>(
+                10,
+                TimeUnit.MINUTES,
+                5,
+                TimeUnit.MINUTES
+            )
+
             OneTimeWorkRequest::class -> OneTimeWorkRequestBuilder<TemperatureWorker>()
             else -> throw IllegalArgumentException("Unsupported work request type")
         }
@@ -192,4 +235,47 @@ object TemperatureUtils {
     fun maskPasswordInUrl(url: String): String {
         return url.replace(Regex("(https?://[^/]+/)[^/]+(/.*)"), "$1****$2")
     }
+
+    fun setCurrentMetadataFile(string: String) {
+            putPref(Settings.KEY_METADATA_DEFAULT_FILE, Settings.METADATA_DEFAULT_FILE)
+    }
+
+    fun getCurrentMetadataFile() : String {
+        return getPref(Settings.KEY_METADATA_DEFAULT_FILE, Settings.METADATA_DEFAULT_FILE)
+    }
+
+    inline fun <reified T> getPref(key: String, default: T): T {
+        val sharedPrefs = getSharedPrefs(appContext!!)
+        return sharedPrefs.run {
+            when (T::class) {
+                String::class -> getString(key, default as? String) as T
+                Int::class -> getInt(key, default as? Int ?: -1) as T
+                Boolean::class -> getBoolean(key, default as? Boolean ?: false) as T
+                Float::class -> getFloat(key, default as? Float ?: -1f) as T
+                Long::class -> getLong(key, default as? Long ?: -1L) as T
+                else -> throw IllegalArgumentException("Unsupported type")
+            }
+        }
+    }
+
+    inline fun <reified T> putPref(key: String, value: T) {
+        val editor = getSharedPrefs(appContext!!).edit()
+        editor.apply {
+            when (T::class) {
+                String::class -> putString(key, value as String)
+                Int::class -> putInt(key, value as Int)
+                Boolean::class -> putBoolean(key, value as Boolean)
+                Float::class -> putFloat(key, value as Float)
+                Long::class -> putLong(key, value as Long)
+                Set::class -> {
+                    @Suppress("UNCHECKED_CAST")
+                    editor.putStringSet(key, value as? Set<String>)
+                }
+
+                else -> throw IllegalArgumentException("Unsupported type: ${T::class}")
+            }
+        }.apply()
+    }
+
+
 }

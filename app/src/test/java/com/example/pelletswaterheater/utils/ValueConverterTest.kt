@@ -1,5 +1,6 @@
 package com.example.pelletswaterheater.utils
 
+import com.example.pelletswaterheater.checkJsonThingValue2
 import kotlinx.serialization.json.Json
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -82,9 +83,9 @@ class ValueConverterTest {
         assertNotNull(serverMetadata, "Server metadata should not be null")
         assertNotNull(userMetadata, "User metadata should not be null")
         val merged = MetadataUtils.mergeMetadata(serverMetadata, userMetadata)
-        assertEquals("Außentemperatur", merged.sections["system"]?.get("L_ambient")?.name)
-        assertEquals(2, merged.sections["system"]?.get("L_ambient")?.decimals)
+        assertEquals("Außentemperatur", checkJsonThingValue2(merged, "system", "L_ambient", {it.name}))
+        assertEquals(2, checkJsonThingValue2(merged, "system", "L_ambient", {it.decimals }))
         assertEquals(null, merged.sections["system"]?.get("L_usb_stick")) // Dropped
-        assertEquals("°C", merged.sections["hk1"]?.get("L_room_temp")?.unit) // From server
+        assertEquals("°C", checkJsonThingValue2(merged, "hk1", "L_roomtemp_set", {it.unit})) // From server
     }
 }

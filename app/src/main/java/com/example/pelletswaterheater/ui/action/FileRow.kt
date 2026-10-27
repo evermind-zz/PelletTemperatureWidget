@@ -105,7 +105,7 @@ fun FileRow(
                             enabled = action.enabled,
                             text = { Text(action.label) },
                             leadingIcon = action.icon?.let {
-                                { Icon(imageVector = it, contentDescription = null) }
+                                { Icon(imageVector = it, contentDescription = null, modifier = Modifier.size(18.dp)) }
                             }
                         )
                     }

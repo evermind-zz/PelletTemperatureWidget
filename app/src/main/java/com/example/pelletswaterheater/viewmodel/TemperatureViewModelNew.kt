@@ -1,6 +1,7 @@
 package com.example.pelletswaterheater.viewmodel
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.core.content.edit
 import com.example.pelletswaterheater.NetworkAccess
@@ -25,16 +26,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
-import okhttp3.OkHttpClient
+import java.io.File
 import java.io.FileNotFoundException
 
 /**
@@ -44,17 +43,53 @@ import java.io.FileNotFoundException
  */
 class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
-    private val httpClient: OkHttpClient = OkHttpClient(),
     private val logger: ILogger = Logger,
+
     private val temperatureLogger: TemperatureLogger = TemperatureLoggerCsvImpl(
         contextProvider,
         logger
     ),
     private val networkAccess: NetworkAccess = NetworkAccess(),
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-)  {
+) {
+
+    companion object {
+        private val TAG = TemperatureViewModelNew::class.java.simpleName
+    }
+    class DebugStateFlow<T>(
+        private val delegate: MutableStateFlow<T>,
+        private val tag: String = "DebugStateFlow"
+    ) : MutableStateFlow<T> by delegate {
+
+        /* intercept the property setter */
+        override var value: T
+            get() = delegate.value
+            set(v) {
+                Log.d(tag, "value= called by:\n" + Throwable().stackTraceToString())
+                delegate.value = v
+            }
+
+        /* intercept FlowCollector functions */
+        override fun tryEmit(value: T): Boolean {
+            Log.d(tag, "tryEmit called by:\n" + Throwable().stackTraceToString())
+            return delegate.tryEmit(value)
+        }
+
+        override suspend fun emit(value: T) {
+            Log.d(tag, "emit called by:\n" + Throwable().stackTraceToString())
+            delegate.emit(value)
+        }
+    }
+
+    /* use it only in debug builds
+    private val _convertedValues: MutableStateFlow<ConvertedBatch> =
+        if (BuildConfig.DEBUG) DebugStateFlow(MutableStateFlow(ConvertedBatch()))
+        else MutableStateFlow(ConvertedBatch())
+
+     */
+
+
     private val networkAccessMutex = Mutex()
-    private val TAG = TemperatureViewModelNew::class.java.simpleName
 
     private val _metadata = MutableStateFlow<MetadataJson?>(null)
     /**
@@ -68,41 +103,37 @@ class TemperatureViewModelNew(
      */
     val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues.asStateFlow()
 
-    private val _selections = MutableStateFlow<List<Selection>>(emptyList())
+    private val _selections = DebugStateFlow(MutableStateFlow<List<Selection>>(emptyList()))
     /**
      * Flow of checkbox selections for logging, widget display, DataScreen, and section/name visibility.
      */
     val selections: StateFlow<List<Selection>> = _selections.asStateFlow()
 
-    private val _state = MutableStateFlow<String>("state")
-    private val _error = MutableStateFlow<String>("error")
-    private val _lastTimestamp = MutableStateFlow<String>("timestamp")
+    private val _state = MutableStateFlow<String>("Start")
+    private val _error = MutableStateFlow<String?>(null)
+    private val _lastTimestamp = MutableStateFlow<String>("N/A")
 
-    private val _isLoggingViable = MutableStateFlow<Boolean>(false)
-    val isLoggingViable: StateFlow<Boolean> = _isLoggingViable.asStateFlow()
+    @Serializable
+    data class SystemStats(
+        val lastTimestamp : StateFlow<String>,
+        val state: StateFlow<String>,
+        val error : StateFlow<String?>
+    )
+    val systemStats = SystemStats(_lastTimestamp.asStateFlow(), _state.asStateFlow(), _error.asStateFlow())
 
-    //var loggingIsViable: StateFlow<Boolean> = selections
-    //    .map { list -> list.any {
-    //        println("EMIT HERE this is ${it.log}")
-    //        it.log
-    //    } }
-    //    .stateIn(
-    //        scope = viewModelScope,
-    //        started = SharingStarted.WhileSubscribed(5_000),
-    //        initialValue = false
-    //    )
     val loggingIsViable = selections
         .map { list -> list.any(Selection::log) }
-        .onEach { Log.d("VM", "loggingIsViable -> $it") } // easier to read
+        /* DBG .onEach { Log.d("VM", "loggingIsViable -> $it") } // easier to read */
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val statsMutex = Mutex()
 
     init {
         loadCachedMetadata()
-        viewModelScope.launch {
-            selections.onEach { println("EMIT ${loggingIsViable.value} -> $it") }.collect()
-        }
+        // DBG viewModelScope.launch {
+        // DBG     selections.onEach {
+        // DBG         println("EMIT ${loggingIsViable.value} -> $it") }.collect()
+        // DBG }
 
     }
 
@@ -152,7 +183,7 @@ class TemperatureViewModelNew(
     fun fetchMetadata(url: String = "${TemperatureUtils.getStoredUrl()}?") {  // append ? to get the metadata
         viewModelScope.launch {
             try {
-                val body = networkAccess.getDataFromServer(url, "fetchMetaData()")
+                val body = networkAccess.getDataFromServer(url, "fetchMetadata()")
                 val metadata = MetadataUtils.parseServerJson(body)
                 if (metadata != null) {
                     contextProvider.saveMetadata(body)
@@ -179,14 +210,14 @@ class TemperatureViewModelNew(
      */
     fun fetchValues(url: String, caller: String, doLogging: Boolean = false) : Result<String> {
         viewModelScope.launch {
-            //val body = networkAccess.getDataFromServer(url, caller)
             val result = getDataFromNetworkWithRetry(url, caller)
             if (result.isSuccess) {
                 val body = result.getOrNull()
                 body?.let {
-                    _lastTimestamp.value = TemperatureUtils.formatTimeStamp(System.currentTimeMillis())
-                    parseDataAndUpdateValues(it, doLogging)
-                }
+                    val timestamp = getCurrentTimestamp()
+                    _lastTimestamp.value = TemperatureUtils.formatTimeStamp(timestamp)
+                    parseDataAndUpdateValues(it, timestamp, doLogging)
+                } ?: updateStats("Fetch failed: empty server reply", "Error" )
             }
             TemperatureUtils.appContext?.let {
                 TemperatureWidget().forceUpdateAll(it)
@@ -214,7 +245,6 @@ class TemperatureViewModelNew(
         logger.e(TAG, maskedMessage, RuntimeException(maskedMessage, maskedException))
     }
 
-
     suspend fun getDataFromNetworkWithRetry(url: String, caller: String): Result<String> = networkAccessMutex.withLock {
         val maxAttempts = 3
         repeat(maxAttempts) { attempt ->
@@ -222,20 +252,15 @@ class TemperatureViewModelNew(
                 updateState("Loading...")
                 val body = networkAccess.getDataFromServer(url, caller)
                 logger.d(TAG, "worker=$caller Success: attempt=$attempt")
-                // TODO below should maybe also handled by the viewModel
-                // updateWidget(whichWorker)
                 return Result.success(body)
             } catch (e: Exception) {
                 maskExceptionMessageAndLogIt(e, url, caller, attempt)
                 if (attempt < maxAttempts - 1) delay(5000L) // Wait 5s before retry
-            } finally {
-                //accessTimeMutex.withLock { lastAccessTime = System.currentTimeMillis() }
             }
         }
         updateStats(error = "Failed to fetch temperature after $maxAttempts attempts", state = "Error")
         return Result.failure(Exception("failed to fetch"))
     }
-
 
     fun loadTestDataFromStorage() {
         viewModelScope.launch {
@@ -249,6 +274,7 @@ class TemperatureViewModelNew(
 
     private suspend fun TemperatureViewModelNew.parseDataAndUpdateValues(
         body: String,
+        timestamp: Long = getCurrentTimestamp(),
         doLogging: Boolean = false
     ) {
         val values = MetadataUtils.parseDataValuesJson(body)
@@ -259,13 +285,16 @@ class TemperatureViewModelNew(
                     valsMap["${section}.${jsonName}"] = rawValue
                 }
             }
-            updateValues(valsMap, doLogging)
+            updateValues(valsMap, timestamp, doLogging)
             updateStats(error = null, state = "Success")
-            updateSelectionsIfNeeded()
         } else {
-            logger.e(TAG, "Failed to parse server data values")
+            val errMsg = "Failed to parse server data values"
+            updateStats(errMsg, "parsing failed")
+            logger.e(TAG, errMsg)
         }
     }
+
+    private fun getCurrentTimestamp(): Long = System.currentTimeMillis()
 
     /**
      * Loads user-provided metadata JSON and merges it with existing metadata.
@@ -278,8 +307,7 @@ class TemperatureViewModelNew(
             if (userMetadata != null) {
                 contextProvider.saveMetadata(jsonString)
                 _metadata.value = MetadataUtils.mergeMetadata(_metadata.value, userMetadata)
-                _convertedValues.value = emptyMap()
-                updateSelectionsIfNeeded()
+                wrapUpdateSelectionAndConvertedValuesUpdate(emptyMap())
             } else {
                 logger.e(TAG, "Failed to parse user metadata")
             }
@@ -300,7 +328,7 @@ class TemperatureViewModelNew(
      *
      * @param rawData A map of raw values (e.g., "system.L_ambient" to "219").
      */
-    fun updateValues(rawData: Map<String, String>, doLogging: Boolean = false) {
+    fun updateValues(rawData: Map<String, String>, timestamp: Long = getCurrentTimestamp(), doLogging: Boolean = false) {
         val metadata = _metadata.value ?: return
         val converted = mutableMapOf<String, ConvertedValue>()
         val keyOrder = rawData.keys.toList()
@@ -318,22 +346,37 @@ class TemperatureViewModelNew(
             }
         }
 
+        wrapUpdateSelectionAndConvertedValuesUpdate(converted)
 
-
-        _convertedValues.value = converted
-        updateSelectionsIfNeeded()
         if (doLogging) {
             // Filter converted values to include only those selected for logging
             val logValues = converted.filterKeys { key ->
                 _selections.value.find { it.key == key }?.log ?: false
             }
-            //if (logValues.isEmpty()) {
-            //    _isLoggingViable.value = false
-            //} else {
-            //    _isLoggingViable.value = true
-                temperatureLogger.logValues(logValues, keyOrder.filter { it in logValues })
-            //}
+            temperatureLogger.logValues(logValues, keyOrder.filter { it in logValues }, timestamp)
         }
+    }
+
+    /**
+     * Wrap [updateSelectionsIfNeeded] and [_convertedValues].
+     *
+     * First update [_selections] than set new values to [_convertedValues]
+     * -> as [_convertedValues] depends on [_selections]
+     *
+     * even tough it would be good to call loadSelections() calling on init may fail
+     */
+    private fun wrapUpdateSelectionAndConvertedValuesUpdate(converted: Map<String, ConvertedValue>) {
+        updateSelectionsIfNeeded(converted)
+        _convertedValues.value = converted
+    }
+
+    private fun getCurrentMetadataContent(): String? {
+        val currentMetadataFilename = TemperatureUtils.getCurrentMetadataFile()
+        return contextProvider.getMetadata(currentMetadataFilename)
+    }
+
+    fun getMetadataContent(filename: String): String? {
+        return contextProvider.getMetadata(filename)
     }
 
     /**
@@ -341,7 +384,8 @@ class TemperatureViewModelNew(
      */
     private fun loadCachedMetadata() {
         viewModelScope.launch {
-            val cachedJson = contextProvider.loadCachedMetadata()
+            //val cachedJson = contextProvider.loadCachedMetadata()
+            val cachedJson = getCurrentMetadataContent()
             if (cachedJson != null) {
                 val cached = MetadataUtils.parseServerJson(cachedJson)
                 _metadata.value = cached
@@ -356,13 +400,27 @@ class TemperatureViewModelNew(
     /**
      * Updates selections to match current converted values, loading from SharedPreferences.
      */
-    private fun updateSelectionsIfNeeded() {
+    private fun updateSelectionsIfNeeded(
+        converted: Map<String, ConvertedValue> = _convertedValues.value
+    ) {
         val context = contextProvider.getContext()
         val sharedPrefs = context.getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-        val currentKeys = _convertedValues.value.keys.toList()
+        val currentKeys = converted.keys
         val existingKeys = _selections.value.map { it.key }.toSet()
-        if (currentKeys.toSet() != existingKeys) {
-            _selections.value = currentKeys.map { key ->
+
+        // use the _metadata's inner sections values keys if there are no currentKeys available
+        var availableCurrentKeys: Set<String> = if (currentKeys.isEmpty() && _metadata.value != null) {
+            _metadata.value!!
+                .sections.flatMap { (sectionKey, sectionValuesMap) ->
+                    // create a List<String> like "system.L_ambient"
+                    sectionValuesMap.keys.map { valuesKey -> "$sectionKey.$valuesKey" }
+                }
+                .toSet()
+        } else {
+            currentKeys
+        }
+        if (availableCurrentKeys != existingKeys) {
+            _selections.value = availableCurrentKeys.map { key ->
                 _selections.value.find { it.key == key } ?: Selection(
                     key = key,
                     log = sharedPrefs.getBoolean("log_$key", false),
@@ -481,7 +539,6 @@ class TemperatureViewModelNew(
         }
     }
 
-
     /**
      * Toggles the 'log' selection for all values.
      *
@@ -567,24 +624,6 @@ class TemperatureViewModelNew(
      *
      * @return Flow of filtered values with section and display preferences.
      */
-    //fun getWidgetValuesOld(): WidgetDataWrapper {
-    //    return WidgetDataWrapper((_convertedValues.map { values ->
-    //        values.mapNotNull { (key, value) ->
-    //            val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
-    //            if (selection.widget) {
-    //                ConvertedValueWrapper(
-    //                    convertedValue = value,
-    //                    section = key.substringBeforeLast("."),
-    //                    showSectionName = selection.showSectionName
-    //                )
-    //            } else null
-    //        }
-    //    }),
-    //            state = _state.value,
-    //        error = _error.value,
-    //        timestampSuccess = _lastTimestamp.value
-    //}
-
     fun getWidgetValues(): WidgetDataWrapper {
         val snapshot = _convertedValues.value.mapNotNull { (key, value) ->
             val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
@@ -605,53 +644,30 @@ class TemperatureViewModelNew(
         )
     }
 
+    fun updateError(error: String?) {
+        logger.d(TAG, "Error updated: $error")
+        _error.update { error }
+    }
 
+    fun updateState(state: String) {
+        logger.d(TAG, "State updated: $state")
+        _state.update { state }
+    }
+
+    fun updateStats(error: String?, state: String) {
+        _error.update { error }
+        _state.update { state }
+    }
+
+    /////////// metadata section
+    private val _metadataFiles = MutableStateFlow<List<File>>(emptyList())
     /**
-     * Provides filtered [ConvertedValueWrapper] flow for logging, respecting 'log' selections.
-     *
-     * @return Flow of filtered values with section and display preferences.
+     * Flow of the stored logfiles.
      */
-    fun getLogValues(): StateFlow<List<ConvertedValueWrapper>> {
-        return _convertedValues.map { values ->
-            values.mapNotNull { (key, value) ->
-                val selection = _selections.value.find { it.key == key } ?: return@mapNotNull null
-                if (selection.log) {
-                    ConvertedValueWrapper(
-                        convertedValue = value,
-                        section = key.substringBeforeLast("."),
-                        showSectionName = false,
-                    )
-                } else null
-            }
-        }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, emptyList())
-    }
+    private val metadataFiles: StateFlow<List<File>> = _metadataFiles.asStateFlow()
 
-    suspend fun updateError(error: String?) {
-        Log.d(TAG, "Error updated: $error")
-        //statsMutex.lock {
-            //_error.value = error
-            //updateDisplayTemperature()
-        //}
-        // TODO maybe here we should also trigger updating the widget
-    }
-
-    suspend fun updateState(state: String) {
-        Log.d(TAG, "State updated: $state")
-        //statsMutex.lock {
-            //_state.value = state
-            //updateDisplayTemperature()
-        //}
-        // TODO maybe here we should also trigger updating the widget
-    }
-
-    suspend fun updateStats(error: String?, state: String) {
-        //statsMutex.lock {
-
-        //}
-        // TODO maybe here we should also trigger updating the widget
-    }
     fun getMetadataFileName(): String {
-        return "" // metadataFile?.name ?: "default"
+        return TemperatureUtils.getCurrentMetadataFile()
     }
 
     fun getCurrentMetadataJson(): String {
@@ -669,5 +685,37 @@ class TemperatureViewModelNew(
     fun shareMetadata(context: Context) { /* share intent logic */ }
 
     fun importMetadata(context: Context) { /* file picker logic */ }
+
+    fun getMetadataFiles() : StateFlow<List<File>> {
+        val metadataDir = File(contextProvider.getContext().filesDir, "")
+        _metadataFiles.update {
+            metadataDir.listFiles() { file ->
+                file.isFile && file.extension == "json"
+            } ?.toList() ?: emptyList()
+        }
+        return metadataFiles
+    }
+
+    fun saveUserMetadata(string: kotlin.String) {}
+    fun getMetadataUri(file: java.io.File) : Uri? {
+        return null
+    }
+
+
+    fun deleteMetadataFile(file: File) {
+        val context = contextProvider.getContext()
+        val logDir = File(context.filesDir, "TODO")
+        val target = File(logDir, file.name)
+        if (target.exists()) {
+            target.delete()
+            // updateMetadataFiles()
+        }
+    }
+
+    fun setCurrentMetadata(filename: String) {
+        TemperatureUtils.setCurrentMetadataFile(filename)
+    }
+
+
 
 }

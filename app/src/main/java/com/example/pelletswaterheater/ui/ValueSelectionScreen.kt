@@ -46,8 +46,8 @@ import org.koin.compose.koinInject
 @Composable
 @Preview
 fun ValueSelectionScreen(
-    viewModel: TemperatureViewModelNew = koinInject(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: TemperatureViewModelNew = koinInject()
 ) {
     val values = viewModel.convertedValues.collectAsState(initial = emptyMap())
     val selections = viewModel.selections.collectAsState(initial = emptyList())
@@ -56,8 +56,10 @@ fun ValueSelectionScreen(
 
     Column(modifier = modifier
         .fillMaxSize()
-        .padding(horizontal = 12.dp)) {
+        .padding(horizontal = 12.dp)
+    ) {
 
+        StatsBarWrapper(viewModel)
         // Fixed Global Header (Column Titles + Global Checkboxes + Hint + Divider)
         Column(
             modifier = Modifier
@@ -138,7 +140,9 @@ fun ValueSelectionScreen(
 
         // Scrollable content
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
         ) {
             groupedValues.forEach { (section, entries) ->
 
@@ -220,24 +224,19 @@ fun ValueSelectionScreen(
                 }
             }
 
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            TemperatureUtils.appContext?.let {
-                                TemperatureUtils.forceTemperatureUpdate(it)
-                            }
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Refresh")
-                    }
-                }
+        }
+        Divider(thickness = 1.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = { TemperatureUtils.forceTemperatureUpdate() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Refresh")
             }
         }
     }
