@@ -10,6 +10,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.mozilla.universalchardet.UniversalDetector
 import java.nio.charset.Charset
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 class NetworkAccess(
@@ -23,34 +24,65 @@ class NetworkAccess(
     private val httpClient: OkHttpClient by inject()
     private val networkMutex = Mutex()
     private val lastAccessTime = AtomicLong(0L)
+    private val networkInProgress = AtomicBoolean(false)
 
-    suspend fun getDataFromServer(url: String, caller: String): String {
+    /**
+     * Executes a network call with coordination between Worker and Service.
+     * Returns Result.success(data) if call executed, Result.failure("network busy") if another call is in progress.
+     */
+    suspend fun <T> withNetworkLock(block: () -> T): Result<T> {
+        // Fast path: try to acquire the "network in progress" flag
+        if (!networkInProgress.compareAndSet(false, true)) {
+            Logger.d(TAG, "Network call rejected: another call in progress")
+            return Result.failure(Exception("network busy"))
+        }
+
         // Rate limiting: wait outside the mutex to avoid blocking other callers
         val waitTime = calculateWaitTime()
         if (waitTime > 0) {
-            Logger.d(TAG, "worker=$caller Waiting ${waitTime}ms to respect 3s network access interval")
+            Logger.d(TAG, "Waiting ${waitTime}ms to respect 3s network access interval")
             delay(waitTime)
         }
 
         // Actual network call inside mutex
         return networkMutex.withLock {
             try {
-                Logger.d(TAG, "worker=$caller Requesting now. Thread ${Thread.currentThread().name}")
-                val request = Request.Builder().url(url).build()
-                httpClient.newCall(request).execute().use { response ->
-                    if (response.isSuccessful) {
-                        return@withLock detectAndConvertInputEncodingToUT8(response.body?.bytes())
-                    } else {
-                        throw RuntimeException(response.message)
-                    }
-                }
+                Logger.d(TAG, "Requesting now. Thread ${Thread.currentThread().name}")
+                val result = block()
+                Result.success(result)
             } catch (e: Exception) {
-                Logger.e(TAG, "worker=$caller Network error: ${e.message}", e)
-                throw e
+                Logger.e(TAG, "Network error: ${e.message}", e)
+                Result.failure(e)
             } finally {
                 lastAccessTime.set(System.currentTimeMillis())
+                networkInProgress.set(false)
             }
         }
+    }
+
+    /**
+     * Fetches data from server with coordination, returning Result for graceful error handling.
+     * Returns Result.failure("network busy") if another call is in progress.
+     */
+    suspend fun getDataFromServerResult(url: String, caller: String): Result<String> {
+        return withNetworkLock {
+            val request = Request.Builder().url(url).build()
+            httpClient.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    detectAndConvertInputEncodingToUT8(response.body?.bytes())
+                } else {
+                    throw RuntimeException(response.message)
+                }
+            }
+        }
+    }
+
+    /**
+     * Legacy method for backward compatibility - delegates to getDataFromServerResult.
+     * Throws exception on failure instead of returning Result.
+     */
+    suspend fun getDataFromServer(url: String, caller: String): String {
+        return getDataFromServerResult(url, caller).getOrThrow()
     }
 
     private fun calculateWaitTime(): Long {

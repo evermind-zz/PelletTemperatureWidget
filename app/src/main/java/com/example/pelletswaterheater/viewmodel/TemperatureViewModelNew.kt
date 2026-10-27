@@ -158,7 +158,16 @@ class TemperatureViewModelNew(
     fun fetchMetadata(url: String = "${TemperatureUtils.getStoredUrl()}?") {  // append ? to get the metadata
         viewModelScope.launch {
             try {
-                val body = networkAccess.getDataFromServer(url, "fetchMetadata()")
+                val result = networkAccess.getDataFromServerResult(url, "fetchMetadata()")
+                if (result.isFailure) {
+                    val exception = result.exceptionOrNull()
+                    if (exception?.message == "network busy") {
+                        logger.d(TAG, "Metadata fetch skipped: network busy")
+                        return@launch
+                    }
+                    throw exception ?: Exception("Unknown network error")
+                }
+                val body = result.getOrThrow()
                 val metadata = MetadataUtils.parseServerJson(body)
                 if (metadata != null) {
                     contextProvider.saveMetadata(body)
@@ -183,22 +192,20 @@ class TemperatureViewModelNew(
      * @param doLogging log via [TemperatureLogger]
      *
      */
-    fun fetchValues(url: String, caller: String, doLogging: Boolean = false) : Result<String> {
-        viewModelScope.launch {
-            val result = getDataFromNetworkWithRetry(url, caller)
-            if (result.isSuccess) {
-                val body = result.getOrNull()
-                body?.let {
-                    val timestamp = getCurrentTimestamp()
-                    _lastTimestamp.value = TemperatureUtils.formatTimeStamp(timestamp)
-                    parseDataAndUpdateValues(it, timestamp, doLogging)
-                } ?: updateStats("Fetch failed: empty server reply", "Error" )
-            }
-            TemperatureUtils.appContext?.let {
-                TemperatureWidget().forceUpdateAll(it)
-            }
+    suspend fun fetchValues(url: String, caller: String, doLogging: Boolean = false): Result<String> {
+        val result = getDataFromNetworkWithRetry(url, caller)
+        if (result.isSuccess) {
+            val body = result.getOrNull()
+            body?.let {
+                val timestamp = getCurrentTimestamp()
+                _lastTimestamp.value = TemperatureUtils.formatTimeStamp(timestamp)
+                parseDataAndUpdateValues(it, timestamp, doLogging)
+            } ?: updateStats("Fetch failed: empty server reply", "Error")
         }
-        return Result.failure(Exception("failed to fetch"))
+        TemperatureUtils.appContext?.let {
+            TemperatureWidget().forceUpdateAll(it)
+        }
+        return result
     }
 
     // remove the password from the url inside the exception message
@@ -225,9 +232,17 @@ class TemperatureViewModelNew(
         repeat(maxAttempts) { attempt ->
             try {
                 updateState("Loading...")
-                val body = networkAccess.getDataFromServer(url, caller)
+                val result = networkAccess.getDataFromServerResult(url, caller)
+                if (result.isFailure) {
+                    val exception = result.exceptionOrNull()
+                    if (exception?.message == "network busy") {
+                        logger.d(TAG, "worker=$caller Network busy, will retry on next cycle")
+                        return Result.failure(exception)
+                    }
+                    throw exception ?: Exception("Unknown network error")
+                }
                 logger.d(TAG, "worker=$caller Success: attempt=$attempt")
-                return Result.success(body)
+                return result
             } catch (e: Exception) {
                 maskExceptionMessageAndLogIt(e, url, caller, attempt)
                 if (attempt < maxAttempts - 1) delay(5000L) // Wait 5s before retry

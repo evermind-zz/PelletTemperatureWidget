@@ -73,6 +73,10 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             if (result.isSuccess) {
                 backoffCount.set(0)
                 return@withContext Result.success()
+            } else if (result.exceptionOrNull()?.message == "network busy") {
+                // Network busy - don't count as retry failure, just reschedule
+                logger.d(TAG, "worker=$whichWorker Network busy, will retry on next periodic run")
+                return@withContext Result.retry()
             }
 
                 // All retries failed
