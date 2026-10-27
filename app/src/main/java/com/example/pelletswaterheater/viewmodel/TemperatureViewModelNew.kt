@@ -2,7 +2,6 @@ package com.example.pelletswaterheater.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.core.content.edit
 import com.example.pelletswaterheater.NetworkAccess
 import com.example.pelletswaterheater.TemperatureUtils
@@ -56,30 +55,6 @@ class TemperatureViewModelNew(
     companion object {
         private val TAG = TemperatureViewModelNew::class.java.simpleName
     }
-    class DebugStateFlow<T>(
-        private val delegate: MutableStateFlow<T>,
-        private val tag: String = "DebugStateFlow"
-    ) : MutableStateFlow<T> by delegate {
-
-        /* intercept the property setter */
-        override var value: T
-            get() = delegate.value
-            set(v) {
-                Log.d(tag, "value= called by:\n" + Throwable().stackTraceToString())
-                delegate.value = v
-            }
-
-        /* intercept FlowCollector functions */
-        override fun tryEmit(value: T): Boolean {
-            Log.d(tag, "tryEmit called by:\n" + Throwable().stackTraceToString())
-            return delegate.tryEmit(value)
-        }
-
-        override suspend fun emit(value: T) {
-            Log.d(tag, "emit called by:\n" + Throwable().stackTraceToString())
-            delegate.emit(value)
-        }
-    }
 
     /* use it only in debug builds
     private val _convertedValues: MutableStateFlow<ConvertedBatch> =
@@ -103,7 +78,7 @@ class TemperatureViewModelNew(
      */
     val convertedValues: StateFlow<Map<String, ConvertedValue>> = _convertedValues.asStateFlow()
 
-    private val _selections = DebugStateFlow(MutableStateFlow<List<Selection>>(emptyList()))
+    private val _selections = MutableStateFlow<List<Selection>>(emptyList())
     /**
      * Flow of checkbox selections for logging, widget display, DataScreen, and section/name visibility.
      */
