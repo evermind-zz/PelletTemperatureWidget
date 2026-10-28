@@ -1,0 +1,61 @@
+{
+  "system": {
+    "system_info": "system global variables",
+    "L_ambient": { "val": "219", "unit": "°C", "factor": 0.1, "offset": 0, "name": "Außentemperatur", "format": "float", "min": "-32768", "max": "32767", "decimals": 1 },
+    "L_usb_stick": { "val": "0", "unit": "", "factor": 1.0, "name": "USB Stick", "format": "string" },
+    "L_errors": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehler", "format": "int", "min": "0", "max": "255" },
+    "L_existing_boiler": { "val": "0", "unit": "°C", "factor": 0.1, "name": "Kesseltemperatur", "format": "float", "decimals": 1 },
+    "L_boiler_set": { "val": "600", "unit": "°C", "factor": 0.1, "name": "Kesselsoll", "format": "float", "decimals": 1 },
+    "L_returntemp_act": { "val": "450", "unit": "°C", "factor": 0.1, "name": "Rücklauftemperatur", "format": "float", "decimals": 1 },
+    "L_flue_gas": { "val": "1500", "unit": "°C", "factor": 0.1, "name": "Abgastemperatur", "format": "float", "decimals": 1 },
+    "L_o2": { "val": "80", "unit": "%", "factor": 0.1, "name": "O2 Gehalt", "format": "float", "decimals": 1 },
+    "L_co": { "val": "50", "unit": "ppm", "factor": 1.0, "name": "CO Gehalt", "format": "int" },
+    "L_lambda": { "val": "130", "unit": "", "factor": 0.01, "name": "Lambda", "format": "float", "decimals": 2 }
+  },
+  "hk1": {
+    "hk_info": "heating circuit 1 data",
+    "L_roomtemp_set": { "val": "228", "unit": "°C", "factor": 0.1, "name": "Raumsoll", "format": "float", "decimals": 1 },
+    "L_roomtemp_act": { "val": "230", "unit": "°C", "factor": 0.1, "name": "Raumtemperatur aktuell", "format": "float", "decimals": 1 },
+    "L_flowtemp_act": { "val": "288", "unit": "°C", "factor": 0.1, "name": "Vorlauftemperatur aktuell", "format": "float", "decimals": 1 },
+    "L_flowtemp_set": { "val": "80", "unit": "°C", "factor": 0.1, "name": "Vorlaufsoll", "format": "float", "decimals": 1 },
+    "L_pump": { "val": "1", "unit": "", "factor": 1.0, "name": "Pumpe", "format": "string" },
+    "L_mixer": { "val": "45", "unit": "%", "factor": 1.0, "name": "Mischer", "format": "int" },
+    "L_returntemp_act": { "val": "250", "unit": "°C", "factor": 0.1, "name": "Rücklauf HK1", "format": "float", "decimals": 1 }
+  },
+  "hk2": {
+    "hk_info": "heating circuit 2 data",
+    "L_roomtemp_set": { "val": "210", "unit": "°C", "factor": 0.1, "name": "Raumsoll HK2", "format": "float", "decimals": 1 },
+    "L_roomtemp_act": { "val": "215", "unit": "°C", "factor": 0.1, "name": "Raumtemperatur HK2", "format": "float", "decimals": 1 },
+    "L_flowtemp_act": { "val": "320", "unit": "°C", "factor": 0.1, "name": "Vorlauf HK2", "format": "float", "decimals": 1 },
+    "L_flowtemp_set": { "val": "350", "unit": "°C", "factor": 0.1, "name": "Vorlaufsoll HK2", "format": "float", "decimals": 1 }
+  },
+  "ww1": {
+    "ww_info": "domestic hot water data",
+    "L_wwtemp_act": { "val": "500", "unit": "°C", "factor": 0.1, "name": "Warmwassertemperatur", "format": "float", "decimals": 1 },
+    "L_wwtemp_set": { "val": "550", "unit": "°C", "factor": 0.1, "name": "Warmwassersoll", "format": "float", "decimals": 1 },
+    "L_wwpump": { "val": "0", "unit": "", "factor": 1.0, "name": "WW Pumpe", "format": "string" },
+    "L_circpump": { "val": "1", "unit": "", "factor": 1.0, "name": "Zirkulationspumpe", "format": "string" }
+  },
+  "pe1": {
+    "pe_info": "pellet boiler data",
+    "L_pellet_stock": { "val": "85", "unit": "%", "factor": 1.0, "name": "Pellets Vorrat", "format": "int" },
+    "L_burner_state": { "val": "1", "unit": "", "factor": 1.0, "name": "Brennerzustand", "format": "string" },
+    "L_ignition_time": { "val": "120", "unit": "s", "factor": 1.0, "name": "Zündzeit", "format": "int" },
+    "L_cleaning": { "val": "0", "unit": "", "factor": 1.0, "name": "Reinigung", "format": "string" },
+    "L_ash_box": { "val": "15", "unit": "%", "factor": 1.0, "name": "Aschenkasten", "format": "int" },
+    "L_feed_rate": { "val": "250", "unit": "g/h", "factor": 1.0, "name": "Förderleistung", "format": "int" },
+    "L_burn_time": { "val": "480", "unit": "min", "factor": 1.0, "name": "Brenndauer", "format": "int" }
+  },
+  "circ1": {
+    "circ_info": "circulation pump data",
+    "L_circ_temp": { "val": "350", "unit": "°C", "factor": 0.1, "name": "Zirkulationstemperatur", "format": "float", "decimals": 1 },
+    "L_circ_pump": { "val": "1", "unit": "", "factor": 1.0, "name": "Zirkulationspumpe", "format": "string" },
+    "L_circ_set": { "val": "400", "unit": "°C", "factor": 0.1, "name": "Zirkulationssoll", "format": "float", "decimals": 1 }
+  },
+  "error": {
+    "error_info": "error codes and messages",
+    "L_error_code": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehlercode", "format": "int" },
+    "L_error_text": { "val": "", "unit": "", "factor": 1.0, "name": "Fehlertext", "format": "string" },
+    "L_error_time": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehlerzeit", "format": "string" }
+  }
+}

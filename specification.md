@@ -250,6 +250,98 @@ All 160+ transitive dependencies are licensed under **Apache 2.0** or **BSD-3-Cl
 - `utils/DependencyParser.kt` - Asset JSON parser using kotlinx.serialization
 - `ui/AboutScreen.kt` - Composable displaying the license list
 
+## Implementation Details
+
+### API / Network Details
+- **Base URL Format**: `http://192.168.178.4:4321/<PASSWORD>/all?` (trailing `?` required by gateway)
+- **Gateway Fingerprint**: Optional SHA-256 fingerprint stored in DataStore (`gatewayFingerprint` key) for TLS pinning. If set, `NetworkAccess` verifies server certificate against it.
+- **Retry Logic**: `NetworkRepository.fetchDataWithRetry()` implements exponential backoff:
+  - Max attempts: configurable (default 3)
+  - Initial delay: 1 second
+  - Multiplier: 2x per attempt
+  - Timeout per request: 10 seconds (connect) / 15 seconds (read)
+- **Rate Limiting**: `NetworkAccess` enforces 3-second minimum interval between requests using `AtomicLong lastAccessTime`.
+- **Charset Detection**: Response body decoded with UTF-8 by default. Falls back to ISO-8859-1 if UTF-8 decoding fails (handles legacy gateway responses).
+- **Error Handling**: Returns `Result<T>`; "network busy" is a special sentinel when coordination lock is unavailable (not a true error).
+- **Endpoint Paths**:
+  - Metadata: `http://<host>:<port>/<password>/all?`
+  - Values: Same endpoint returns both metadata and current values in single response
+
+### Worker / Service Coordination
+- **WiFi Subnet Check**: `TemperatureWorker.doWork()` and `LoggingService` verify device is on same subnet (`192.168.178.x`) before attempting network calls. If not, skips fetch and returns success (not failure) to avoid unnecessary retries.
+- **Logging Interval**: Configurable via DataStore (`loggingIntervalMs` key), minimum 10 seconds (10000ms). Default 300000ms (5 minutes). `LoggingService` runs as foreground service with periodic timer.
+- **Foreground Notification**: `LoggingService` shows persistent notification (channel `logging_service`, importance `LOW`) with:
+  - Title: "Pellets Water Heater Logging"
+  - Text: "Logging temperature data..."
+  - Action: Tap opens app
+  - Stop action stops the service
+- **Coordination Mechanism**: Single `AtomicBoolean networkInProgress` in `NetworkAccess` singleton. Both Worker and Service call `withNetworkLock()` which:
+  - Atomically sets flag to true if false, returns `Result.success(block())`
+  - If already true, returns `Result.failure(Exception("network busy"))`
+  - Caller handles "network busy" as non-fatal (logs, skips, schedules next cycle)
+
+### CSV / Logging Format Details
+- **Machine Parts Header Row**: First row identifies sections (e.g., `Machine parts:,system,,hk1,` means columns 2-3 are `system`, column 4 is `hk1`)
+- **Field Names Row**: Second row lists JSON field keys per section (e.g., `,L_ambient,L_errors,L_roomtemp_act`)
+- **Display Names Row**: Third row shows human-readable names (e.g., `,Außentemperatur,,Raumtemperatur aktuell`)
+- **Units Row**: Fourth row shows units (e.g., `timestamp,°C,,°C`)
+- **Data Rows**: ISO 8601 timestamp + logical values (e.g., `2025-06-23T00:47:56Z,22.5,0,24.0`)
+- **Key Order**: `keyOrder` list from server response determines column order. Stored hash (`storedOrderHash` in DataStore) detects column changes for header rewriting.
+- **5MB Rotation**: `TemperatureLoggerCsvImpl` rotates at 5MB:
+  - Current: `temp_log.csv`
+  - Rotated: `temp_log_1.csv`, `temp_log_2.csv`, etc. (max 5 files)
+  - Rotation happens before write if current file + new row > 5MB
+- **Missing Values**: Empty cells (`,,`) for unavailable fields
+- **Test Data File**: `test-values.json` in `src/test/resources/` (unit tests) and `filesDir` (runtime) contains sample raw sensor data for offline testing
+
+### UI / Selection Details
+- **Four Checkboxes per Field** (in `ValueSelectionScreen`):
+  1. **Log** - Include in CSV logging (`Selection.log`)
+  2. **Widget** - Show in Glance widget (`Selection.widget`)
+  3. **Show Data** - Display on DataScreen (`Selection.showData`)
+  4. **Section+Name** - Show "section.name" prefix (e.g., `system Außentemperatur`) on widget/DataScreen (`Selection.showSectionName`)
+- **Select All**: Header row has "Select All" checkbox per column toggles all visible fields
+- **Glance Widget**:
+  - Scrollable `LazyColumn` (vertical)
+  - Shows fields where `Selection.widget == true`
+  - Format: `value unit` (e.g., `22.5 °C`) if `showSectionName == false`, else `section value unit`
+  - Remembers top visible item across updates via `GlanceState`
+  - Refresh: `RefreshWidgetAction` broadcasts `TemperatureWorker` intent
+- **Default Colors** (DataStore keys):
+  - Background: `#F3E5F5` (light purple)
+  - Text: `#000000` (black)
+  - Stored as hex strings with alpha (e.g., `FFF3E5F5`)
+
+### ValueConverter Logic
+- **Input**: Raw string value from server (e.g., `"225"`), `MetadataEntry.Field` with `factor`, `offset`, `format`, `decimals`, `unit`
+- **String Passthrough**: If `format == "string"` or `factor == null`, returns raw value as-is (labels, status strings)
+- **Format Mapping**:
+  - `"int"`: Parse as integer, apply `(raw * factor) + offset`, format as integer
+  - `"float"` / `"double"`: Parse as double, apply conversion, format with `decimals` precision
+  - Default (numeric): Same as float
+- **Localized Separator**: Uses `Locale.getDefault()` for decimal separator (`,` in German, `.` in US)
+- **Decimals Handling**: `String.format(Locale.getDefault(), "%." + decimals + "f", value)`
+- **Unit Appending**: Appends `unit` from metadata (e.g., `°C`, `bar`) with space prefix
+- **Edge Cases**:
+  - Empty/null raw value → returns empty string
+  - Non-numeric raw value with numeric format → returns raw value
+  - Factor = 0 → treated as 1 (no scaling)
+
+### Offline-First Metadata
+- **Default Metadata**: `metadata.json` (root project file, ~14KB) embedded in APK at `src/main/assets/metadata.json`
+- **Fallback Chain**:
+  1. Try server fetch (`TemperatureWorker` / `MetadataRepository`)
+  2. On failure, load cached `metadata.json` from internal storage (`ContextProvider`)
+  3. If no cache, parse embedded asset `metadata.json` as last resort
+  4. User JSON overrides applied on top (via `SettingsScreen` → `MetadataRepository.loadUserMetadata()`)
+- **Embedding**: Add `metadata.json` to `app/src/main/assets/` and ensure Gradle copies it (`assets` source set)
+
+### Test Resources
+- `testdata.json` location: `app/src/test/resources/testdata.json` (unit tests)
+- `server.json`: `app/src/test/resources/server.json` (mock server response)
+- `user.json`: `app/src/test/resources/user.json` (mock user override)
+- Used by: `ValueConverterTest`, `TemperatureLoggerTest`, `TemperatureViewModelNewTest`
+
 ## Notes
 - GitHub: https://github.com/whatever/pelletswaterheater (TBD).
 - Testing: Moto G54.

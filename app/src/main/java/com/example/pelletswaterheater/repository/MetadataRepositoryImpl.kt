@@ -75,13 +75,20 @@ class MetadataRepositoryImpl(
     }
 
     override suspend fun loadCachedMetadata(): MetadataJson? {
-        val cachedJson = getCurrentMetadataContent()
+        var cachedJson = getCurrentMetadataContent()
         if (cachedJson != null) {
             val cached = MetadataUtils.parseServerJson(cachedJson)
             _metadata.value = cached
             return cached
         }
-        logger.w(TAG, "No cached metadata found")
+        logger.w(TAG, "No cached metadata found, trying default from assets")
+        cachedJson = contextProvider.loadDefaultMetadata()
+        if (cachedJson != null) {
+            val cached = MetadataUtils.parseServerJson(cachedJson)
+            _metadata.value = cached
+            return cached
+        }
+        logger.e(TAG, "No default metadata found in assets")
         return null
     }
 
