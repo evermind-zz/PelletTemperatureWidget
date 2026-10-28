@@ -228,6 +228,7 @@ class TemperatureWidgetReceiver : GlanceAppWidgetReceiver() {
 
 class RefreshWidgetAction : ActionCallback, KoinComponent {
     private val preferencesRepository: PreferencesRepository by inject()
+    private val temperatureUtils: TemperatureUtils by inject()
 
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         val lastRefresh = preferencesRepository.lastRefreshTime.first().await() ?: 0L
@@ -239,7 +240,7 @@ class RefreshWidgetAction : ActionCallback, KoinComponent {
         }
         try {
             preferencesRepository.setLastRefreshTime(currentTime).await()
-            TemperatureUtils.forceTemperatureUpdate()
+            temperatureUtils.forceTemperatureUpdate()
             (TemperatureWidget()).forceUpdateAll(context)
             Log.d("RefreshWidgetAction", "Refresh enqueued successfully")
         } catch (e: Exception) {

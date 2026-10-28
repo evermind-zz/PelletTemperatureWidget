@@ -16,13 +16,14 @@ import com.example.pelletswaterheater.repository.StateRepository
 import com.example.pelletswaterheater.repository.StateRepositoryImpl
 import com.example.pelletswaterheater.repository.ValueRepository
 import com.example.pelletswaterheater.repository.ValueRepositoryImpl
-import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.AndroidContextProvider
+import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.NetworkFingerprint
 import com.example.pelletswaterheater.utils.TemperatureLogger
 import com.example.pelletswaterheater.utils.TemperatureLoggerCsvImpl
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
@@ -31,9 +32,6 @@ import org.koin.dsl.module
  * Koin module for dependency injection in the PelletsWaterHeater app.
  */
 val appModule = module {
-    // Provide application Context
-    //single<Context> { androidContext() }
-
     // Provide ContextProvider
     single<ContextProvider> { AndroidContextProvider(get()) }
 
@@ -44,12 +42,14 @@ val appModule = module {
     single { OkHttpClient() }
     single { NetworkAccess() }
 
-    single { NetworkFingerprint }
     // Provide TemperatureLogger
     single<TemperatureLogger> { TemperatureLoggerCsvImpl(get(), get()) }
 
     // Provide PreferencesRepository (DataStore)
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
+
+    // Provide TemperatureUtils
+    single { TemperatureUtils(get(), get<ContextProvider>().getContext()) }
 
     // Provide Repositories
     single<MetadataRepository> { MetadataRepositoryImpl(get(), get(), get(), get(), get()) }
@@ -59,12 +59,9 @@ val appModule = module {
     single<NetworkRepository> { NetworkRepositoryImpl(get()) }
     single<StateRepository> { StateRepositoryImpl(get()) }
 
-    //single<SharedPreferences> {
-    //    get<Context>().getSharedPreferences("pellets_prefs", Context.MODE_PRIVATE)
-    //}
-
     // Provide TemperatureViewModelNew
     single { TemperatureViewModelNew(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
+    // Provide SettingsViewModel
     single { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
 }

@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.pelletswaterheater.TemperatureUtils
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import org.koin.compose.koinInject
 
@@ -49,6 +49,7 @@ fun ValueSelectionScreen(
     modifier: Modifier = Modifier,
     viewModel: TemperatureViewModelNew = koinInject()
 ) {
+    val temperatureUtils: TemperatureUtils = koinInject()
     val values = viewModel.convertedValues.collectAsState(initial = emptyMap())
     val selections = viewModel.selections.collectAsState(initial = emptyList())
     val groupedValues = values.value.entries.groupBy { it.key.substringBeforeLast(".") }
@@ -233,7 +234,7 @@ fun ValueSelectionScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = { TemperatureUtils.forceTemperatureUpdate() },
+                onClick = { temperatureUtils.forceTemperatureUpdate() },
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Refresh")

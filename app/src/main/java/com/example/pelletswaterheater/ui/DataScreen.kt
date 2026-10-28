@@ -33,8 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.pelletswaterheater.SettingsViewModel
-import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.ui.misc.UiEvent
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -48,6 +48,7 @@ fun DataScreen(
 ) {
     val viewModel: TemperatureViewModelNew = koinInject()
     val settingsViewModel: SettingsViewModel = koinViewModel()
+    val temperatureUtils: TemperatureUtils = koinInject()
     val values = viewModel.dataScreenValues.collectAsState(initial = emptyList())
     val groupedValues = values.value.groupBy { it.section }
     val expandedSections = remember { mutableStateMapOf<String, Boolean>() }
@@ -146,7 +147,7 @@ fun DataScreen(
 
         // Refresh button
         Button(
-            onClick = { TemperatureUtils.forceTemperatureUpdate() },
+            onClick = { temperatureUtils.forceTemperatureUpdate() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Refresh")

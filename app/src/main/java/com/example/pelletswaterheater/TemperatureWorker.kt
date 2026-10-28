@@ -30,12 +30,13 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private val backoffCount = AtomicInteger(0)
     private val viewModel: TemperatureViewModelNew by inject()
     private val logger: ILogger by inject()
+    private val temperatureUtils: TemperatureUtils by inject()
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER) ?: tags.toString()
         try {
             logger.d(TAG, "Starting worker execution: workId=${id}")
-            var url = TemperatureUtils.getStoredUrl()
-            val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+            var url = temperatureUtils.getServerUrl()
+            val maskedUrl = temperatureUtils.maskPasswordInUrl(url)
             logger.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
             // Check max retries
@@ -64,8 +65,8 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
             logger.d(TAG, "worker=$whichWorker Attempting temperature fetch: url=$maskedUrl")
 
             // Re-read URL to avoid stale value
-            url = TemperatureUtils.getStoredUrl()
-            val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+            url = temperatureUtils.getServerUrl()
+            val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
 
                 logger.d(TAG, "worker=$whichWorker Refreshed URL: $refreshedMaskedUrl")
 
@@ -107,7 +108,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         whichWorker: String?,
         attempt: Int
     ) {
-        val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+        val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
         val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
         val maskedException = when (e) {
             is FileNotFoundException -> FileNotFoundException(maskedOriginalMessage)

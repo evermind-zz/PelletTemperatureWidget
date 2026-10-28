@@ -1,6 +1,5 @@
 package com.example.pelletswaterheater.viewmodel
 
-import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.TemperatureWidget
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.repository.LoggingRepository
@@ -14,6 +13,7 @@ import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.MetadataJson
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -34,6 +34,7 @@ class TemperatureViewModelNew(
     private val contextProvider: ContextProvider,
     private val logger: ILogger = Logger,
     private val preferencesRepository: PreferencesRepository,
+    private val temperatureUtils: TemperatureUtils,
 
     private val metadataRepository: MetadataRepository,
     private val valueRepository: ValueRepository,
@@ -119,8 +120,9 @@ class TemperatureViewModelNew(
     /**
      * Fetches metadata from the server.
      */
-    fun fetchMetadata(url: String = "${TemperatureUtils.getStoredUrl()}?") {
+    fun fetchMetadata() {
         viewModelScope.launch {
+            val url = temperatureUtils.getServerUrl()
             stateRepository.updateState("Loading...")
             val result = metadataRepository.fetchMetadata(url)
             if (result.isFailure) {

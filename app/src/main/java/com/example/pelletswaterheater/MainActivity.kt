@@ -40,16 +40,20 @@ import com.example.pelletswaterheater.ui.MetadataScreen
 import com.example.pelletswaterheater.ui.SettingsScreen
 import com.example.pelletswaterheater.ui.ValueSelectionScreen
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import com.example.pelletswaterheater.utils.TemperatureUtils
+import com.example.pelletswaterheater.utils.TemperatureWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+    private val temperatureUtils: TemperatureUtils by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        TemperatureUtils.forceTemperatureUpdate()
-        TemperatureUtils.schedulePeriodicTemperatureUpdate()
+        temperatureUtils.forceTemperatureUpdate()
+        temperatureUtils.schedulePeriodicWork(5000)
         CoroutineScope(Dispatchers.Main).launch {
             TemperatureWidget().forceUpdateAll(this@MainActivity)
         }

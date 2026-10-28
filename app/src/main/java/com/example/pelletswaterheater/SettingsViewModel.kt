@@ -10,13 +10,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.service.LoggingService
 import com.example.pelletswaterheater.ui.misc.UiEvent
 import com.example.pelletswaterheater.ui.misc.UiState
-import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.NetworkFingerprint
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,9 +39,8 @@ class SettingsViewModel(
     private val contextProvider: ContextProvider,
     private val logger: ILogger,
     private val dataRepository: TemperatureViewModelNew,
-    private val nnetworkFingerprint: NetworkFingerprint = NetworkFingerprint,
-    private val okHttpClient: OkHttpClient = OkHttpClient(),
-    private val preferencesRepository: PreferencesRepository = PreferencesRepositoryImpl(contextProvider.getContext()),
+    private val preferencesRepository: PreferencesRepository,
+    private val temperatureUtils: TemperatureUtils,
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) : ViewModel() {
 
@@ -90,12 +90,12 @@ class SettingsViewModel(
     private val _rawMetadata = MutableStateFlow<String?>(null)
     val rawMetadata: StateFlow<String?> = _rawMetadata
 
-    fun initialize(context: Context) {
-        _serverUrl.value = TemperatureUtils.getStoredUrl()
-        _widgetWidth.value = TemperatureUtils.getStoredWidgetSize(context, "width") ?: "100"
-        _widgetHeight.value = TemperatureUtils.getStoredWidgetSize(context, "height") ?: "100"
-        _backgroundColor.value = TemperatureUtils.getStoredBackgroundColorHex(context) ?: "FFF3E5F5"
-        _textColor.value = TemperatureUtils.getStoredTextColorHex(context) ?: "FF000000"
+    suspend fun initialize() {
+        _serverUrl.value = temperatureUtils.getServerUrl()
+        _widgetWidth.value = temperatureUtils.getWidgetWidth()
+        _widgetHeight.value = temperatureUtils.getWidgetHeight()
+        _backgroundColor.value = temperatureUtils.getBackgroundColor()
+        _textColor.value = temperatureUtils.getTextColor()
         _backgroundColorSelection.value = if (_backgroundColor.value == "TRANSPARENT") "Transparent" else "Custom"
         _textColorSelection.value = "Custom"
         Log.d("SettingsViewModel", "Initialized: url=${_serverUrl.value}, width=${_widgetWidth.value}, height=${_widgetHeight.value}")
@@ -153,27 +153,29 @@ class SettingsViewModel(
         }
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
-                TemperatureUtils.pingServer(_serverUrl.value)
+                temperatureUtils.pingServerAsync(_serverUrl.value)
             }
             _testResult.value = if (result) "Server reachable" else "Server unreachable"
             Log.d("SettingsViewModel", "Test result: ${_testResult.value}")
         }
-
     }
 
     fun saveSettings(context: Context): Boolean {
         if (!validateInputs()) {
             return false
         }
-        TemperatureUtils.saveSettings(
-            context,
-            _serverUrl.value,
-            _widgetWidth.value,
-            _widgetHeight.value,
-            _backgroundColor.value,
-            _textColor.value
-        )
-        TemperatureUtils.forceTemperatureUpdate()
+        viewModelScope.launch {
+            val urlChanged = temperatureUtils.updateAllSettings(
+                _serverUrl.value,
+                _widgetWidth.value,
+                _widgetHeight.value,
+                _backgroundColor.value,
+                _textColor.value
+            )
+            if (urlChanged) {
+                temperatureUtils.forceTemperatureUpdate()
+            }
+        }
         viewModelScope.launch {
             TemperatureWidget().forceUpdateAll(context)
         }
@@ -211,26 +213,17 @@ class SettingsViewModel(
     private val _showBatteryOptimizationDialog = MutableStateFlow(false)
     val showBatteryOptimizationDialog: StateFlow<Boolean> = _showBatteryOptimizationDialog
 
-    private val _loggingInterval = MutableStateFlow(5000L) // Default: 5 seconds
+    private val _loggingInterval = MutableStateFlow(5000L)
     val loggingInterval: StateFlow<Long> = _loggingInterval
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
     private val _uiLoggingIntervalState = MutableStateFlow(UiState(
-        input = getLoggingIntervalFromPrefs().toString(),
-        canSubmit = enableIntervalSetting()
+        input = LOGGING_INTERVAL_MIN_VAL_IN_MS.toString(),
+        canSubmit = true
     ))
     val uiLoggingIntervalState: StateFlow<UiState> = _uiLoggingIntervalState.asStateFlow()
-
-    private fun getLoggingIntervalFromPrefs(): Int {
-        return LOGGING_INTERVAL_MIN_VAL_IN_MS // TODO fetch it from config
-    }
-
-
-    private fun enableIntervalSetting(): Boolean {
-        return getLoggingIntervalFromPrefs() >= LOGGING_INTERVAL_MIN_VAL_IN_MS
-    }
 
     fun onLoggingIntervalInputChanged(text: String) {
         val value = text.toIntOrNull()
@@ -246,13 +239,12 @@ class SettingsViewModel(
 
     fun onLoggingIntervalSubmit() {
         if (_isLoggingEnabled.value) {
-            // Restart service with new interval
             stopLogging()
             startLogging()
         }
     }
 
-    fun isLoggingViable() : Boolean {
+    fun isLoggingViable(): Boolean {
         if (!dataRepository.loggingIsViable.value) {
             viewModelScope.launch {
                 _uiEvent.emit(UiEvent.ShowSnackbar("There are no values to log please select some values first."))
@@ -305,9 +297,8 @@ class SettingsViewModel(
         }
         _isLoggingEnabled.value = true
         val context = contextProvider.getContext()
-        TemperatureUtils.cancelPeriodicWorker(context)
+        temperatureUtils.cancelPeriodicWork()
         val intent = Intent(context, LoggingService::class.java).apply {
-            //putExtra(LoggingService.EXTRA_LOGGING_INTERVAL, _loggingInterval.value)
             putExtra(LoggingService.EXTRA_LOGGING_INTERVAL, _uiLoggingIntervalState.value.input.toLong())
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -328,7 +319,7 @@ class SettingsViewModel(
         val intent = Intent(context, LoggingService::class.java)
         context.stopService(intent)
         logger.d(TAG, "Logging service stopped")
-        TemperatureUtils.schedulePeriodicTemperatureUpdate()
+        temperatureUtils.schedulePeriodicWork(LOGGING_INTERVAL_MIN_VAL_IN_MS)
     }
 
     fun hideBatteryOptimizationDialog() {
@@ -340,16 +331,20 @@ class SettingsViewModel(
      */
     fun getRawMetadata() {
         viewModelScope.launch {
-            _rawMetadata.update {  contextProvider.loadCachedMetadata() }
+            _rawMetadata.value = contextProvider.loadCachedMetadata()?.toString()
         }
     }
+
     fun updateNetworkFingerprint() {
         viewModelScope.launch {
-            val fingerprint = nnetworkFingerprint.getGatewayFingerprint(contextProvider.getContext(), okHttpClient)
+            val fingerprint = NetworkFingerprint.getGatewayFingerprint(
+                contextProvider.getContext(),
+                OkHttpClient()
+            )
             _networkFingerprint.value = fingerprint
             logger.d(TAG, "Gateway fingerprint: $fingerprint")
             fingerprint?.let {
-                viewModelScope.launch { preferencesRepository.setGatewayFingerprint(it) }
+                viewModelScope.launch { temperatureUtils.setGatewayFingerprint(it) }
             }
         }
     }

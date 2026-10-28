@@ -4,16 +4,17 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.example.pelletswaterheater.NetworkAccess
-import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataUtils
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,12 +22,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
-import java.io.FileNotFoundException
 
 class MetadataRepositoryImpl(
     private val contextProvider: ContextProvider,
     private val logger: ILogger = Logger,
     private val preferencesRepository: PreferencesRepository,
+    private val temperatureUtils: TemperatureUtils,
     private val networkAccess: NetworkAccess = NetworkAccess(),
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) : MetadataRepository, KoinComponent {
@@ -107,11 +108,11 @@ class MetadataRepositoryImpl(
     }
 
     override fun getCurrentMetadataFilename(): String {
-        return TemperatureUtils.getCurrentMetadataFile()
+        return temperatureUtils.getMetadataDefaultFile()
     }
 
     override fun setCurrentMetadataFilename(filename: String) {
-        TemperatureUtils.setCurrentMetadataFile(filename)
+        temperatureUtils.setMetadataDefaultFile(filename)
     }
 
     override fun getMetadataFiles(): Flow<List<File>> {
@@ -143,6 +144,7 @@ class MetadataRepositoryImpl(
 
     override fun getMetadataUri(file: File): Uri? {
         return try {
+            val context = contextProvider.getContext()
             FileProvider.getUriForFile(
                 context,
                 "${context.packageName}.fileprovider",
@@ -159,25 +161,7 @@ class MetadataRepositoryImpl(
     }
 
     private fun getCurrentMetadataContent(): String? {
-        val currentMetadataFilename = TemperatureUtils.getCurrentMetadataFile()
+        val currentMetadataFilename = temperatureUtils.getMetadataDefaultFile()
         return contextProvider.getMetadata(currentMetadataFilename)
-    }
-
-    fun getMetadataUri(file: File): Uri? {
-        return try {
-            val context = contextProvider.getContext()
-            FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                file
-            )
-        } catch (e: Exception) {
-            logger.e(TAG, "Failed to get metadata URI: $e", e)
-            null
-        }
-    }
-
-    fun saveUserMetadata(jsonString: String) {
-        viewModelScope.launch { loadUserMetadata(jsonString) }
     }
 }

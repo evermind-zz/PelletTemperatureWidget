@@ -11,9 +11,9 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.example.pelletswaterheater.MainActivity
-import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.TemperatureLogger
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,10 +25,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class LoggingService : Service() {
     private val logger: TemperatureLogger by inject()
     private val dataRepository: TemperatureViewModelNew by inject()
+    private val temperatureUtils: TemperatureUtils by inject()
     private var isServiceStarted = false
     private var logCount = 0
     private var loggingIntervalMs = 5000L // Default: 5 seconds
@@ -76,7 +76,8 @@ class LoggingService : Service() {
 
         loggingJob = CoroutineScope(Dispatchers.IO).launch {
             while (isServiceStarted) {
-                val result = dataRepository.fetchValues(TemperatureUtils.getStoredUrl(), TAG, true)
+                val url = temperatureUtils.getServerUrl()
+                val result = dataRepository.fetchValues(url, TAG, true)
                 if (result.isFailure) {
                     val exception = result.exceptionOrNull()
                     if (exception?.message == "network busy") {

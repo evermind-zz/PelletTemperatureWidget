@@ -1,6 +1,5 @@
 package com.example.pelletswaterheater.repository
 
-import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.TemperatureWidget
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ConvertedValue
@@ -9,6 +8,7 @@ import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataUtils
 import com.example.pelletswaterheater.utils.TemperatureLogger
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,12 +19,16 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ValueRepositoryImpl(
     private val contextProvider: ContextProvider,
     private val logger: ILogger = Logger,
     private val temperatureLogger: TemperatureLogger,
     private val metadataRepository: MetadataRepository,
+    private val temperatureUtils: TemperatureUtils,
     private val viewModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) : ValueRepository, KoinComponent {
 
@@ -55,7 +59,7 @@ class ValueRepositoryImpl(
         }
 
         _convertedValues.value = converted
-        _lastTimestamp.value = TemperatureUtils.formatTimeStamp(timestamp)
+        _lastTimestamp.value = temperatureUtils.formatTimeStamp(timestamp)
 
         if (doLogging) {
             // Note: Logging selection filtering is done by the caller (ViewModel)
@@ -63,7 +67,7 @@ class ValueRepositoryImpl(
         }
 
         // Trigger widget update
-        TemperatureUtils.appContext?.let {
+        temperatureUtils.context?.let {
             TemperatureWidget().forceUpdateAll(it)
         }
     }
