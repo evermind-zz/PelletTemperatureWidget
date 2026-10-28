@@ -28,6 +28,9 @@ Clean separation into 6 repositories (Metadata, Values, Selections, Logging, Net
 ### F7: Donate Screen
 Donation options including PayPal.me link that opens in browser, Bitcoin address copy, and Patreon link.
 
+### License Integration
+About screen automatically displays all open source licenses from build-time generated report using the `dependency-license-report` Gradle plugin. All transitive dependencies verified Apache 2.0 / BSD-3-Clause (GPLv3 compatible).
+
 - Dependency Injection: Koin for modular dependency management.
 - Min SDK: 24 (Android 7.0), no desugaring required.
 - Tech Stack: Kotlin 2.0.0, kotlinx.serialization 1.7.1, OkHttp 4.12.0, Koin 3.5.6, AndroidX, Jetpack DataStore, Jetpack Compose, Glance AppWidget.

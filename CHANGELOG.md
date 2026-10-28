@@ -8,6 +8,12 @@ All notable changes to the Pellets Water Heater app are documented here.
 ## [Unreleased]
 ### Added
 - Planned F3: UI layout with Fragments and navigation drawer.
+- License Integration: AboutScreen auto-populates OSS licenses from build-time generated report.
+  - Uses `dependency-license-report` Gradle plugin to generate `license-report.json` at build time.
+  - `DependencyParser` reads from assets using `kotlinx.serialization`.
+  - `SoftwareComponent` data class for license info.
+  - All 160+ transitive deps verified Apache 2.0 / BSD-3-Clause (GPLv3 compatible).
+  - Documented in specification.md.
 
 ## [0.3.0] - 2025-10-27
 ### Added
