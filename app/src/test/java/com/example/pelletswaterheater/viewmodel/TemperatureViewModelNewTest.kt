@@ -3,7 +3,6 @@ package com.example.pelletswaterheater.viewmodel
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.pelletswaterheater.NetworkAccess
-import com.example.pelletswaterheater.checkJsonThingValue2
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.MetadataField
@@ -80,8 +79,6 @@ class TemperatureViewModelNewTest : KoinTest {
             on { e(any(), any(), anyOrNull()) } doAnswer { /* suppress or log */ }
         }
 
-        ///////////////////
-
         mockContext = mock<Context> {
             on { filesDir } doAnswer { tempDir }
             on { packageName } doAnswer { "com.example.pelletswaterheater" }
@@ -97,11 +94,11 @@ class TemperatureViewModelNewTest : KoinTest {
             on { saveMetadata(any()) } doAnswer { }
             on { getContext() } doAnswer { mockContext }
         }
-        //////////////////
+
         viewModel = TemperatureViewModelNew(
             contextProvider = contextProvider,
             logger = logger,
-            viewModelScope =  testScope
+            viewModelScope = testScope
         )
     }
 
@@ -111,9 +108,28 @@ class TemperatureViewModelNewTest : KoinTest {
         Dispatchers.resetMain()
     }
 
+    // Helper function to extract field values from merged metadata
+    private fun <T> checkJsonThingValue2(
+        metadata: MetadataJson,
+        section: String,
+        valueName: String,
+        fieldSelector: (MetadataField) -> T
+    ): T? {
+        return metadata.sections[section]?.get(valueName)
+            ?.let { fieldSelector(it as MetadataField) }
+    }
+
+    private fun checkJsonThingValue(metadata: MetadataJson, section: String, valueName: String): String? {
+        return when (val entry = metadata.sections[section]?.get(valueName)) {
+            is MetadataField -> entry.value
+            is MetadataLabel -> entry.label
+            null -> null
+        }
+    }
+
     @Test
     fun testFetchMetadata() = runTest {
-        val serverJson = File("src/test/resources/server.json").readText()
+        val serverJson = javaClass.getResource("/server.json")?.readText() ?: ""
         server.enqueue(MockResponse().setBody(serverJson).setResponseCode(200))
 
         viewModel.fetchMetadata(server.url("/").toString())
@@ -122,31 +138,9 @@ class TemperatureViewModelNewTest : KoinTest {
         val metadata = viewModel.metadata.value
         assertNotNull(metadata, "Metadata should not be null")
         assertEquals(2, metadata.sections.size, "Should have 2 sections: system, hk1")
-        assertEquals("219", checkJsonThingValue2(metadata, "system", "L_ambient", { it.value}))
-        assertEquals("228", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", {it.value}))
+        assertEquals("219", checkJsonThingValue2(metadata, "system", "L_ambient", { it.value }))
+        assertEquals("228", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", { it.value }))
     }
-
-    fun checkJsonThingValue(metadata: MetadataJson, section: String, valueName : String) : String? {
-        return when (val entry = metadata.sections[section]?.get(valueName)) {
-            is MetadataField -> {
-                entry.value
-            }
-            is MetadataLabel -> entry.label
-            null -> null
-        }
-
-    }
-
-    //fun <T>checkJsonThingValue2(metadata: MetadataJsonNew, section: String, valueName : String, fieldSelector: (MetadataFieldNew) -> T) : Any? {
-    //    return when (val entry = metadata.sections[section]?.get(valueName)) {
-    //        is MetadataFieldNew -> {
-    //            return fieldSelector(entry)
-    //        }
-    //        is MetadataLabel -> entry.label
-    //        null -> null
-    //    }
-
-    //}
 
     @Test
     fun testLoadUserMetadataAndMerge() = runTest {
@@ -155,25 +149,25 @@ class TemperatureViewModelNewTest : KoinTest {
         val metadata = viewModel.metadata.value
         assertNotNull(metadata, "Merged metadata should not be null")
 
-        assertEquals("Außentemperatur", checkJsonThingValue2(metadata, "system", "L_ambient", {it.name}))
-        assertEquals(2, checkJsonThingValue2(metadata, "system", "L_ambient", {it.decimals}))
+        assertEquals("Außentemperatur", checkJsonThingValue2(metadata, "system", "L_ambient", { it.name }))
+        assertEquals(2, checkJsonThingValue2(metadata, "system", "L_ambient", { it.decimals }))
         assertEquals(
             null,
             metadata.sections["system"]?.get("L_usb_stick"),
             "L_usb_stick should be dropped"
         )
-        assertEquals("°C", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", {it.unit}))
+        assertEquals("°C", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", { it.unit }))
     }
 
     private fun fetchMetaDataAndMergeWithUserMetadata() {
         // First fetch server metadata
-        val serverJson = File("src/test/resources/server.json").readText()
+        val serverJson = javaClass.getResource("/server.json")?.readText() ?: ""
         server.enqueue(MockResponse().setBody(serverJson).setResponseCode(200))
         viewModel.fetchMetadata(server.url("/").toString())
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Load user metadata
-        val userJson = File("src/test/resources/user.json").readText()
+        val userJson = javaClass.getResource("/user.json")?.readText() ?: ""
         viewModel.loadUserMetadata(userJson)
         testDispatcher.scheduler.advanceUntilIdle()
     }
@@ -181,7 +175,7 @@ class TemperatureViewModelNewTest : KoinTest {
     @Test
     fun testValues() = runTest {
         fetchMetaDataAndMergeWithUserMetadata()
-        val valueTestData = File("src/test/resources/testdata.json").readText()
+        val valueTestData = javaClass.getResource("/testdata.json")?.readText() ?: ""
         server.enqueue(MockResponse().setBody(valueTestData).setResponseCode(200))
 
         viewModel.fetchValues(server.url("/").toString(), "test", false)
@@ -190,19 +184,19 @@ class TemperatureViewModelNewTest : KoinTest {
         val metadata = viewModel.metadata.value
         assertNotNull(metadata, "Metadata should not be null")
         assertEquals(2, metadata.sections.size, "Should have 2 sections: system, hk1")
-        assertEquals("219", checkJsonThingValue2(metadata, "system", "L_ambient", {it.value}))
-        assertEquals("228", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", {it.value}))
+        assertEquals("219", checkJsonThingValue2(metadata, "system", "L_ambient", { it.value }))
+        assertEquals("228", checkJsonThingValue2(metadata, "hk1", "L_roomtemp_set", { it.value }))
     }
 
     @Test
     fun testUpdateValues() = runTest {
-        val serverJson = File("src/test/resources/server.json").readText()
+        val serverJson = javaClass.getResource("/server.json")?.readText() ?: ""
         server.enqueue(MockResponse().setBody(serverJson).setResponseCode(200))
         viewModel.fetchMetadata(server.url("/").toString())
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Load user metadata
-        val userJson = File("src/test/resources/user.json").readText()
+        val userJson = javaClass.getResource("/user.json")?.readText() ?: ""
         viewModel.loadUserMetadata(userJson)
         testDispatcher.scheduler.advanceUntilIdle()
 

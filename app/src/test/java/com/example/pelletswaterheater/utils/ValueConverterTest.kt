@@ -1,14 +1,26 @@
 package com.example.pelletswaterheater.utils
 
-import com.example.pelletswaterheater.checkJsonThingValue2
+import com.example.pelletswaterheater.utils.MetadataJson
+import com.example.pelletswaterheater.utils.MetadataField
 import kotlinx.serialization.json.Json
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.File
+import java.io.InputStreamReader
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+
+// Helper function to extract field values from merged metadata
+private fun <T> checkJsonThingValue2(
+    metadata: MetadataJson,
+    section: String,
+    valueName: String,
+    fieldSelector: (MetadataField) -> T
+): T? {
+    return metadata.sections[section]?.get(valueName)
+        ?.let { fieldSelector(it as MetadataField) }
+}
 
 class ValueConverterTest {
     private lateinit var server: MockWebServer
@@ -76,16 +88,16 @@ class ValueConverterTest {
 
     @Test
     fun testMetadataMerging() {
-        val serverJson = File("src/test/resources/server.json").readText()
-        val userJson = File("src/test/resources/user.json").readText()
+        val serverJson = javaClass.getResource("/server.json")?.readText() ?: ""
+        val userJson = javaClass.getResource("/user.json")?.readText() ?: ""
         val serverMetadata = MetadataUtils.parseServerJson(serverJson)
         val userMetadata = MetadataUtils.parseUserJson(userJson)
         assertNotNull(serverMetadata, "Server metadata should not be null")
         assertNotNull(userMetadata, "User metadata should not be null")
         val merged = MetadataUtils.mergeMetadata(serverMetadata, userMetadata)
-        assertEquals("Außentemperatur", checkJsonThingValue2(merged, "system", "L_ambient", {it.name}))
-        assertEquals(2, checkJsonThingValue2(merged, "system", "L_ambient", {it.decimals }))
+        assertEquals("Außentemperatur", checkJsonThingValue2(merged, "system", "L_ambient", { it.name }))
+        assertEquals(2, checkJsonThingValue2(merged, "system", "L_ambient", { it.decimals }))
         assertEquals(null, merged.sections["system"]?.get("L_usb_stick")) // Dropped
-        assertEquals("°C", checkJsonThingValue2(merged, "hk1", "L_roomtemp_set", {it.unit})) // From server
+        assertEquals("°C", checkJsonThingValue2(merged, "hk1", "L_roomtemp_set", { it.unit })) // From server
     }
 }
