@@ -56,12 +56,6 @@ android {
         htmlOutput = file("${project.buildDir}/reports/lint-results.html")
         xmlOutput = file("${project.buildDir}/reports/lint-results.xml")
     }
-
-    testOptions {
-        unitTests {
-            useJUnitPlatform()
-        }
-    }
 }
 
 dependencies {
@@ -96,4 +90,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.3")
 
     testImplementation("io.insert-koin:koin-test:3.5.6")
+}
+
+// Configure JUnit Platform for all test tasks (debug and release unit tests)
+// The Android plugin creates testDebugUnitTest and testReleaseUnitTest tasks
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
