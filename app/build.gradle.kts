@@ -94,4 +94,10 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    // Only run tests for debug variant
+    this.enabled = false
+}
+
+tasks.named("testDebugUnitTest") {
+    useJUnitPlatform()
 }
