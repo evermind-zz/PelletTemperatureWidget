@@ -3,6 +3,7 @@ package com.example.pelletswaterheater.viewmodel
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.pelletswaterheater.NetworkAccess
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.repository.LoggingRepository
 import com.example.pelletswaterheater.repository.MetadataRepository
 import com.example.pelletswaterheater.repository.NetworkRepository
@@ -10,6 +11,7 @@ import com.example.pelletswaterheater.repository.SelectionRepository
 import com.example.pelletswaterheater.repository.StateRepository
 import com.example.pelletswaterheater.repository.ValueRepository
 import com.example.pelletswaterheater.utils.ContextProvider
+import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.MetadataField
 import com.example.pelletswaterheater.utils.MetadataJson
@@ -40,6 +42,7 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 import java.io.File
+import kotlin.Result
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -53,14 +56,14 @@ class TemperatureViewModelNewTest : KoinTest {
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
-    // Mock repositories
-    private lateinit var mockMetadataRepository: MetadataRepository
-    private lateinit var mockValueRepository: ValueRepository
-    private lateinit var mockSelectionRepository: SelectionRepository
-    private lateinit var mockNetworkRepository: NetworkRepository
-    private lateinit var mockLoggingRepository: LoggingRepository
-    private lateinit var mockStateRepository: StateRepository
-    private lateinit var mockPreferencesRepository: com.example.pelletswaterheater.preferences.PreferencesRepository
+    // Fake repository implementations
+    private lateinit var fakeMetadataRepository: MetadataRepository
+    private lateinit var fakeValueRepository: ValueRepository
+    private lateinit var fakeSelectionRepository: SelectionRepository
+    private lateinit var fakeNetworkRepository: NetworkRepository
+    private lateinit var fakeLoggingRepository: LoggingRepository
+    private lateinit var fakeStateRepository: StateRepository
+    private lateinit var fakePreferencesRepository: PreferencesRepository
 
     companion object {
         @JvmStatic
@@ -112,97 +115,103 @@ class TemperatureViewModelNewTest : KoinTest {
             on { getContext() } doAnswer { mockContext }
         }
 
-        // Mock repositories
+        // Fake MetadataRepository
         val metadataFlow = MutableStateFlow<MetadataJson?>(null)
-        mockMetadataRepository = mock<MetadataRepository> {
-            on { metadata } doAnswer { metadataFlow }
-            on { fetchMetadata(any()) } doAnswer { mock<kotlin.Result<MetadataJson>> { } }
-            on { loadCachedMetadata() } doAnswer { null }
-            on { loadUserMetadata(any()) } doAnswer { mock<kotlin.Result<MetadataJson>> { } }
-            on { getCurrentMetadataFilename() } doAnswer { "metadata.json" }
-            on { setCurrentMetadataFilename(any()) } doAnswer { }
-            on { getMetadataFiles() } doAnswer { mock<StateFlow<List<File>>> { } }
-            on { deleteMetadataFile(any()) } doAnswer { }
-            on { shareMetadata(any()) } doAnswer { }
-            on { importMetadata(any()) } doAnswer { }
-            on { getMetadataUri(any()) } doAnswer { null }
-            on { saveUserMetadata(any()) } doAnswer { }
-            on { getMetadataContent(any()) } doAnswer { null }
+        fakeMetadataRepository = object : MetadataRepository {
+            override val metadata: StateFlow<MetadataJson?> = metadataFlow
+            override suspend fun fetchMetadata(url: String): Result<MetadataJson> = Result.success(MetadataJson())
+            override suspend fun loadCachedMetadata(): MetadataJson? = null
+            override suspend fun loadUserMetadata(jsonString: String): Result<MetadataJson> = Result.success(MetadataJson())
+            override fun getCurrentMetadataFilename(): String = "metadata.json"
+            override fun setCurrentMetadataFilename(filename: String) {}
+            override val metadataFiles: StateFlow<List<File>> = MutableStateFlow(emptyList()).asStateFlow()
+            override fun deleteMetadataFile(file: File) {}
+            override fun shareMetadata(context: Context) {}
+            override fun importMetadata(context: Context) {}
+            override fun getMetadataUri(file: File): android.net.Uri? = null
+            override fun saveUserMetadata(jsonString: String) {}
+            override fun getMetadataContent(filename: String): String? = null
         }
 
+        // Fake ValueRepository
         val convertedValuesFlow = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
         val lastTimestampFlow = MutableStateFlow<String>("")
-        mockValueRepository = mock<ValueRepository> {
-            on { convertedValues } doAnswer { convertedValuesFlow }
-            on { lastTimestamp } doAnswer { lastTimestampFlow }
-            on { updateValues(any(), any(), any()) } doAnswer { }
-            on { loadTestDataFromStorage() } doAnswer { }
-            on { getCurrentTimestamp() } doAnswer { java.time.Instant.now().toString() }
+        fakeValueRepository = object : ValueRepository {
+            override val convertedValues: StateFlow<Map<String, ConvertedValue>> = convertedValuesFlow.asStateFlow()
+            override val lastTimestamp: StateFlow<String> = lastTimestampFlow.asStateFlow()
+            override fun updateValues(rawData: Map<String, String>, timestamp: String, doLogging: Boolean) {}
+            override suspend fun loadTestDataFromStorage() {}
+            override fun getCurrentTimestamp(): String = java.time.Instant.now().toString()
         }
 
+        // Fake SelectionRepository
         val selectionsFlow = MutableStateFlow<List<SelectionRepository.Selection>>(emptyList())
-        mockSelectionRepository = mock<SelectionRepository> {
-            on { selections } doAnswer { selectionsFlow }
-            on { loadSelections() } doAnswer { emptyList() }
-            on { updateSelection(any(), any(), any(), any(), any()) } doAnswer { }
-            on { toggleAllLog(any()) } doAnswer { }
-            on { toggleAllWidget(any()) } doAnswer { }
-            on { toggleAllShowData(any()) } doAnswer { }
-            on { toggleAllSectionName(any()) } doAnswer { }
-            on { updateSelectionsIfNeeded(any()) } doAnswer { }
+        fakeSelectionRepository = object : SelectionRepository {
+            override val selections: StateFlow<List<Selection>> = selectionsFlow.asStateFlow()
+            override suspend fun loadSelections(): List<Selection> = emptyList()
+            override fun updateSelection(key: String, log: Boolean?, widget: Boolean?, showData: Boolean?, showSectionName: Boolean?) {}
+            override fun toggleAllLog(checked: Boolean) {}
+            override fun toggleAllWidget(checked: Boolean) {}
+            override fun toggleAllShowData(checked: Boolean) {}
+            override fun toggleAllSectionName(checked: Boolean) {}
+            override fun updateSelectionsIfNeeded(allKeys: Set<String>) {}
         }
 
-        mockNetworkRepository = mock<NetworkRepository> {
-            on { fetchDataWithRetry(any(), any(), any()) } doAnswer { mock<kotlin.Result<String>> { } }
+        // Fake NetworkRepository
+        fakeNetworkRepository = object : NetworkRepository {
+            override suspend fun fetchDataWithRetry(url: String, caller: String, maxAttempts: Int): Result<String> = Result.success("{}")
         }
 
-        mockLoggingRepository = mock<LoggingRepository> {
-            on { logValues(any(), any(), any(), any()) } doAnswer { }
+        // Fake LoggingRepository
+        fakeLoggingRepository = object : LoggingRepository {
+            override fun logValues(values: Map<String, ConvertedValue>, keyOrder: List<String>, timestamp: String, selectedKeys: Set<String>) {}
         }
 
+        // Fake StateRepository
         val systemStatsFlow = MutableStateFlow<StateRepository.SystemStats>(StateRepository.SystemStats("N/A", null, "N/A"))
-        mockStateRepository = mock<StateRepository> {
-            on { systemStats } doAnswer { systemStatsFlow }
-            on { updateState(any()) } doAnswer { }
-            on { updateError(any()) } doAnswer { }
-            on { updateStats(any(), any()) } doAnswer { }
+        fakeStateRepository = object : StateRepository {
+            override val systemStats: StateFlow<SystemStats> = systemStatsFlow.asStateFlow()
+            override fun updateState(state: String) {}
+            override fun updateError(error: String?) {}
+            override fun updateStats(error: String?, state: String) {}
         }
 
-        mockPreferencesRepository = mock<com.example.pelletswaterheater.preferences.PreferencesRepository> {
-            on { serverUrl } doAnswer { mock<StateFlow<String>> { } }
-            on { widgetWidth } doAnswer { mock<StateFlow<String>> { } }
-            on { widgetHeight } doAnswer { mock<StateFlow<String>> { } }
-            on { backgroundColor } doAnswer { mock<StateFlow<String>> { } }
-            on { textColor } doAnswer { mock<StateFlow<String>> { } }
-            on { loggingInterval } doAnswer { mock<StateFlow<Long>> { } }
-            on { gatewayFingerprint } doAnswer { mock<StateFlow<String?>> { } }
-            on { metadataDefaultFile } doAnswer { mock<StateFlow<String>> { } }
-            on { selectionsJson } doAnswer { mock<StateFlow<String>> { } }
-            on { storedOrderHash } doAnswer { mock<StateFlow<Int>> { } }
-            on { lastRefreshTime } doAnswer { mock<StateFlow<Long?>> { } }
-            on { setServerUrl(any()) } doAnswer { }
-            on { setWidgetWidth(any()) } doAnswer { }
-            on { setWidgetHeight(any()) } doAnswer { }
-            on { setBackgroundColor(any()) } doAnswer { }
-            on { setTextColor(any()) } doAnswer { }
-            on { setLoggingInterval(any()) } doAnswer { }
-            on { setGatewayFingerprint(any()) } doAnswer { }
-            on { setMetadataDefaultFile(any()) } doAnswer { }
-            on { setSelectionsJson(any()) } doAnswer { }
-            on { setStoredOrderHash(any()) } doAnswer { }
-            on { setLastRefreshTime(any()) } doAnswer { }
+        // Fake PreferencesRepository
+        fakePreferencesRepository = object : PreferencesRepository {
+            override val serverUrl: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val widgetWidth: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val widgetHeight: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val backgroundColor: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val textColor: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val loggingInterval: StateFlow<Long> = MutableStateFlow(5000L).asStateFlow()
+            override val gatewayFingerprint: StateFlow<String?> = MutableStateFlow(null).asStateFlow()
+            override val metadataDefaultFile: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val selectionsJson: StateFlow<String> = MutableStateFlow("").asStateFlow()
+            override val storedOrderHash: StateFlow<Int> = MutableStateFlow(0).asStateFlow()
+            override val lastRefreshTime: StateFlow<Long?> = MutableStateFlow(null).asStateFlow()
+            override suspend fun setServerUrl(url: String) {}
+            override suspend fun setWidgetWidth(width: String) {}
+            override suspend fun setWidgetHeight(height: String) {}
+            override suspend fun setBackgroundColor(color: String) {}
+            override suspend fun setTextColor(color: String) {}
+            override suspend fun setLoggingInterval(interval: Long) {}
+            override suspend fun setGatewayFingerprint(fingerprint: String) {}
+            override suspend fun setMetadataDefaultFile(filename: String) {}
+            override suspend fun setSelectionsJson(json: String) {}
+            override suspend fun setStoredOrderHash(hash: Int) {}
+            override suspend fun setLastRefreshTime(time: Long) {}
         }
 
         viewModel = TemperatureViewModelNew(
             contextProvider = contextProvider,
             logger = logger,
-            preferencesRepository = mockPreferencesRepository,
-            metadataRepository = mockMetadataRepository,
-            valueRepository = mockValueRepository,
-            selectionRepository = mockSelectionRepository,
-            networkRepository = mockNetworkRepository,
-            loggingRepository = mockLoggingRepository,
-            stateRepository = mockStateRepository,
+            preferencesRepository = fakePreferencesRepository,
+            metadataRepository = fakeMetadataRepository,
+            valueRepository = fakeValueRepository,
+            selectionRepository = fakeSelectionRepository,
+            networkRepository = fakeNetworkRepository,
+            loggingRepository = fakeLoggingRepository,
+            stateRepository = fakeStateRepository,
             viewModelScope = testScope
         )
     }
