@@ -10,9 +10,8 @@ plugins {
 licenseReport {
     outputDir = file("${projectDir}/src/main/assets").absolutePath
     renderers = arrayOf(JsonReportRenderer())
-    excludeGroups = listOf("com.example").toTypedArray() // Exclude your own modules
+    excludeGroups = listOf("com.example").toTypedArray()
 }
-
 
 android {
     namespace = "com.example.pelletswaterheater"
@@ -43,7 +42,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    // Ensure test tasks use JVM 17
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
     }
@@ -55,7 +53,6 @@ android {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
 
-    // Lint configuration
     lint {
         isAbortOnError = false
         htmlOutput = file("${project.buildDir}/reports/lint-results.html")
@@ -81,22 +78,19 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("io.insert-koin:koin-android:3.5.6")
     implementation("io.insert-koin:koin-androidx-compose:3.5.6")
-    implementation("androidx.compose.ui:ui-tooling-preview-android:1.7.0") //  koinViewModel() or get()
-
+    implementation("androidx.compose.ui:ui-tooling-preview-android:1.7.0")
 
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
-    // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-preferences-core:1.1.1")
     implementation("androidx.datastore:datastore-preferences-rxjava3:1.1.1")
-
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.22")
 
     testImplementation("org.mockito:mockito-core:5.12.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
@@ -106,5 +100,5 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform() // Enables JUnit 5 test discovery
+    useJUnitPlatform()
 }
