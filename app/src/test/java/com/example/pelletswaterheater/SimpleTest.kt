@@ -8,4 +8,9 @@ class SimpleTest {
     fun testBasic() {
         assertEquals(2, 1 + 1)
     }
+
+    @Test
+    fun testString() {
+        assertEquals("hello", "hello")
+    }
 }
