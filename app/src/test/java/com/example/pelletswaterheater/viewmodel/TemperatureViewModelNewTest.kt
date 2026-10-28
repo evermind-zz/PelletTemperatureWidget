@@ -3,12 +3,20 @@ package com.example.pelletswaterheater.viewmodel
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.pelletswaterheater.NetworkAccess
+import com.example.pelletswaterheater.repository.LoggingRepository
+import com.example.pelletswaterheater.repository.MetadataRepository
+import com.example.pelletswaterheater.repository.NetworkRepository
+import com.example.pelletswaterheater.repository.SelectionRepository
+import com.example.pelletswaterheater.repository.StateRepository
+import com.example.pelletswaterheater.repository.ValueRepository
 import com.example.pelletswaterheater.utils.ContextProvider
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.MetadataField
 import com.example.pelletswaterheater.utils.MetadataJson
 import com.example.pelletswaterheater.utils.MetadataLabel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
@@ -44,6 +52,15 @@ class TemperatureViewModelNewTest : KoinTest {
     private lateinit var logger: ILogger
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
+
+    // Mock repositories
+    private lateinit var mockMetadataRepository: MetadataRepository
+    private lateinit var mockValueRepository: ValueRepository
+    private lateinit var mockSelectionRepository: SelectionRepository
+    private lateinit var mockNetworkRepository: NetworkRepository
+    private lateinit var mockLoggingRepository: LoggingRepository
+    private lateinit var mockStateRepository: StateRepository
+    private lateinit var mockPreferencesRepository: com.example.pelletswaterheater.preferences.PreferencesRepository
 
     companion object {
         @JvmStatic
@@ -95,9 +112,97 @@ class TemperatureViewModelNewTest : KoinTest {
             on { getContext() } doAnswer { mockContext }
         }
 
+        // Mock repositories
+        val metadataFlow = MutableStateFlow<MetadataJson?>(null)
+        mockMetadataRepository = mock<MetadataRepository> {
+            on { metadata } doAnswer { metadataFlow }
+            on { fetchMetadata(any()) } doAnswer { mock<kotlin.Result<MetadataJson>> { } }
+            on { loadCachedMetadata() } doAnswer { null }
+            on { loadUserMetadata(any()) } doAnswer { mock<kotlin.Result<MetadataJson>> { } }
+            on { getCurrentMetadataFilename() } doAnswer { "metadata.json" }
+            on { setCurrentMetadataFilename(any()) } doAnswer { }
+            on { getMetadataFiles() } doAnswer { mock<StateFlow<List<File>>> { } }
+            on { deleteMetadataFile(any()) } doAnswer { }
+            on { shareMetadata(any()) } doAnswer { }
+            on { importMetadata(any()) } doAnswer { }
+            on { getMetadataUri(any()) } doAnswer { null }
+            on { saveUserMetadata(any()) } doAnswer { }
+            on { getMetadataContent(any()) } doAnswer { null }
+        }
+
+        val convertedValuesFlow = MutableStateFlow<Map<String, ConvertedValue>>(emptyMap())
+        val lastTimestampFlow = MutableStateFlow<String>("")
+        mockValueRepository = mock<ValueRepository> {
+            on { convertedValues } doAnswer { convertedValuesFlow }
+            on { lastTimestamp } doAnswer { lastTimestampFlow }
+            on { updateValues(any(), any(), any()) } doAnswer { }
+            on { loadTestDataFromStorage() } doAnswer { }
+            on { getCurrentTimestamp() } doAnswer { java.time.Instant.now().toString() }
+        }
+
+        val selectionsFlow = MutableStateFlow<List<SelectionRepository.Selection>>(emptyList())
+        mockSelectionRepository = mock<SelectionRepository> {
+            on { selections } doAnswer { selectionsFlow }
+            on { loadSelections() } doAnswer { emptyList() }
+            on { updateSelection(any(), any(), any(), any(), any()) } doAnswer { }
+            on { toggleAllLog(any()) } doAnswer { }
+            on { toggleAllWidget(any()) } doAnswer { }
+            on { toggleAllShowData(any()) } doAnswer { }
+            on { toggleAllSectionName(any()) } doAnswer { }
+            on { updateSelectionsIfNeeded(any()) } doAnswer { }
+        }
+
+        mockNetworkRepository = mock<NetworkRepository> {
+            on { fetchDataWithRetry(any(), any(), any()) } doAnswer { mock<kotlin.Result<String>> { } }
+        }
+
+        mockLoggingRepository = mock<LoggingRepository> {
+            on { logValues(any(), any(), any(), any()) } doAnswer { }
+        }
+
+        val systemStatsFlow = MutableStateFlow<StateRepository.SystemStats>(StateRepository.SystemStats("N/A", null, "N/A"))
+        mockStateRepository = mock<StateRepository> {
+            on { systemStats } doAnswer { systemStatsFlow }
+            on { updateState(any()) } doAnswer { }
+            on { updateError(any()) } doAnswer { }
+            on { updateStats(any(), any()) } doAnswer { }
+        }
+
+        mockPreferencesRepository = mock<com.example.pelletswaterheater.preferences.PreferencesRepository> {
+            on { serverUrl } doAnswer { mock<StateFlow<String>> { } }
+            on { widgetWidth } doAnswer { mock<StateFlow<String>> { } }
+            on { widgetHeight } doAnswer { mock<StateFlow<String>> { } }
+            on { backgroundColor } doAnswer { mock<StateFlow<String>> { } }
+            on { textColor } doAnswer { mock<StateFlow<String>> { } }
+            on { loggingInterval } doAnswer { mock<StateFlow<Long>> { } }
+            on { gatewayFingerprint } doAnswer { mock<StateFlow<String?>> { } }
+            on { metadataDefaultFile } doAnswer { mock<StateFlow<String>> { } }
+            on { selectionsJson } doAnswer { mock<StateFlow<String>> { } }
+            on { storedOrderHash } doAnswer { mock<StateFlow<Int>> { } }
+            on { lastRefreshTime } doAnswer { mock<StateFlow<Long?>> { } }
+            on { setServerUrl(any()) } doAnswer { }
+            on { setWidgetWidth(any()) } doAnswer { }
+            on { setWidgetHeight(any()) } doAnswer { }
+            on { setBackgroundColor(any()) } doAnswer { }
+            on { setTextColor(any()) } doAnswer { }
+            on { setLoggingInterval(any()) } doAnswer { }
+            on { setGatewayFingerprint(any()) } doAnswer { }
+            on { setMetadataDefaultFile(any()) } doAnswer { }
+            on { setSelectionsJson(any()) } doAnswer { }
+            on { setStoredOrderHash(any()) } doAnswer { }
+            on { setLastRefreshTime(any()) } doAnswer { }
+        }
+
         viewModel = TemperatureViewModelNew(
             contextProvider = contextProvider,
             logger = logger,
+            preferencesRepository = mockPreferencesRepository,
+            metadataRepository = mockMetadataRepository,
+            valueRepository = mockValueRepository,
+            selectionRepository = mockSelectionRepository,
+            networkRepository = mockNetworkRepository,
+            loggingRepository = mockLoggingRepository,
+            stateRepository = mockStateRepository,
             viewModelScope = testScope
         )
     }
