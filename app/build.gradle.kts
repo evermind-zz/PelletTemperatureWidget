@@ -94,7 +94,6 @@ dependencies {
 
     testImplementation("org.mockito:mockito-core:5.12.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
-    testImplementation("org.robolectric:robolectric:4.12.2")
 
     testImplementation("io.insert-koin:koin-test:3.5.6")
 }
