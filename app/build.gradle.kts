@@ -94,5 +94,4 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    include("**/*Test*.class")
 }
