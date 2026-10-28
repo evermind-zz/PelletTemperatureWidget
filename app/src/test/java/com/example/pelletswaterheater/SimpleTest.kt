@@ -1,9 +1,9 @@
 package com.example.pelletswaterheater
 
-import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import org.junit.Test
+import junit.framework.TestCase
 
-class SimpleTest {
+class SimpleTest : TestCase() {
     @Test
     fun testBasic() {
         assertEquals(2, 1 + 1)
