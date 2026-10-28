@@ -9,6 +9,41 @@ All notable changes to the Pellets Water Heater app are documented here.
 ### Added
 - Planned F3: UI layout with Fragments and navigation drawer.
 
+## [0.3.0] - 2025-10-27
+### Added
+- F4: DataStore Migration for Preferences (`PreferencesRepository`, `AppPreferences`, migration from `EncryptedSharedPreferences`).
+  - Migrated all preference keys: server URL, widget dimensions, colors, logging interval, gateway fingerprint, metadata filename, selections JSON.
+  - Thread-safe async operations via `Flow`.
+- F5: Worker and Service Coordination in `NetworkAccess`.
+  - `AtomicBoolean` `networkInProgress` flag for thread-safe coordination.
+  - `withNetworkLock()` returning `Result<T>` for graceful "network busy" handling.
+  - Updated `TemperatureWorker` and `LoggingService` to handle coordination without counting as failure.
+- F6: Repository Architecture - Split `TemperatureViewModelNew` into 6 focused repositories.
+  - `MetadataRepository` / `MetadataRepositoryImpl` - metadata fetching, caching, merging, file operations.
+  - `ValueRepository` / `ValueRepositoryImpl` - value conversion, updates, test data loading.
+  - `SelectionRepository` / `SelectionRepositoryImpl` - user selections persisted via `DataStore`.
+  - `LoggingRepository` / `LoggingRepositoryImpl` - CSV logging coordination.
+  - `NetworkRepository` / `NetworkRepositoryImpl` - HTTP requests with retry logic.
+  - `StateRepository` / `StateRepositoryImpl` - system stats (state, error, timestamp).
+  - Updated DI module with all repository bindings.
+- F7: Donate Screen with PayPal.me browser intent.
+  - `DonateScreen` with PayPal, Bitcoin, Patreon options.
+  - PayPal opens PayPal.me URL in browser via `LocalUriHandler`.
+  - Bitcoin address copyable to clipboard.
+
+### Changed
+- Removed legacy `TemperatureViewModel` and `SettingsActivity` (dead code).
+- Fixed `NetworkAccess` mutex - moved 3 second rate-limit delay outside lock using `AtomicLong`.
+- Fixed CSV Logger header hash instability - replaced `keyOrder.hashCode()` with stable string-based hash.
+- Removed `DebugStateFlow` from production code.
+- `TemperatureWidget` now uses `widgetValues` flow directly.
+- Updated all UI screens (`DataScreen`, `MetadataScreen`, `SettingsScreen`, `StatsBarSection`) to use new repository API.
+
+### Fixed
+- `NetworkAccess` mutex no longer sleeps inside lock (prevents blocking other coroutines).
+- CSV header generation uses stable hash across JVM restarts.
+- `DebugStateFlow` wrapper removed, replaced with plain `MutableStateFlow`.
+
 ## [0.2.0] - 2025-06-22
 ### Added
 - F2: Logging feature (`TemperatureLoggerCsvImpl`).
