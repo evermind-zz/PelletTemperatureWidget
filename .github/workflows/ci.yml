@@ -30,6 +30,10 @@ jobs:
         run: ./gradlew dependencyLicenseReport --no-daemon --stacktrace
         continue-on-error: true
 
+      - name: Compile Test Classes
+        run: ./gradlew compileTestKotlin --no-daemon --stacktrace
+        continue-on-error: true
+
       - name: Run Unit Tests
         run: ./gradlew test --no-daemon --stacktrace --continue
 
