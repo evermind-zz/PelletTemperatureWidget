@@ -222,6 +222,34 @@ Data Sources
 7. Iteration 7: F7 Donate Screen (Completed).
 8. Iteration 8: UI tests, enhancements.
 
+## Open Source License Compliance
+
+The app includes an **About** screen that automatically displays all open source licenses used by the project. This is handled at build time using the `com.github.jk1.dependency-license-report` Gradle plugin.
+
+### How It Works
+1. **Build-time generation**: The Gradle plugin runs during `assemble` / `licenseReport` task and generates `license-report.json` into `src/main/assets/`.
+2. **APK packaging**: Assets are automatically included in the APK.
+3. **Runtime parsing**: `DependencyParser` reads `license-report.json` from assets using `kotlinx.serialization` and converts it to `List<SoftwareComponent>`.
+4. **Display**: `AboutScreen` renders the component list with name, version, license, and link.
+
+### Regenerating Licenses
+When dependencies change (add/remove/update):
+1. Update dependencies in `build.gradle.kts`
+2. Run `./gradlew licenseReport` (or just `./gradlew assemble`)
+3. The plugin regenerates `src/main/assets/license-report.json` with current dependencies
+4. Next build includes updated licenses automatically
+
+No manual JSON editing or separate scripts needed. The Gradle plugin is the single source of truth.
+
+### License Compatibility
+All 160+ transitive dependencies are licensed under **Apache 2.0** or **BSD-3-Clause**, which are compatible with the project's **GPLv3** license.
+
+### Implementation Files
+- `build.gradle.kts` - Plugin configuration (`licenseReport` block)
+- `utils/SoftwareComponent.kt` - Data class for license info
+- `utils/DependencyParser.kt` - Asset JSON parser using kotlinx.serialization
+- `ui/AboutScreen.kt` - Composable displaying the license list
+
 ## Notes
 - GitHub: https://github.com/whatever/pelletswaterheater (TBD).
 - Testing: Moto G54.
