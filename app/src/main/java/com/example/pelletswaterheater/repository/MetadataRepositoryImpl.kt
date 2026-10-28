@@ -14,7 +14,6 @@ import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -115,7 +114,7 @@ class MetadataRepositoryImpl(
         temperatureUtils.setMetadataDefaultFile(filename)
     }
 
-    override fun getMetadataFiles(): Flow<List<File>> {
+    override fun getMetadataFiles(): StateFlow<List<File>> {
         val metadataDir = File(contextProvider.getContext().filesDir, "")
         _metadataFiles.update {
             metadataDir.listFiles { file ->

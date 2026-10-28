@@ -1,7 +1,6 @@
 package com.example.pelletswaterheater.repository
 
 import com.example.pelletswaterheater.utils.ConvertedValue
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -15,4 +14,5 @@ interface ValueRepository {
     fun updateValues(rawData: Map<String, String>, timestamp: Long, doLogging: Boolean)
     suspend fun loadTestDataFromStorage()
     fun getCurrentTimestamp(): Long
+    fun resetValues()
 }

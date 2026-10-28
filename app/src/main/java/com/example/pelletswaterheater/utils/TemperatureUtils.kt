@@ -2,13 +2,18 @@ package com.example.pelletswaterheater.utils
 
 import android.content.Context
 import android.graphics.Color
-import androidx.work.WorkManager
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.pelletswaterheater.TemperatureWorker
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ConvertedValue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -70,12 +75,12 @@ class TemperatureUtils private constructor(
         fun forceTemperatureUpdate() {
             // Try to trigger via WorkManager if context available
             appContext?.let { ctx ->
-                val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
+                val workRequest: OneTimeWorkRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
                     .addTag(WORK_NAME)
                     .build()
                 WorkManager.getInstance(ctx).enqueueUniqueWork(
                     WORK_NAME,
-                    androidx.work.ExistingWorkPolicy.REPLACE,
+                    ExistingWorkPolicy.REPLACE,
                     workRequest
                 )
             }
@@ -286,12 +291,12 @@ class TemperatureUtils private constructor(
     }
 
     fun forceTemperatureUpdate() {
-        val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
+        val workRequest: OneTimeWorkRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
             .addTag(WORK_NAME)
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             WORK_NAME,
-            androidx.work.ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.REPLACE,
             workRequest
         )
     }

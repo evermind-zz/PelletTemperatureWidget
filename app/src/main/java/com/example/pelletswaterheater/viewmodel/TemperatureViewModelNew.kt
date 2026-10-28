@@ -17,10 +17,8 @@ import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -204,7 +202,7 @@ class TemperatureViewModelNew(
     }
 
     fun resetMetadata() {
-        valueRepository.convertedValues.value = emptyMap()
+        valueRepository.resetValues()
         fetchMetadata()
     }
 
@@ -242,12 +240,12 @@ class TemperatureViewModelNew(
     // Metadata file methods - delegate to MetadataRepository
     fun getMetadataFileName(): String = metadataRepository.getCurrentMetadataFilename()
     fun setCurrentMetadata(filename: String) { metadataRepository.setCurrentMetadataFilename(filename) }
-    fun getMetadataFiles(): kotlinx.coroutines.flow.StateFlow<List<java.io.File>> = metadataRepository.getMetadataFiles()
+    fun getMetadataFiles(): StateFlow<List<java.io.File>> = metadataRepository.getMetadataFiles()
     fun deleteMetadataFile(file: java.io.File) { metadataRepository.deleteMetadataFile(file) }
     fun shareMetadata(context: android.content.Context) { metadataRepository.shareMetadata(context) }
     fun importMetadata(context: android.content.Context) { metadataRepository.importMetadata(context) }
-    fun getMetadataUri(file: java.io.File): android.net.Uri? = (metadataRepository as? MetadataRepositoryImpl)?.getMetadataUri(file)
-    fun saveUserMetadata(jsonString: String) { (metadataRepository as? MetadataRepositoryImpl)?.saveUserMetadata(jsonString) }
+    fun getMetadataUri(file: java.io.File): android.net.Uri? = metadataRepository.getMetadataUri(file)
+    fun saveUserMetadata(jsonString: String) { metadataRepository.saveUserMetadata(jsonString) }
     fun getCurrentMetadataJson(): String? = metadataRepository.getMetadataContent(getMetadataFileName())
 
     // Error/State methods - delegate to StateRepository

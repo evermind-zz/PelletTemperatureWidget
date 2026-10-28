@@ -82,6 +82,11 @@ class ValueRepositoryImpl(
 
     override fun getCurrentTimestamp(): Long = System.currentTimeMillis()
 
+    override fun resetValues() {
+        _convertedValues.value = emptyMap()
+        _lastTimestamp.value = "N/A"
+    }
+
     private fun parseAndUpdateValues(body: String) {
         val values = MetadataUtils.parseDataValuesJson(body)
         if (values != null) {

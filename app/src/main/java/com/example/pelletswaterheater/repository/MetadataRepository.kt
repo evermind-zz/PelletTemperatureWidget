@@ -1,15 +1,17 @@
 package com.example.pelletswaterheater.repository
 
+import android.content.Context
+import android.net.Uri
 import com.example.pelletswaterheater.utils.MetadataJson
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Repository for managing metadata (server + user merged).
  * Handles fetching, caching, and merging metadata.
  */
 interface MetadataRepository {
-    val metadata: Flow<MetadataJson?>
-    val metadataFiles: Flow<List<java.io.File>>
+    val metadata: StateFlow<MetadataJson?>
+    val metadataFiles: StateFlow<List<java.io.File>>
 
     suspend fun fetchMetadata(url: String): Result<MetadataJson>
     suspend fun loadCachedMetadata(): MetadataJson?
@@ -17,10 +19,10 @@ interface MetadataRepository {
     fun getMetadataContent(filename: String): String?
     fun getCurrentMetadataFilename(): String
     fun setCurrentMetadataFilename(filename: String)
-    fun getMetadataFiles(): Flow<List<java.io.File>>
+    fun getMetadataFiles(): StateFlow<List<java.io.File>>
     fun deleteMetadataFile(file: java.io.File)
-    fun shareMetadata(context: android.content.Context)
-    fun importMetadata(context: android.content.Context)
-    fun getMetadataUri(file: java.io.File): android.net.Uri?
+    fun shareMetadata(context: Context)
+    fun importMetadata(context: Context)
+    fun getMetadataUri(file: java.io.File): Uri?
     fun saveUserMetadata(jsonString: String)
 }
