@@ -40,8 +40,8 @@ import com.example.pelletswaterheater.ui.MetadataScreen
 import com.example.pelletswaterheater.ui.SettingsScreen
 import com.example.pelletswaterheater.ui.ValueSelectionScreen
 import com.example.pelletswaterheater.ui.theme.PelletsWaterHeaterTheme
+import com.example.pelletswaterheater.TemperatureWidget
 import com.example.pelletswaterheater.utils.TemperatureUtils
-import com.example.pelletswaterheater.utils.TemperatureWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

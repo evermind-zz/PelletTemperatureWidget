@@ -319,7 +319,7 @@ class SettingsViewModel(
         val intent = Intent(context, LoggingService::class.java)
         context.stopService(intent)
         logger.d(TAG, "Logging service stopped")
-        temperatureUtils.schedulePeriodicWork(LOGGING_INTERVAL_MIN_VAL_IN_MS)
+        temperatureUtils.schedulePeriodicWork(LOGGING_INTERVAL_MIN_VAL_IN_MS.toLong())
     }
 
     fun hideBatteryOptimizationDialog() {
