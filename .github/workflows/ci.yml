@@ -27,7 +27,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Generate License Report
-        run: ./gradlew licenseReport --no-daemon --stacktrace
+        run: ./gradlew dependencyLicenseReport --no-daemon --stacktrace
 
       - name: Run Unit Tests
         run: ./gradlew test --no-daemon --stacktrace --continue
@@ -92,7 +92,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Generate License Report
-        run: ./gradlew licenseReport --no-daemon --stacktrace
+        run: ./gradlew dependencyLicenseReport --no-daemon --stacktrace
 
       - name: Assemble Debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
