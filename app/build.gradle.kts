@@ -54,7 +54,7 @@ android {
     }
 
     lint {
-        isAbortOnError = false
+        abortOnError = false
         htmlOutput = file("${project.buildDir}/reports/lint-results.html")
         xmlOutput = file("${project.buildDir}/reports/lint-results.xml")
     }
