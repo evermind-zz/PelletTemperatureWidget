@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
 
       - name: Run Unit Tests
-        run: ./gradlew test --no-daemon --stacktrace --continue --info
+        run: ./gradlew :app:test --no-daemon --stacktrace --continue --info
 
       - name: Upload Test Reports
         if: always()
