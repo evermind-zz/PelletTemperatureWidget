@@ -1,21 +1,17 @@
 package com.example.pelletswaterheater.utils
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import com.example.pelletswaterheater.TemperatureWorker
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ConvertedValue
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,6 +20,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Utility functions for temperature app settings and operations.
  * Uses PreferencesRepository for DataStore-based persistence.
+ * Static methods in companion object are for backward compatibility and UI access.
  */
 class TemperatureUtils private constructor(
     private val preferencesRepository: PreferencesRepository,
@@ -47,7 +44,6 @@ class TemperatureUtils private constructor(
         // Static convenience methods for backward compatibility
         @Suppress("UNUSED_PARAMETER")
         fun getStoredUrl(): String {
-            // This is a blocking call for backward compat - should be avoided
             return DEFAULT_SERVER_URL
         }
 
@@ -71,8 +67,19 @@ class TemperatureUtils private constructor(
             // Deprecated - use PreferencesRepository directly
         }
 
-        @Suppress("UNUSED_PARAMETER")
-        fun forceTemperatureUpdate() {}
+        fun forceTemperatureUpdate() {
+            // Try to trigger via WorkManager if context available
+            appContext?.let { ctx ->
+                val workRequest = OneTimeWorkRequestBuilder<TemperatureWorker>()
+                    .addTag(WORK_NAME)
+                    .build()
+                WorkManager.getInstance(ctx).enqueueUniqueWork(
+                    WORK_NAME,
+                    androidx.work.ExistingWorkPolicy.REPLACE,
+                    workRequest
+                )
+            }
+        }
 
         @Suppress("UNUSED_PARAMETER")
         fun pingServer(url: String): Boolean {
@@ -156,7 +163,7 @@ class TemperatureUtils private constructor(
         )
     }
 
-    // Instance methods using PreferencesRepository
+    // Instance methods using PreferencesRepository (DataStore)
     suspend fun getServerUrl(): String {
         return preferencesRepository.serverUrl.first() ?: DEFAULT_SERVER_URL
     }
@@ -245,10 +252,6 @@ class TemperatureUtils private constructor(
         textColor: String
     ): Boolean {
         return preferencesRepository.updateAllSettings(url, width, height, backgroundColor, textColor)
-    }
-
-    fun maskPasswordInUrl(url: String): String {
-        return url.replace(Regex("://([^:]+):([^@]+)@"), "://\$1:****@")
     }
 
     fun pingServerAsync(url: String): Boolean {
