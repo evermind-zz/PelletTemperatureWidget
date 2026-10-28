@@ -98,13 +98,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
 
-    testImplementation("org.mockito:mockito-core:5.12.0") // Added for Log mocking
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1") // Added for Kotlin-friendly mocking
-    testImplementation("org.robolectric:robolectric:4.12.2") // For Android classes in unit tests
+    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+    testImplementation("org.robolectric:robolectric:4.12.2")
 
     testImplementation("io.insert-koin:koin-test:3.5.6")
-    implementation("io.insert-koin:koin-test:3.5.6")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 tasks.withType<Test> {
