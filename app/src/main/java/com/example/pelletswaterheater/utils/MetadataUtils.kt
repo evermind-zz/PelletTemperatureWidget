@@ -92,9 +92,8 @@ object MetadataJsonSerializer : KSerializer<MetadataJson> {
         // Parse each root-level key; treat non-"error" keys as sections.
         jsonObject.forEach { (sectionKey, sectionValue) ->
             if (sectionKey == "error") {
-                // TODO Better handling if error becomes structured in the future
-                error = sectionValue.toString()
-                //error = sectionValue.jsonPrimitive.contentOrNull ?: sectionValue.toString()
+                // Error is currently a simple string; handle structured errors if API changes
+                error = sectionValue.jsonPrimitive?.content ?: sectionValue.toString()
                 return@forEach
             }
 

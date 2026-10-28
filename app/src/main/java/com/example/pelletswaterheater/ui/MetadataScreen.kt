@@ -166,17 +166,17 @@ fun MetadataScreen(
         fileToEditState.value?.let { file ->
             CodeEditorDialog(
                 "Edit Metadata",
-                initialText = "", // TODO settingsViewModel.rawMetadata.collectAsState()
+                initialText = viewModel.getCurrentMetadataJson() ?: "",
                 onDismiss = {
                     fileToEditState.value = null
                 },
-                onSave = {
+                onSave = { saveText ->
                     fileToEditState.value = null
-                    // TODO save it viewModel.saveUserMetadata(it)
+                    viewModel.saveUserMetadata(saveText)
                 },
                 onSaveAs = { filename, saveText ->
-                    // handle the filename and save logic
-                    // Save file etc...
+                    viewModel.setCurrentMetadata(filename)
+                    viewModel.saveUserMetadata(saveText)
                     fileToEditState.value = null
                 }
             )

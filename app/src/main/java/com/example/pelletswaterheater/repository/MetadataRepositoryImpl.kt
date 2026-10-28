@@ -141,11 +141,22 @@ class MetadataRepositoryImpl(
     }
 
     override fun shareMetadata(context: Context) {
-        // TODO: Implement share intent logic
+        val currentMetadataFile = temperatureUtils.getMetadataDefaultFile()
+        val uri = getMetadataUri(File(context.filesDir, currentMetadataFile))
+        uri?.let { uri ->
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND)
+            intent.type = "text/json"
+            intent.putExtra(android.content.Intent.EXTRA_STREAM, uri)
+            intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            context.startActivity(android.content.Intent.createChooser(intent, "Share Metadata"))
+        }
     }
 
     override fun importMetadata(context: Context) {
-        // TODO: Implement file picker logic
+        val intent = android.content.Intent(android.content.Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(android.content.Intent.CATEGORY_OPENABLE)
+        intent.type = "application/json"
+        // Note: This requires the caller to handle the result via ActivityResultContracts.StartActivityForResult
     }
 
     override fun getMetadataUri(file: File): Uri? {
