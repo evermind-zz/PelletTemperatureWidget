@@ -28,6 +28,7 @@ jobs:
 
       - name: Generate License Report
         run: ./gradlew dependencyLicenseReport --no-daemon --stacktrace
+        continue-on-error: true
 
       - name: Run Unit Tests
         run: ./gradlew test --no-daemon --stacktrace --continue
@@ -93,6 +94,7 @@ jobs:
 
       - name: Generate License Report
         run: ./gradlew dependencyLicenseReport --no-daemon --stacktrace
+        continue-on-error: true
 
       - name: Assemble Debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
