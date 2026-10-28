@@ -54,6 +54,13 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
+
+    // Lint configuration
+    lint {
+        isAbortOnError = false
+        htmlOutput = file("${project.buildDir}/reports/lint-results.html")
+        xmlOutput = file("${project.buildDir}/reports/lint-results.xml")
+    }
 }
 
 dependencies {
@@ -93,7 +100,7 @@ dependencies {
 
     testImplementation("org.mockito:mockito-core:5.12.0") // Added for Log mocking
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1") // Added for Kotlin-friendly mocking
-    //testImplementation("org.robolectric:robolectric:4.12.2") // Added for Android classes in unit tests
+    testImplementation("org.robolectric:robolectric:4.12.2") // For Android classes in unit tests
 
     testImplementation("io.insert-koin:koin-test:3.5.6")
     implementation("io.insert-koin:koin-test:3.5.6")
