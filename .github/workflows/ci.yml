@@ -101,16 +101,16 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          ndk-version: r26c
-          emulator: true
           cmdline-tools-version: latest
-          build-tools-version: 34.0.0
+          packages: platform-tools platforms;android-34 build-tools;34.0.0 system-images;android-34;default;x86_64
 
       - name: Create and Start Emulator
         run: |
           echo "no" | avdmanager create avd -n test -k "system-images;android-34;default;x86_64" --force
           emulator -avd test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+
+      - name: Accept SDK Licenses
+        run: yes | sdkmanager --licenses
 
       - name: Wait for Emulator
         run: |
