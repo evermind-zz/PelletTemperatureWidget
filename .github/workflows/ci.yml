@@ -108,12 +108,9 @@ jobs:
           build-tools-version: 34.0.0
 
       - name: Create and Start Emulator
-        uses: android-actions/create-emulator@v2
-        with:
-          api-level: 34
-          force-avd-creation: false
-          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
-          arch: x86_64
+        run: |
+          echo "no" | avdmanager create avd -n test -k "system-images;android-34;default;x86_64" --force
+          emulator -avd test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
 
       - name: Wait for Emulator
         run: |
