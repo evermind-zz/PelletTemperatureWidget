@@ -19,17 +19,13 @@ import android.util.Log
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.FileNotFoundException
 import java.net.URI
 import java.util.concurrent.atomic.AtomicInteger
 
-class TemperatureWorker(
-    appContext: Context,
-    params: WorkerParameters,
-    private val viewModel: TemperatureViewModelNew,
-    private val logger: ILogger,
-    private val temperatureUtils: TemperatureUtils
-) : CoroutineWorker(appContext, params) {
+class TemperatureWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params), KoinComponent {
 
     companion object {
         private val TAG = TemperatureWorker::class.java.simpleName
@@ -38,6 +34,9 @@ class TemperatureWorker(
         fun resetBackoffCount() { backoffCount = 0 }
     }
     private val backoffCount = AtomicInteger(0)
+    private val viewModel: TemperatureViewModelNew by inject()
+    private val logger: ILogger by inject()
+    private val temperatureUtils: TemperatureUtils by inject()
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER) ?: tags.toString()
