@@ -49,17 +49,18 @@ class ValueRepositoryImpl(
                 val fullKey = "$section.$key"
                 val rawValue = rawData[fullKey] ?: return@forEach
                 when (field) {
-                    is MetadataJson.Field -> {
+                    is com.example.pelletswaterheater.utils.MetadataField -> {
                         logger.d(TAG, " updateValues() Field $key = ${field.value} (${field.unit ?: "no unit"})")
                         converted[fullKey] = com.example.pelletswaterheater.utils.ValueConverter.convert(fullKey, rawValue, field)
                     }
-                    is MetadataJson.Label -> logger.d(TAG, "updateValues() Label $key = ${field.label}")
+                    is com.example.pelletswaterheater.utils.MetadataLabel -> logger.d(TAG, "updateValues() Label $key = ${field.label}")
+                    else -> logger.w(TAG, "Unknown metadata entry type for $fullKey")
                 }
             }
         }
 
         _convertedValues.value = converted
-        _lastTimestamp.value = temperatureUtils.formatTimeStamp(timestamp)
+        _lastTimestamp.value = TemperatureUtils.formatTimeStamp(timestamp)
 
         if (doLogging) {
             // Note: Logging selection filtering is done by the caller (ViewModel)
@@ -67,8 +68,8 @@ class ValueRepositoryImpl(
         }
 
         // Trigger widget update
-        temperatureUtils.context?.let {
-            TemperatureWidget().forceUpdateAll(it)
+        viewModelScope.launch {
+            TemperatureWidget().forceUpdateAll(contextProvider.getContext())
         }
     }
 

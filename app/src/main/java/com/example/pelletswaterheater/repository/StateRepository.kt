@@ -38,7 +38,7 @@ class StateRepositoryImpl(
     private val _lastTimestamp = MutableStateFlow<String>("N/A")
     override val lastTimestamp: StateFlow<String> = _lastTimestamp.asStateFlow()
 
-    override val systemStats = SystemStats(_lastTimestamp.asStateFlow(), _state.asStateFlow(), _error.asStateFlow())
+    override val systemStats = StateRepository.SystemStats(_lastTimestamp.asStateFlow(), _state.asStateFlow(), _error.asStateFlow())
 
     override fun updateError(error: String?) {
         _error.value = error

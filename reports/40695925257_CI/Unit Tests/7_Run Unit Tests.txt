@@ -1,0 +1,1181 @@
+﻿2026-10-28T13:24:20.9623640Z ##[group]Run ./gradlew :app:test --no-daemon --stacktrace --continue --info
+2026-10-28T13:24:20.9624120Z [36;1m./gradlew :app:test --no-daemon --stacktrace --continue --info[0m
+2026-10-28T13:24:20.9642107Z shell: /usr/bin/bash -e {0}
+2026-10-28T13:24:20.9642364Z env:
+2026-10-28T13:24:20.9642667Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T13:24:20.9643104Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T13:24:20.9643442Z ##[endgroup]
+2026-10-28T13:24:21.3604277Z Initialized native services in: /home/runner/.gradle/native
+2026-10-28T13:24:21.3618725Z Initialized jansi services in: /home/runner/.gradle/native
+2026-10-28T13:24:21.4704199Z Received JVM installation metadata from '/usr/lib/jvm/temurin-17-jdk-amd64': {JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64, JAVA_VERSION=17.0.21, JAVA_VENDOR=Eclipse Adoptium, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.21+9, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.21+9, VM_VENDOR=Eclipse Adoptium, OS_ARCH=amd64}
+2026-10-28T13:24:21.5698513Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.10/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-10-28T13:24:21.5711841Z Starting process 'Gradle build daemon'. Working directory: /home/runner/.gradle/daemon/8.10 Command: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED -Xmx2048m -Dfile.encoding=UTF-8 -Duser.country -Duser.language=en -Duser.variant -cp /home/runner/.gradle/wrapper/dists/gradle-8.10-bin/deqhafrv1ntovfmgh0nh3npr9/gradle-8.10/lib/gradle-daemon-main-8.10.jar -javaagent:/home/runner/.gradle/wrapper/dists/gradle-8.10-bin/deqhafrv1ntovfmgh0nh3npr9/gradle-8.10/lib/agents/gradle-instrumentation-agent-8.10.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 8.10
+2026-10-28T13:24:21.5717695Z Successfully started process 'Gradle build daemon'
+2026-10-28T13:24:22.3693311Z An attempt to start the daemon took 0.83 secs.
+2026-10-28T13:24:22.5694655Z The client will now receive all logging from the daemon (pid: 2499). The daemon log file: /home/runner/.gradle/daemon/8.10/daemon-2499.out.log
+2026-10-28T13:24:22.5696087Z Daemon will be stopped at the end of the build 
+2026-10-28T13:24:22.8706544Z Using 4 worker leases.
+2026-10-28T13:24:23.0696218Z Received JVM installation metadata from '/usr/lib/jvm/temurin-17-jdk-amd64': {JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64, JAVA_VERSION=17.0.21, JAVA_VENDOR=Eclipse Adoptium, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.21+9, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.21+9, VM_VENDOR=Eclipse Adoptium, OS_ARCH=amd64}
+2026-10-28T13:24:23.3691508Z Watching the file system is configured to be enabled if available
+2026-10-28T13:24:23.3692631Z Now considering [/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget] as hierarchies to watch
+2026-10-28T13:24:23.3693310Z File system watching is active
+2026-10-28T13:24:23.9698672Z Starting Build
+2026-10-28T13:24:24.6697991Z Settings evaluated using settings file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/settings.gradle.kts'.
+2026-10-28T13:24:24.6718487Z Projects loaded. Root project using build file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/build.gradle.kts'.
+2026-10-28T13:24:24.6727860Z Included projects: [root project 'PelletsWaterHeater', project ':app']
+2026-10-28T13:24:25.7707275Z 
+2026-10-28T13:24:25.7774933Z > Configure project :
+2026-10-28T13:24:25.7798131Z Evaluating root project 'PelletsWaterHeater' using build file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/build.gradle.kts'.
+2026-10-28T13:24:25.7827536Z Transforming gradle-8.5.1.jar (com.android.tools.build:gradle:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7836306Z Transforming gradle-settings-api-8.5.1.jar (com.android.tools.build:gradle-settings-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7837950Z Transforming lint-model-31.5.1.jar (com.android.tools.lint:lint-model:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7839205Z Transforming builder-8.5.1.jar (com.android.tools.build:builder:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7840439Z Transforming manifest-merger-31.5.1.jar (com.android.tools.build:manifest-merger:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7841640Z Transforming sdk-common-31.5.1.jar (com.android.tools:sdk-common:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7842706Z Transforming sdklib-31.5.1.jar (com.android.tools:sdklib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7843716Z Transforming repository-31.5.1.jar (com.android.tools:repository:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7844857Z Transforming aaptcompiler-8.5.1.jar (com.android.tools.build:aaptcompiler:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7846071Z Transforming tracker-31.5.1.jar (com.android.tools.analytics-library:tracker:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7847488Z Transforming shared-31.5.1.jar (com.android.tools.analytics-library:shared:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7848867Z Transforming databinding-compiler-common-8.5.1.jar (androidx.databinding:databinding-compiler-common:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7850601Z Transforming android-test-plugin-host-emulator-control-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7887922Z Transforming android-test-plugin-host-retention-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7889623Z Transforming builder-model-8.5.1.jar (com.android.tools.build:builder-model:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7890765Z Transforming gradle-api-8.5.1.jar (com.android.tools.build:gradle-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7891919Z Transforming builder-test-api-8.5.1.jar (com.android.tools.build:builder-test-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7893333Z Transforming ddmlib-31.5.1.jar (com.android.tools.ddms:ddmlib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7894466Z Transforming layoutlib-api-31.5.1.jar (com.android.tools.layoutlib:layoutlib-api:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7895578Z Transforming dvlib-31.5.1.jar (com.android.tools:dvlib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7896505Z Transforming common-31.5.1.jar (com.android.tools:common:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7897734Z Transforming kotlin-stdlib-jdk8-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7899059Z Transforming jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7900398Z Transforming jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7901598Z Transforming kotlin-reflect-1.9.24.jar (org.jetbrains.kotlin:kotlin-reflect:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7902723Z Transforming kotlin-stdlib-jdk7-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7904009Z Transforming kotlin-stdlib-1.9.24.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7905078Z Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7906203Z Transforming kotlin-serialization-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-serialization:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7930879Z Transforming kotlin-gradle-plugin-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-model:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7932304Z Transforming kotlin-gradle-plugin-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7933672Z Transforming kotlin-gradle-plugin-api-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7935037Z Transforming kotlin-gradle-plugin-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7936242Z Transforming bundletool-1.16.0.jar (com.android.tools.build:bundletool:1.16.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7967812Z Transforming aapt2-proto-8.5.1-11315950.jar (com.android.tools.build:aapt2-proto:8.5.1-11315950) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7969025Z Transforming crash-31.5.1.jar (com.android.tools.analytics-library:crash:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7970239Z Transforming lint-typedef-remover-31.5.1.jar (com.android.tools.lint:lint-typedef-remover:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7971451Z Transforming databinding-common-8.5.1.jar (androidx.databinding:databinding-common:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7972602Z Transforming baseLibrary-8.5.1.jar (com.android.databinding:baseLibrary:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7973954Z Transforming android-device-provider-ddmlib-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7975540Z Transforming android-device-provider-gradle-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7977374Z Transforming android-test-plugin-host-additional-test-output-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7979629Z Transforming android-test-plugin-host-coverage-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7981336Z Transforming android-test-plugin-host-logcat-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7983057Z Transforming android-test-plugin-host-apk-installer-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7984986Z Transforming android-test-plugin-result-listener-gradle-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7987006Z Transforming transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7988362Z Transforming httpmime-4.5.6.jar (org.apache.httpcomponents:httpmime:4.5.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7989331Z Transforming commons-io-2.13.0.jar (commons-io:commons-io:2.13.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7990436Z Transforming asm-commons-9.6.jar (org.ow2.asm:asm-commons:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7991331Z Transforming asm-util-9.6.jar (org.ow2.asm:asm-util:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7992200Z Transforming asm-analysis-9.6.jar (org.ow2.asm:asm-analysis:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7993068Z Transforming asm-tree-9.6.jar (org.ow2.asm:asm-tree:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7993876Z Transforming asm-9.6.jar (org.ow2.asm:asm:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7994778Z Transforming apkzlib-8.5.1.jar (com.android.tools.build:apkzlib:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.7995826Z Transforming bcpkix-jdk18on-1.77.jar (org.bouncycastle:bcpkix-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8073602Z Transforming jaxb-runtime-2.3.2.jar (org.glassfish.jaxb:jaxb-runtime:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8074838Z Transforming jopt-simple-4.9.jar (net.sf.jopt-simple:jopt-simple:4.9) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8075838Z Transforming javapoet-1.10.0.jar (com.squareup:javapoet:1.10.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8077046Z Transforming protobuf-java-util-3.22.3.jar (com.google.protobuf:protobuf-java-util:3.22.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8078180Z Transforming grpc-protobuf-1.57.0.jar (io.grpc:grpc-protobuf:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8079129Z Transforming tink-1.7.0.jar (com.google.crypto.tink:tink:1.7.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8080173Z Transforming protos-31.5.1.jar (com.android.tools.analytics-library:protos:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8081370Z Transforming proto-google-common-protos-2.17.0.jar (com.google.api.grpc:proto-google-common-protos:2.17.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8082606Z Transforming protobuf-java-3.22.3.jar (com.google.protobuf:protobuf-java:3.22.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8083491Z Transforming grpc-netty-1.57.0.jar (io.grpc:grpc-netty:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8084368Z Transforming grpc-core-1.57.0.jar (io.grpc:grpc-core:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8085273Z Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8086164Z Transforming grpc-stub-1.57.0.jar (io.grpc:grpc-stub:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8087645Z Transforming core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8088740Z Transforming kxml2-2.3.0.jar (net.sf.kxml:kxml2:2.3.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8089849Z Transforming tensorflow-lite-metadata-0.1.0-rc2.jar (org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8091230Z Transforming flatbuffers-java-1.12.0.jar (com.google.flatbuffers:flatbuffers-java:1.12.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8092619Z Transforming kotlin-gradle-plugin-idea-proto-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea-proto:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8094045Z Transforming kotlin-gradle-plugin-idea-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8095412Z Transforming kotlin-klib-commonizer-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8131256Z Transforming kotlin-native-utils-1.9.24.jar (org.jetbrains.kotlin:kotlin-native-utils:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8133034Z Transforming kotlin-util-klib-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-klib:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8134660Z Transforming kotlin-build-tools-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-build-tools-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8136245Z Transforming kotlin-android-extensions-1.9.24.jar (org.jetbrains.kotlin:kotlin-android-extensions:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8137904Z Transforming kotlin-compiler-runner-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-runner:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8139358Z Transforming kotlin-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8141074Z Transforming kotlin-scripting-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8142789Z Transforming kotlin-scripting-compiler-impl-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8144236Z Transforming jimfs-1.1.jar (com.google.jimfs:jimfs:1.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8145249Z Transforming grpc-context-1.57.0.jar (io.grpc:grpc-context:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8146352Z Transforming grpc-protobuf-lite-1.57.0.jar (io.grpc:grpc-protobuf-lite:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8177143Z Transforming grpc-api-1.57.0.jar (io.grpc:grpc-api:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8178295Z Transforming guava-32.0.1-jre.jar (com.google.guava:guava:32.0.1-jre) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8179451Z Transforming dagger-2.28.3.jar (com.google.dagger:dagger:2.28.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8180538Z Transforming javax.inject-1.jar (javax.inject:javax.inject:1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8181692Z Transforming bcutil-jdk18on-1.77.jar (org.bouncycastle:bcutil-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8182904Z Transforming bcprov-jdk18on-1.77.jar (org.bouncycastle:bcprov-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8184149Z Transforming trove4j-1.0.20200330.jar (org.jetbrains.intellij.deps:trove4j:1.0.20200330) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8185416Z Transforming commons-compress-1.21.jar (org.apache.commons:commons-compress:1.21) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8187001Z Transforming httpclient-4.5.14.jar (org.apache.httpcomponents:httpclient:4.5.14) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8188423Z Transforming httpcore-4.4.16.jar (org.apache.httpcomponents:httpcore:4.4.16) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8189648Z Transforming javax.activation-1.2.0.jar (com.sun.activation:javax.activation:1.2.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8190785Z Transforming signflinger-8.5.1.jar (com.android:signflinger:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8192057Z Transforming zipflinger-8.5.1.jar (com.android:zipflinger:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8192945Z Transforming annotations-31.5.1.jar (com.android.tools:annotations:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8193983Z Transforming jna-platform-5.6.0.jar (net.java.dev.jna:jna-platform:5.6.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8195297Z Transforming juniversalchardet-1.0.3.jar (com.googlecode.juniversalchardet:juniversalchardet:1.0.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8196500Z Transforming javax.annotation-api-1.3.2.jar (javax.annotation:javax.annotation-api:1.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8197948Z Transforming stax-ex-1.8.1.jar (org.jvnet.staxex:stax-ex:1.8.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8199394Z Transforming jakarta.xml.bind-api-2.3.2.jar (jakarta.xml.bind:jakarta.xml.bind-api:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8200456Z Transforming txw2-2.3.2.jar (org.glassfish.jaxb:txw2:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8201594Z Transforming istack-commons-runtime-3.0.8.jar (com.sun.istack:istack-commons-runtime:3.0.8) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8202799Z Transforming FastInfoset-1.2.16.jar (com.sun.xml.fastinfoset:FastInfoset:1.2.16) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8204023Z Transforming jakarta.activation-api-1.2.1.jar (jakarta.activation:jakarta.activation-api:1.2.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8205532Z Transforming auto-value-annotations-1.6.2.jar (com.google.auto.value:auto-value-annotations:1.6.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8207101Z Transforming error_prone_annotations-2.18.0.jar (com.google.errorprone:error_prone_annotations:2.18.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8208410Z Transforming jose4j-0.9.5.jar (org.bitbucket.b_c:jose4j:0.9.5) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8209451Z Transforming slf4j-api-1.7.30.jar (org.slf4j:slf4j-api:1.7.30) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8210376Z Transforming jdom2-2.0.6.jar (org.jdom:jdom2:2.0.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8211497Z Transforming jsr305-3.0.2.jar (com.google.code.findbugs:jsr305:3.0.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8212678Z Transforming j2objc-annotations-2.8.jar (com.google.j2objc:j2objc-annotations:2.8) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8214097Z Transforming annotations-4.1.1.4.jar (com.google.android:annotations:4.1.1.4) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8215465Z Transforming animal-sniffer-annotations-1.23.jar (org.codehaus.mojo:animal-sniffer-annotations:1.23) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8253549Z Transforming perfmark-api-0.26.0.jar (io.perfmark:perfmark-api:0.26.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8255073Z Transforming netty-codec-http2-4.1.93.Final.jar (io.netty:netty-codec-http2:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8256393Z Transforming netty-handler-proxy-4.1.93.Final.jar (io.netty:netty-handler-proxy:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8257959Z Transforming netty-codec-http-4.1.93.Final.jar (io.netty:netty-codec-http:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8259405Z Transforming netty-handler-4.1.93.Final.jar (io.netty:netty-handler:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8260862Z Transforming netty-transport-native-unix-common-4.1.93.Final.jar (io.netty:netty-transport-native-unix-common:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8262434Z Transforming checker-qual-3.33.0.jar (org.checkerframework:checker-qual:3.33.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8263656Z Transforming commons-codec-1.11.jar (commons-codec:commons-codec:1.11) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8264562Z Transforming apksig-8.5.1.jar (com.android.tools.build:apksig:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8265724Z Transforming javawriter-2.5.0.jar (com.squareup:javawriter:2.5.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8267281Z Transforming kotlin-gradle-plugin-annotations-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-annotations:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8269042Z Transforming kotlin-project-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-project-model:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8270497Z Transforming kotlin-tooling-core-1.9.24.jar (org.jetbrains.kotlin:kotlin-tooling-core:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8272061Z Transforming kotlin-util-io-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-io:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8273478Z Transforming kotlin-daemon-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8274955Z Transforming kotlin-daemon-client-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-client:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8276459Z Transforming kotlinx-coroutines-core-jvm-1.5.0.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8309801Z Transforming kotlin-scripting-jvm-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8311282Z Transforming kotlin-scripting-common-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-common:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8312619Z Transforming failureaccess-1.0.1.jar (com.google.guava:failureaccess:1.0.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8314308Z Transforming listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8315911Z Transforming commons-logging-1.2.jar (commons-logging:commons-logging:1.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8317351Z Transforming jna-5.6.0.jar (net.java.dev.jna:jna:5.6.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8318514Z Transforming netty-codec-socks-4.1.93.Final.jar (io.netty:netty-codec-socks:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8319772Z Transforming netty-codec-4.1.93.Final.jar (io.netty:netty-codec:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8320994Z Transforming netty-transport-4.1.93.Final.jar (io.netty:netty-transport:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8322294Z Transforming netty-buffer-4.1.93.Final.jar (io.netty:netty-buffer:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8323493Z Transforming netty-resolver-4.1.93.Final.jar (io.netty:netty-resolver:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8324690Z Transforming netty-common-4.1.93.Final.jar (io.netty:netty-common:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8325811Z Transforming gradle-8.5.1.jar (com.android.tools.build:gradle:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8327066Z Transforming gradle-8.5.1.jar (com.android.tools.build:gradle:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8328530Z Transforming gradle-settings-api-8.5.1.jar (com.android.tools.build:gradle-settings-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8329913Z Transforming gradle-settings-api-8.5.1.jar (com.android.tools.build:gradle-settings-api:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8331188Z Transforming lint-model-31.5.1.jar (com.android.tools.lint:lint-model:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8332361Z Transforming lint-model-31.5.1.jar (com.android.tools.lint:lint-model:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8333533Z Transforming builder-8.5.1.jar (com.android.tools.build:builder:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8334647Z Transforming builder-8.5.1.jar (com.android.tools.build:builder:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8335878Z Transforming manifest-merger-31.5.1.jar (com.android.tools.build:manifest-merger:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8394649Z Transforming manifest-merger-31.5.1.jar (com.android.tools.build:manifest-merger:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8396019Z Transforming sdk-common-31.5.1.jar (com.android.tools:sdk-common:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8397522Z Transforming sdk-common-31.5.1.jar (com.android.tools:sdk-common:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8398702Z Transforming sdklib-31.5.1.jar (com.android.tools:sdklib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8399746Z Transforming sdklib-31.5.1.jar (com.android.tools:sdklib:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8400958Z Transforming repository-31.5.1.jar (com.android.tools:repository:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8401987Z Transforming repository-31.5.1.jar (com.android.tools:repository:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8403125Z Transforming aaptcompiler-8.5.1.jar (com.android.tools.build:aaptcompiler:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8404320Z Transforming aaptcompiler-8.5.1.jar (com.android.tools.build:aaptcompiler:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8405601Z Transforming tracker-31.5.1.jar (com.android.tools.analytics-library:tracker:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8407068Z Transforming tracker-31.5.1.jar (com.android.tools.analytics-library:tracker:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8408500Z Transforming shared-31.5.1.jar (com.android.tools.analytics-library:shared:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8409803Z Transforming shared-31.5.1.jar (com.android.tools.analytics-library:shared:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8411208Z Transforming databinding-compiler-common-8.5.1.jar (androidx.databinding:databinding-compiler-common:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8412709Z Transforming databinding-compiler-common-8.5.1.jar (androidx.databinding:databinding-compiler-common:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8414539Z Transforming android-test-plugin-host-emulator-control-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8419826Z Transforming android-test-plugin-host-emulator-control-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8421952Z Transforming android-test-plugin-host-retention-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8424124Z Transforming android-test-plugin-host-retention-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8425622Z Transforming builder-model-8.5.1.jar (com.android.tools.build:builder-model:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8427026Z Transforming builder-model-8.5.1.jar (com.android.tools.build:builder-model:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8428323Z Transforming gradle-api-8.5.1.jar (com.android.tools.build:gradle-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8429451Z Transforming gradle-api-8.5.1.jar (com.android.tools.build:gradle-api:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8430705Z Transforming builder-test-api-8.5.1.jar (com.android.tools.build:builder-test-api:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8431956Z Transforming builder-test-api-8.5.1.jar (com.android.tools.build:builder-test-api:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8433153Z Transforming ddmlib-31.5.1.jar (com.android.tools.ddms:ddmlib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8434431Z Transforming gradle-settings-api-8.5.1.jar (com.android.tools.build:gradle-settings-api:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8435813Z Transforming ddmlib-31.5.1.jar (com.android.tools.ddms:ddmlib:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8437078Z Transforming layoutlib-api-31.5.1.jar (com.android.tools.layoutlib:layoutlib-api:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8438243Z Transforming layoutlib-api-31.5.1.jar (com.android.tools.layoutlib:layoutlib-api:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8439217Z Transforming dvlib-31.5.1.jar (com.android.tools:dvlib:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8440286Z Transforming dvlib-31.5.1.jar (com.android.tools:dvlib:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8441260Z Transforming common-31.5.1.jar (com.android.tools:common:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8442308Z Transforming common-31.5.1.jar (com.android.tools:common:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8443434Z Transforming kotlin-stdlib-jdk8-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8444540Z Transforming kotlin-stdlib-jdk8-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8445987Z Transforming jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8456097Z Transforming jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8457992Z Transforming jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8459503Z Transforming jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8460818Z Transforming kotlin-reflect-1.9.24.jar (org.jetbrains.kotlin:kotlin-reflect:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8462029Z Transforming kotlin-reflect-1.9.24.jar (org.jetbrains.kotlin:kotlin-reflect:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8463097Z Transforming kotlin-stdlib-jdk7-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8464364Z Transforming kotlin-stdlib-jdk7-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8478110Z Transforming kotlin-stdlib-1.9.24.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8482172Z Transforming kotlin-stdlib-1.9.24.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8483440Z Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8484520Z Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8485782Z Transforming kotlin-serialization-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-serialization:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8487476Z Transforming kotlin-serialization-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-serialization:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8488856Z Transforming kotlin-gradle-plugin-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-model:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8490302Z Transforming kotlin-gradle-plugin-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-model:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8491632Z Transforming kotlin-gradle-plugin-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8493120Z Transforming kotlin-gradle-plugin-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8494423Z Transforming kotlin-gradle-plugin-api-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8495927Z Transforming kotlin-gradle-plugin-api-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8497464Z Transforming kotlin-gradle-plugin-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8498864Z Transforming kotlin-gradle-plugin-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8500255Z Transforming bundletool-1.16.0.jar (com.android.tools.build:bundletool:1.16.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8501358Z Transforming bundletool-1.16.0.jar (com.android.tools.build:bundletool:1.16.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8502536Z Transforming aapt2-proto-8.5.1-11315950.jar (com.android.tools.build:aapt2-proto:8.5.1-11315950) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8503747Z Transforming aapt2-proto-8.5.1-11315950.jar (com.android.tools.build:aapt2-proto:8.5.1-11315950) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8504866Z Transforming crash-31.5.1.jar (com.android.tools.analytics-library:crash:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8506041Z Transforming crash-31.5.1.jar (com.android.tools.analytics-library:crash:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8507382Z Transforming lint-typedef-remover-31.5.1.jar (com.android.tools.lint:lint-typedef-remover:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8508700Z Transforming lint-typedef-remover-31.5.1.jar (com.android.tools.lint:lint-typedef-remover:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8510099Z Transforming databinding-common-8.5.1.jar (androidx.databinding:databinding-common:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8513336Z Transforming databinding-common-8.5.1.jar (androidx.databinding:databinding-common:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8514700Z Transforming baseLibrary-8.5.1.jar (com.android.databinding:baseLibrary:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8515805Z Transforming baseLibrary-8.5.1.jar (com.android.databinding:baseLibrary:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8517611Z Transforming android-device-provider-ddmlib-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8519379Z Transforming android-device-provider-ddmlib-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8521028Z Transforming android-device-provider-gradle-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8522869Z Transforming android-device-provider-gradle-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8524776Z Transforming android-test-plugin-host-additional-test-output-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8527230Z Transforming android-test-plugin-host-additional-test-output-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8529405Z Transforming android-test-plugin-host-coverage-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8531194Z Transforming android-test-plugin-host-coverage-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8532824Z Transforming android-test-plugin-host-logcat-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8534471Z Transforming android-test-plugin-host-logcat-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8536416Z Transforming android-test-plugin-host-apk-installer-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8538322Z Transforming android-test-plugin-host-apk-installer-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8540042Z Transforming android-test-plugin-result-listener-gradle-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8542143Z Transforming android-test-plugin-result-listener-gradle-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8543972Z Transforming transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8545851Z Transforming transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8547479Z Transforming httpmime-4.5.6.jar (org.apache.httpcomponents:httpmime:4.5.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8548612Z Transforming httpmime-4.5.6.jar (org.apache.httpcomponents:httpmime:4.5.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8549860Z Transforming commons-io-2.13.0.jar (commons-io:commons-io:2.13.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8550850Z Transforming commons-io-2.13.0.jar (commons-io:commons-io:2.13.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8551902Z Transforming asm-commons-9.6.jar (org.ow2.asm:asm-commons:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8553095Z Transforming asm-commons-9.6.jar (org.ow2.asm:asm-commons:9.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8571137Z Transforming asm-util-9.6.jar (org.ow2.asm:asm-util:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8572345Z Transforming asm-util-9.6.jar (org.ow2.asm:asm-util:9.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8573368Z Transforming asm-analysis-9.6.jar (org.ow2.asm:asm-analysis:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8574351Z Transforming asm-analysis-9.6.jar (org.ow2.asm:asm-analysis:9.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8575494Z Transforming asm-tree-9.6.jar (org.ow2.asm:asm-tree:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8576494Z Transforming asm-tree-9.6.jar (org.ow2.asm:asm-tree:9.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8577679Z Transforming asm-9.6.jar (org.ow2.asm:asm:9.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8578576Z Transforming asm-9.6.jar (org.ow2.asm:asm:9.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8579548Z Transforming apkzlib-8.5.1.jar (com.android.tools.build:apkzlib:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8580699Z Transforming apkzlib-8.5.1.jar (com.android.tools.build:apkzlib:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8581981Z Transforming bcpkix-jdk18on-1.77.jar (org.bouncycastle:bcpkix-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8583204Z Transforming bcpkix-jdk18on-1.77.jar (org.bouncycastle:bcpkix-jdk18on:1.77) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8584384Z Transforming gradle-8.5.1.jar (com.android.tools.build:gradle:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8585471Z Transforming jaxb-runtime-2.3.2.jar (org.glassfish.jaxb:jaxb-runtime:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8588069Z Transforming jaxb-runtime-2.3.2.jar (org.glassfish.jaxb:jaxb-runtime:2.3.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8589305Z Transforming jopt-simple-4.9.jar (net.sf.jopt-simple:jopt-simple:4.9) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8590538Z Transforming lint-model-31.5.1.jar (com.android.tools.lint:lint-model:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8591859Z Transforming jopt-simple-4.9.jar (net.sf.jopt-simple:jopt-simple:4.9) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8592852Z Transforming javapoet-1.10.0.jar (com.squareup:javapoet:1.10.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8594040Z Transforming javapoet-1.10.0.jar (com.squareup:javapoet:1.10.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8595223Z Transforming protobuf-java-util-3.22.3.jar (com.google.protobuf:protobuf-java-util:3.22.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8596499Z Transforming protobuf-java-util-3.22.3.jar (com.google.protobuf:protobuf-java-util:3.22.3) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8597886Z Transforming grpc-protobuf-1.57.0.jar (io.grpc:grpc-protobuf:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8598870Z Transforming grpc-protobuf-1.57.0.jar (io.grpc:grpc-protobuf:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8600009Z Transforming tink-1.7.0.jar (com.google.crypto.tink:tink:1.7.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8600973Z Transforming tink-1.7.0.jar (com.google.crypto.tink:tink:1.7.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8602076Z Transforming protos-31.5.1.jar (com.android.tools.analytics-library:protos:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8603223Z Transforming protos-31.5.1.jar (com.android.tools.analytics-library:protos:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8604682Z Transforming proto-google-common-protos-2.17.0.jar (com.google.api.grpc:proto-google-common-protos:2.17.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8606177Z Transforming proto-google-common-protos-2.17.0.jar (com.google.api.grpc:proto-google-common-protos:2.17.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8607644Z Transforming protobuf-java-3.22.3.jar (com.google.protobuf:protobuf-java:3.22.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8608820Z Transforming protobuf-java-3.22.3.jar (com.google.protobuf:protobuf-java:3.22.3) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8609800Z Transforming grpc-netty-1.57.0.jar (io.grpc:grpc-netty:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8610867Z Transforming grpc-netty-1.57.0.jar (io.grpc:grpc-netty:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8612055Z Transforming grpc-core-1.57.0.jar (io.grpc:grpc-core:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8615208Z Transforming grpc-core-1.57.0.jar (io.grpc:grpc-core:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8616267Z Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8617468Z Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8618695Z Transforming grpc-stub-1.57.0.jar (io.grpc:grpc-stub:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8619714Z Transforming grpc-stub-1.57.0.jar (io.grpc:grpc-stub:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8620905Z Transforming core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8622276Z Transforming core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8623422Z Transforming kxml2-2.3.0.jar (net.sf.kxml:kxml2:2.3.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8624355Z Transforming kxml2-2.3.0.jar (net.sf.kxml:kxml2:2.3.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8625411Z Transforming tensorflow-lite-metadata-0.1.0-rc2.jar (org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8653249Z Transforming tensorflow-lite-metadata-0.1.0-rc2.jar (org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8654791Z Transforming flatbuffers-java-1.12.0.jar (com.google.flatbuffers:flatbuffers-java:1.12.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8656148Z Transforming flatbuffers-java-1.12.0.jar (com.google.flatbuffers:flatbuffers-java:1.12.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8657737Z Transforming kotlin-gradle-plugin-idea-proto-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea-proto:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8659188Z Transforming kotlin-gradle-plugin-idea-proto-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea-proto:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8660564Z Transforming kotlin-gradle-plugin-idea-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8662068Z Transforming kotlin-gradle-plugin-idea-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8663660Z Transforming kotlin-klib-commonizer-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8665202Z Transforming kotlin-klib-commonizer-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8666841Z Transforming kotlin-native-utils-1.9.24.jar (org.jetbrains.kotlin:kotlin-native-utils:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8668244Z Transforming kotlin-native-utils-1.9.24.jar (org.jetbrains.kotlin:kotlin-native-utils:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8669516Z Transforming kotlin-util-klib-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-klib:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8670671Z Transforming kotlin-util-klib-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-klib:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8671858Z Transforming kotlin-build-tools-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-build-tools-api:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8673367Z Transforming kotlin-build-tools-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-build-tools-api:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8674660Z Transforming kotlin-android-extensions-1.9.24.jar (org.jetbrains.kotlin:kotlin-android-extensions:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8675983Z Transforming kotlin-android-extensions-1.9.24.jar (org.jetbrains.kotlin:kotlin-android-extensions:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8677453Z Transforming kotlin-compiler-runner-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-runner:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8678941Z Transforming kotlin-compiler-runner-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-runner:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8680438Z Transforming kotlin-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8681863Z Transforming kotlin-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8683401Z Transforming kotlin-scripting-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8685208Z Transforming kotlin-scripting-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8687059Z Transforming kotlin-scripting-compiler-impl-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8690374Z Transforming kotlin-scripting-compiler-impl-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8691307Z Transforming jimfs-1.1.jar (com.google.jimfs:jimfs:1.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8691937Z Transforming jimfs-1.1.jar (com.google.jimfs:jimfs:1.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8692685Z Transforming grpc-context-1.57.0.jar (io.grpc:grpc-context:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8693351Z Transforming grpc-context-1.57.0.jar (io.grpc:grpc-context:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8694065Z Transforming grpc-protobuf-lite-1.57.0.jar (io.grpc:grpc-protobuf-lite:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8694810Z Transforming grpc-protobuf-lite-1.57.0.jar (io.grpc:grpc-protobuf-lite:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8695450Z Transforming grpc-api-1.57.0.jar (io.grpc:grpc-api:1.57.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8696073Z Transforming grpc-api-1.57.0.jar (io.grpc:grpc-api:1.57.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8696948Z Transforming guava-32.0.1-jre.jar (com.google.guava:guava:32.0.1-jre) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8697873Z Transforming guava-32.0.1-jre.jar (com.google.guava:guava:32.0.1-jre) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8698996Z Transforming dagger-2.28.3.jar (com.google.dagger:dagger:2.28.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8699846Z Transforming dagger-2.28.3.jar (com.google.dagger:dagger:2.28.3) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8700799Z Transforming javax.inject-1.jar (javax.inject:javax.inject:1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8701760Z Transforming javax.inject-1.jar (javax.inject:javax.inject:1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8702777Z Transforming bcutil-jdk18on-1.77.jar (org.bouncycastle:bcutil-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8703981Z Transforming bcutil-jdk18on-1.77.jar (org.bouncycastle:bcutil-jdk18on:1.77) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8705176Z Transforming builder-8.5.1.jar (com.android.tools.build:builder:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8706415Z Transforming bcprov-jdk18on-1.77.jar (org.bouncycastle:bcprov-jdk18on:1.77) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8707750Z Transforming bcprov-jdk18on-1.77.jar (org.bouncycastle:bcprov-jdk18on:1.77) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8709091Z Transforming manifest-merger-31.5.1.jar (com.android.tools.build:manifest-merger:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8710689Z Transforming trove4j-1.0.20200330.jar (org.jetbrains.intellij.deps:trove4j:1.0.20200330) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8711770Z Transforming trove4j-1.0.20200330.jar (org.jetbrains.intellij.deps:trove4j:1.0.20200330) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8712884Z Transforming commons-compress-1.21.jar (org.apache.commons:commons-compress:1.21) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8714005Z Transforming commons-compress-1.21.jar (org.apache.commons:commons-compress:1.21) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8715129Z Transforming httpclient-4.5.14.jar (org.apache.httpcomponents:httpclient:4.5.14) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8716216Z Transforming httpclient-4.5.14.jar (org.apache.httpcomponents:httpclient:4.5.14) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8717530Z Transforming httpcore-4.4.16.jar (org.apache.httpcomponents:httpcore:4.4.16) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8718708Z Transforming httpcore-4.4.16.jar (org.apache.httpcomponents:httpcore:4.4.16) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8719818Z Transforming javax.activation-1.2.0.jar (com.sun.activation:javax.activation:1.2.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8721069Z Transforming javax.activation-1.2.0.jar (com.sun.activation:javax.activation:1.2.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8722234Z Transforming signflinger-8.5.1.jar (com.android:signflinger:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8723313Z Transforming signflinger-8.5.1.jar (com.android:signflinger:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8724476Z Transforming zipflinger-8.5.1.jar (com.android:zipflinger:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8725532Z Transforming zipflinger-8.5.1.jar (com.android:zipflinger:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8726907Z Transforming annotations-31.5.1.jar (com.android.tools:annotations:31.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8728095Z Transforming annotations-31.5.1.jar (com.android.tools:annotations:31.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8729215Z Transforming jna-platform-5.6.0.jar (net.java.dev.jna:jna-platform:5.6.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8730387Z Transforming jna-platform-5.6.0.jar (net.java.dev.jna:jna-platform:5.6.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8731869Z Transforming sdk-common-31.5.1.jar (com.android.tools:sdk-common:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8733282Z Transforming juniversalchardet-1.0.3.jar (com.googlecode.juniversalchardet:juniversalchardet:1.0.3) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8734744Z Transforming juniversalchardet-1.0.3.jar (com.googlecode.juniversalchardet:juniversalchardet:1.0.3) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8736104Z Transforming javax.annotation-api-1.3.2.jar (javax.annotation:javax.annotation-api:1.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8737640Z Transforming javax.annotation-api-1.3.2.jar (javax.annotation:javax.annotation-api:1.3.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8738860Z Transforming stax-ex-1.8.1.jar (org.jvnet.staxex:stax-ex:1.8.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8739906Z Transforming stax-ex-1.8.1.jar (org.jvnet.staxex:stax-ex:1.8.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8741088Z Transforming jakarta.xml.bind-api-2.3.2.jar (jakarta.xml.bind:jakarta.xml.bind-api:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8742372Z Transforming jakarta.xml.bind-api-2.3.2.jar (jakarta.xml.bind:jakarta.xml.bind-api:2.3.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8743704Z Transforming txw2-2.3.2.jar (org.glassfish.jaxb:txw2:2.3.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8744736Z Transforming txw2-2.3.2.jar (org.glassfish.jaxb:txw2:2.3.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8745992Z Transforming istack-commons-runtime-3.0.8.jar (com.sun.istack:istack-commons-runtime:3.0.8) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8747369Z Transforming istack-commons-runtime-3.0.8.jar (com.sun.istack:istack-commons-runtime:3.0.8) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8748441Z Transforming FastInfoset-1.2.16.jar (com.sun.xml.fastinfoset:FastInfoset:1.2.16) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8749534Z Transforming FastInfoset-1.2.16.jar (com.sun.xml.fastinfoset:FastInfoset:1.2.16) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8750651Z Transforming jakarta.activation-api-1.2.1.jar (jakarta.activation:jakarta.activation-api:1.2.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8751817Z Transforming jakarta.activation-api-1.2.1.jar (jakarta.activation:jakarta.activation-api:1.2.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8753253Z Transforming auto-value-annotations-1.6.2.jar (com.google.auto.value:auto-value-annotations:1.6.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8754415Z Transforming auto-value-annotations-1.6.2.jar (com.google.auto.value:auto-value-annotations:1.6.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8755656Z Transforming error_prone_annotations-2.18.0.jar (com.google.errorprone:error_prone_annotations:2.18.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8757102Z Transforming error_prone_annotations-2.18.0.jar (com.google.errorprone:error_prone_annotations:2.18.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8758152Z Transforming jose4j-0.9.5.jar (org.bitbucket.b_c:jose4j:0.9.5) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8759169Z Transforming jose4j-0.9.5.jar (org.bitbucket.b_c:jose4j:0.9.5) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8760053Z Transforming slf4j-api-1.7.30.jar (org.slf4j:slf4j-api:1.7.30) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8760975Z Transforming slf4j-api-1.7.30.jar (org.slf4j:slf4j-api:1.7.30) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8761847Z Transforming jdom2-2.0.6.jar (org.jdom:jdom2:2.0.6) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8762721Z Transforming jdom2-2.0.6.jar (org.jdom:jdom2:2.0.6) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8763891Z Transforming jsr305-3.0.2.jar (com.google.code.findbugs:jsr305:3.0.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8764821Z Transforming jsr305-3.0.2.jar (com.google.code.findbugs:jsr305:3.0.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8765977Z Transforming j2objc-annotations-2.8.jar (com.google.j2objc:j2objc-annotations:2.8) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8767404Z Transforming j2objc-annotations-2.8.jar (com.google.j2objc:j2objc-annotations:2.8) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8768443Z Transforming annotations-4.1.1.4.jar (com.google.android:annotations:4.1.1.4) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8769559Z Transforming annotations-4.1.1.4.jar (com.google.android:annotations:4.1.1.4) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8770764Z Transforming animal-sniffer-annotations-1.23.jar (org.codehaus.mojo:animal-sniffer-annotations:1.23) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8772207Z Transforming animal-sniffer-annotations-1.23.jar (org.codehaus.mojo:animal-sniffer-annotations:1.23) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8773377Z Transforming perfmark-api-0.26.0.jar (io.perfmark:perfmark-api:0.26.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8774618Z Transforming perfmark-api-0.26.0.jar (io.perfmark:perfmark-api:0.26.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8775656Z Transforming netty-codec-http2-4.1.93.Final.jar (io.netty:netty-codec-http2:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8776914Z Transforming repository-31.5.1.jar (com.android.tools:repository:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8778138Z Transforming netty-codec-http2-4.1.93.Final.jar (io.netty:netty-codec-http2:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8779355Z Transforming netty-handler-proxy-4.1.93.Final.jar (io.netty:netty-handler-proxy:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8780486Z Transforming netty-handler-proxy-4.1.93.Final.jar (io.netty:netty-handler-proxy:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8781854Z Transforming netty-codec-http-4.1.93.Final.jar (io.netty:netty-codec-http:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8783101Z Transforming netty-codec-http-4.1.93.Final.jar (io.netty:netty-codec-http:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8784318Z Transforming netty-handler-4.1.93.Final.jar (io.netty:netty-handler:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8785483Z Transforming netty-handler-4.1.93.Final.jar (io.netty:netty-handler:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8787146Z Transforming netty-transport-native-unix-common-4.1.93.Final.jar (io.netty:netty-transport-native-unix-common:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8788836Z Transforming netty-transport-native-unix-common-4.1.93.Final.jar (io.netty:netty-transport-native-unix-common:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8790226Z Transforming checker-qual-3.33.0.jar (org.checkerframework:checker-qual:3.33.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8791471Z Transforming checker-qual-3.33.0.jar (org.checkerframework:checker-qual:3.33.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8792629Z Transforming commons-codec-1.11.jar (commons-codec:commons-codec:1.11) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8793780Z Transforming commons-codec-1.11.jar (commons-codec:commons-codec:1.11) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8794947Z Transforming apksig-8.5.1.jar (com.android.tools.build:apksig:8.5.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8796093Z Transforming apksig-8.5.1.jar (com.android.tools.build:apksig:8.5.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8797659Z Transforming javawriter-2.5.0.jar (com.squareup:javawriter:2.5.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8798788Z Transforming javawriter-2.5.0.jar (com.squareup:javawriter:2.5.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8800220Z Transforming kotlin-gradle-plugin-annotations-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-annotations:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8802004Z Transforming kotlin-gradle-plugin-annotations-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-annotations:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8803612Z Transforming aaptcompiler-8.5.1.jar (com.android.tools.build:aaptcompiler:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8804935Z Transforming sdklib-31.5.1.jar (com.android.tools:sdklib:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8806275Z Transforming kotlin-project-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-project-model:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8807757Z Transforming kotlin-project-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-project-model:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8809325Z Transforming kotlin-tooling-core-1.9.24.jar (org.jetbrains.kotlin:kotlin-tooling-core:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8810587Z Transforming kotlin-tooling-core-1.9.24.jar (org.jetbrains.kotlin:kotlin-tooling-core:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8811882Z Transforming kotlin-util-io-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-io:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8813131Z Transforming kotlin-util-io-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-io:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8814541Z Transforming kotlin-daemon-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8815888Z Transforming kotlin-daemon-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8817571Z Transforming kotlin-daemon-client-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-client:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8818922Z Transforming kotlin-daemon-client-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-client:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8820304Z Transforming kotlinx-coroutines-core-jvm-1.5.0.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8821567Z Transforming kotlinx-coroutines-core-jvm-1.5.0.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8822813Z Transforming kotlin-scripting-jvm-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8823939Z Transforming kotlin-scripting-jvm-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8825239Z Transforming kotlin-scripting-common-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-common:1.9.24) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8826794Z Transforming kotlin-scripting-common-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-common:1.9.24) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8828062Z Transforming failureaccess-1.0.1.jar (com.google.guava:failureaccess:1.0.1) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8829212Z Transforming failureaccess-1.0.1.jar (com.google.guava:failureaccess:1.0.1) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8830788Z Transforming listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8833014Z Transforming listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8834566Z Transforming commons-logging-1.2.jar (commons-logging:commons-logging:1.2) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8835709Z Transforming commons-logging-1.2.jar (commons-logging:commons-logging:1.2) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8836957Z Transforming jna-5.6.0.jar (net.java.dev.jna:jna:5.6.0) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8837797Z Transforming jna-5.6.0.jar (net.java.dev.jna:jna:5.6.0) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8838933Z Transforming netty-codec-socks-4.1.93.Final.jar (io.netty:netty-codec-socks:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8840135Z Transforming netty-codec-socks-4.1.93.Final.jar (io.netty:netty-codec-socks:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8841254Z Transforming netty-codec-4.1.93.Final.jar (io.netty:netty-codec:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8842474Z Transforming netty-codec-4.1.93.Final.jar (io.netty:netty-codec:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8843846Z Transforming netty-transport-4.1.93.Final.jar (io.netty:netty-transport:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8845060Z Transforming netty-transport-4.1.93.Final.jar (io.netty:netty-transport:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8846347Z Transforming netty-buffer-4.1.93.Final.jar (io.netty:netty-buffer:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8847766Z Transforming netty-buffer-4.1.93.Final.jar (io.netty:netty-buffer:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8848984Z Transforming netty-resolver-4.1.93.Final.jar (io.netty:netty-resolver:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8850166Z Transforming netty-resolver-4.1.93.Final.jar (io.netty:netty-resolver:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8851306Z Transforming netty-common-4.1.93.Final.jar (io.netty:netty-common:4.1.93.Final) with InstrumentationAnalysisTransform
+2026-10-28T13:24:25.8852566Z Transforming netty-common-4.1.93.Final.jar (io.netty:netty-common:4.1.93.Final) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:25.8853907Z Transforming tracker-31.5.1.jar (com.android.tools.analytics-library:tracker:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8855308Z Transforming shared-31.5.1.jar (com.android.tools.analytics-library:shared:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8857010Z Transforming databinding-compiler-common-8.5.1.jar (androidx.databinding:databinding-compiler-common:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8858829Z Transforming android-test-plugin-host-retention-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8860990Z Transforming android-test-plugin-host-emulator-control-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8862828Z Transforming builder-model-8.5.1.jar (com.android.tools.build:builder-model:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8864201Z Transforming gradle-api-8.5.1.jar (com.android.tools.build:gradle-api:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8865633Z Transforming builder-test-api-8.5.1.jar (com.android.tools.build:builder-test-api:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8867191Z Transforming ddmlib-31.5.1.jar (com.android.tools.ddms:ddmlib:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8868157Z Transforming layoutlib-api-31.5.1.jar (com.android.tools.layoutlib:layoutlib-api:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8869123Z Transforming dvlib-31.5.1.jar (com.android.tools:dvlib:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8869944Z Transforming common-31.5.1.jar (com.android.tools:common:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8870884Z Transforming kotlin-stdlib-jdk8-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8871950Z Transforming jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8873283Z Transforming jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8874481Z Transforming kotlin-reflect-1.9.24.jar (org.jetbrains.kotlin:kotlin-reflect:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8875719Z Transforming kotlin-stdlib-jdk7-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8877090Z Transforming kotlin-stdlib-1.9.24.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8878166Z Transforming kotlin-gradle-plugin-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-model:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8879420Z Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8880758Z Transforming kotlin-serialization-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-serialization:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8882258Z Transforming kotlin-gradle-plugin-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8883882Z Transforming kotlin-gradle-plugin-api-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8885310Z Transforming kotlin-gradle-plugin-1.9.24-gradle82.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8886993Z Transforming bundletool-1.16.0.jar (com.android.tools.build:bundletool:1.16.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8888462Z Transforming aapt2-proto-8.5.1-11315950.jar (com.android.tools.build:aapt2-proto:8.5.1-11315950) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8889946Z Transforming crash-31.5.1.jar (com.android.tools.analytics-library:crash:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8891363Z Transforming lint-typedef-remover-31.5.1.jar (com.android.tools.lint:lint-typedef-remover:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8892828Z Transforming databinding-common-8.5.1.jar (androidx.databinding:databinding-common:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8894615Z Transforming android-device-provider-gradle-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8896517Z Transforming android-device-provider-ddmlib-proto-31.5.1.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8928906Z Transforming baseLibrary-8.5.1.jar (com.android.databinding:baseLibrary:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8930693Z Transforming android-test-plugin-host-additional-test-output-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8932843Z Transforming android-test-plugin-host-coverage-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8934911Z Transforming android-test-plugin-host-apk-installer-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8937059Z Transforming android-test-plugin-host-logcat-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8939079Z Transforming android-test-plugin-result-listener-gradle-proto-31.5.1.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8941350Z Transforming transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8942946Z Transforming httpmime-4.5.6.jar (org.apache.httpcomponents:httpmime:4.5.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8944280Z Transforming commons-io-2.13.0.jar (commons-io:commons-io:2.13.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8945487Z Transforming asm-util-9.6.jar (org.ow2.asm:asm-util:9.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8946933Z Transforming asm-commons-9.6.jar (org.ow2.asm:asm-commons:9.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8948120Z Transforming asm-analysis-9.6.jar (org.ow2.asm:asm-analysis:9.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8949180Z Transforming asm-tree-9.6.jar (org.ow2.asm:asm-tree:9.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8950431Z Transforming apkzlib-8.5.1.jar (com.android.tools.build:apkzlib:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8951564Z Transforming asm-9.6.jar (org.ow2.asm:asm:9.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8952799Z Transforming bcpkix-jdk18on-1.77.jar (org.bouncycastle:bcpkix-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8954094Z Transforming jaxb-runtime-2.3.2.jar (org.glassfish.jaxb:jaxb-runtime:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8955324Z Transforming jopt-simple-4.9.jar (net.sf.jopt-simple:jopt-simple:4.9) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8974309Z Transforming protobuf-java-util-3.22.3.jar (com.google.protobuf:protobuf-java-util:3.22.3) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8975783Z Transforming grpc-protobuf-1.57.0.jar (io.grpc:grpc-protobuf:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8977375Z Transforming javapoet-1.10.0.jar (com.squareup:javapoet:1.10.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8978662Z Transforming protos-31.5.1.jar (com.android.tools.analytics-library:protos:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8979881Z Transforming tink-1.7.0.jar (com.google.crypto.tink:tink:1.7.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8981320Z Transforming proto-google-common-protos-2.17.0.jar (com.google.api.grpc:proto-google-common-protos:2.17.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8982966Z Transforming protobuf-java-3.22.3.jar (com.google.protobuf:protobuf-java:3.22.3) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8984266Z Transforming grpc-netty-1.57.0.jar (io.grpc:grpc-netty:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8985476Z Transforming gson-2.10.1.jar (com.google.code.gson:gson:2.10.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8987068Z Transforming grpc-core-1.57.0.jar (io.grpc:grpc-core:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8988205Z Transforming grpc-stub-1.57.0.jar (io.grpc:grpc-stub:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8989280Z Transforming kxml2-2.3.0.jar (net.sf.kxml:kxml2:2.3.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8990650Z Transforming core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8992258Z Transforming tensorflow-lite-metadata-0.1.0-rc2.jar (org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8993976Z Transforming flatbuffers-java-1.12.0.jar (com.google.flatbuffers:flatbuffers-java:1.12.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.8995587Z Transforming kotlin-gradle-plugin-idea-proto-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea-proto:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9017837Z Transforming kotlin-gradle-plugin-idea-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9019593Z Transforming kotlin-native-utils-1.9.24.jar (org.jetbrains.kotlin:kotlin-native-utils:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9021214Z Transforming kotlin-util-klib-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-klib:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9022833Z Transforming kotlin-klib-commonizer-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-klib-commonizer-api:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9024476Z Transforming kotlin-build-tools-api-1.9.24.jar (org.jetbrains.kotlin:kotlin-build-tools-api:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9026057Z Transforming kotlin-android-extensions-1.9.24.jar (org.jetbrains.kotlin:kotlin-android-extensions:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9027856Z Transforming kotlin-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9029335Z Transforming kotlin-compiler-runner-1.9.24.jar (org.jetbrains.kotlin:kotlin-compiler-runner:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9031056Z Transforming kotlin-scripting-compiler-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9032771Z Transforming kotlin-scripting-compiler-impl-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9034381Z Transforming grpc-context-1.57.0.jar (io.grpc:grpc-context:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9035596Z Transforming jimfs-1.1.jar (com.google.jimfs:jimfs:1.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9036803Z Transforming dagger-2.28.3.jar (com.google.dagger:dagger:2.28.3) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9038290Z Transforming grpc-protobuf-lite-1.57.0.jar (io.grpc:grpc-protobuf-lite:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9039510Z Transforming grpc-api-1.57.0.jar (io.grpc:grpc-api:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9040607Z Transforming guava-32.0.1-jre.jar (com.google.guava:guava:32.0.1-jre) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9041801Z Transforming javax.inject-1.jar (javax.inject:javax.inject:1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9043011Z Transforming bcutil-jdk18on-1.77.jar (org.bouncycastle:bcutil-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9044412Z Transforming trove4j-1.0.20200330.jar (org.jetbrains.intellij.deps:trove4j:1.0.20200330) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9045830Z Transforming commons-compress-1.21.jar (org.apache.commons:commons-compress:1.21) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9065669Z Transforming bcprov-jdk18on-1.77.jar (org.bouncycastle:bcprov-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9067433Z Transforming httpclient-4.5.14.jar (org.apache.httpcomponents:httpclient:4.5.14) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9069023Z Transforming httpcore-4.4.16.jar (org.apache.httpcomponents:httpcore:4.4.16) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9070382Z Transforming javax.activation-1.2.0.jar (com.sun.activation:javax.activation:1.2.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9071762Z Transforming signflinger-8.5.1.jar (com.android:signflinger:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9073038Z Transforming annotations-31.5.1.jar (com.android.tools:annotations:31.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9074322Z Transforming zipflinger-8.5.1.jar (com.android:zipflinger:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9075535Z Transforming jna-platform-5.6.0.jar (net.java.dev.jna:jna-platform:5.6.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9077142Z Transforming juniversalchardet-1.0.3.jar (com.googlecode.juniversalchardet:juniversalchardet:1.0.3) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9078859Z Transforming javax.annotation-api-1.3.2.jar (javax.annotation:javax.annotation-api:1.3.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9080255Z Transforming stax-ex-1.8.1.jar (org.jvnet.staxex:stax-ex:1.8.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9081671Z Transforming jakarta.xml.bind-api-2.3.2.jar (jakarta.xml.bind:jakarta.xml.bind-api:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9083016Z Transforming txw2-2.3.2.jar (org.glassfish.jaxb:txw2:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9084475Z Transforming jakarta.activation-api-1.2.1.jar (jakarta.activation:jakarta.activation-api:1.2.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9086082Z Transforming istack-commons-runtime-3.0.8.jar (com.sun.istack:istack-commons-runtime:3.0.8) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9118042Z Transforming FastInfoset-1.2.16.jar (com.sun.xml.fastinfoset:FastInfoset:1.2.16) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9119644Z Transforming auto-value-annotations-1.6.2.jar (com.google.auto.value:auto-value-annotations:1.6.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9121189Z Transforming error_prone_annotations-2.18.0.jar (com.google.errorprone:error_prone_annotations:2.18.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9122660Z Transforming jose4j-0.9.5.jar (org.bitbucket.b_c:jose4j:0.9.5) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9124106Z Transforming slf4j-api-1.7.30.jar (org.slf4j:slf4j-api:1.7.30) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9125202Z Transforming jdom2-2.0.6.jar (org.jdom:jdom2:2.0.6) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9126512Z Transforming jsr305-3.0.2.jar (com.google.code.findbugs:jsr305:3.0.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9128086Z Transforming j2objc-annotations-2.8.jar (com.google.j2objc:j2objc-annotations:2.8) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9129651Z Transforming animal-sniffer-annotations-1.23.jar (org.codehaus.mojo:animal-sniffer-annotations:1.23) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9131165Z Transforming annotations-4.1.1.4.jar (com.google.android:annotations:4.1.1.4) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9132573Z Transforming netty-handler-proxy-4.1.93.Final.jar (io.netty:netty-handler-proxy:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9134038Z Transforming perfmark-api-0.26.0.jar (io.perfmark:perfmark-api:0.26.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9135654Z Transforming netty-codec-http-4.1.93.Final.jar (io.netty:netty-codec-http:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9137237Z Transforming netty-codec-http2-4.1.93.Final.jar (io.netty:netty-codec-http2:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9138689Z Transforming commons-codec-1.11.jar (commons-codec:commons-codec:1.11) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9139989Z Transforming netty-handler-4.1.93.Final.jar (io.netty:netty-handler:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9141454Z Transforming checker-qual-3.33.0.jar (org.checkerframework:checker-qual:3.33.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9143018Z Transforming netty-transport-native-unix-common-4.1.93.Final.jar (io.netty:netty-transport-native-unix-common:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9144600Z Transforming apksig-8.5.1.jar (com.android.tools.build:apksig:8.5.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9146163Z Transforming kotlin-gradle-plugin-annotations-1.9.24.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-annotations:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9158280Z Transforming javawriter-2.5.0.jar (com.squareup:javawriter:2.5.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9159854Z Transforming kotlin-project-model-1.9.24.jar (org.jetbrains.kotlin:kotlin-project-model:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9161335Z Transforming kotlin-tooling-core-1.9.24.jar (org.jetbrains.kotlin:kotlin-tooling-core:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9162820Z Transforming kotlin-util-io-1.9.24.jar (org.jetbrains.kotlin:kotlin-util-io:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9164244Z Transforming kotlin-daemon-embeddable-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-embeddable:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9165771Z Transforming kotlin-daemon-client-1.9.24.jar (org.jetbrains.kotlin:kotlin-daemon-client:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9167473Z Transforming kotlin-scripting-jvm-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-jvm:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9168989Z Transforming kotlinx-coroutines-core-jvm-1.5.0.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9170804Z Transforming kotlin-scripting-common-1.9.24.jar (org.jetbrains.kotlin:kotlin-scripting-common:1.9.24) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9172274Z Transforming failureaccess-1.0.1.jar (com.google.guava:failureaccess:1.0.1) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9173944Z Transforming listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9175822Z Transforming commons-logging-1.2.jar (commons-logging:commons-logging:1.2) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9177197Z Transforming jna-5.6.0.jar (net.java.dev.jna:jna:5.6.0) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9178491Z Transforming netty-codec-socks-4.1.93.Final.jar (io.netty:netty-codec-socks:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9179887Z Transforming netty-transport-4.1.93.Final.jar (io.netty:netty-transport:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9181215Z Transforming netty-resolver-4.1.93.Final.jar (io.netty:netty-resolver:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9182770Z Transforming netty-buffer-4.1.93.Final.jar (io.netty:netty-buffer:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9184076Z Transforming netty-common-4.1.93.Final.jar (io.netty:netty-common:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:25.9185387Z Transforming netty-codec-4.1.93.Final.jar (io.netty:netty-codec:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:27.7691527Z 
+2026-10-28T13:24:27.7692570Z > Configure project :app
+2026-10-28T13:24:27.7694249Z Evaluating project ':app' using build file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts'.
+2026-10-28T13:24:27.7695765Z Transforming gradle-license-report-2.9.jar (com.github.jk1:gradle-license-report:2.9) with InstrumentationAnalysisTransform
+2026-10-28T13:24:27.7697574Z Transforming gradle-license-report-2.9.jar (com.github.jk1:gradle-license-report:2.9) with InstrumentationAnalysisTransform
+2026-10-28T13:24:27.7699249Z Transforming gradle-license-report-2.9.jar (com.github.jk1:gradle-license-report:2.9) with MergeInstrumentationAnalysisTransform
+2026-10-28T13:24:27.7700726Z Transforming gradle-license-report-2.9.jar (com.github.jk1:gradle-license-report:2.9) with ExternalDependencyInstrumentingArtifactTransform
+2026-10-28T13:24:27.7701797Z Using default execution profile
+2026-10-28T13:24:27.7702359Z Using Kotlin Gradle Plugin gradle82 variant
+2026-10-28T13:24:27.7703133Z Caching disabled for Kotlin DSL script compilation (Project/TopLevel/stage2) because:
+2026-10-28T13:24:27.7703876Z   Build cache is disabled
+2026-10-28T13:24:31.1692535Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts:62:13: Unresolved reference: useJUnitPlatform
+2026-10-28T13:24:31.1693912Z w: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts:56:38: 'getter for buildDir: File!' is deprecated. Deprecated in Java
+2026-10-28T13:24:31.1698331Z w: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts:57:37: 'getter for buildDir: File!' is deprecated. Deprecated in Java
+2026-10-28T13:24:31.2690510Z 
+2026-10-28T13:24:31.2818005Z FAILURE: Build completed with 2 failures.
+2026-10-28T13:24:31.2846518Z 
+2026-10-28T13:24:31.2848045Z 1: Task failed with an exception.
+2026-10-28T13:24:31.2889754Z -----------
+2026-10-28T13:24:31.2907190Z * Where:
+2026-10-28T13:24:31.2927614Z Build file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts' line: 62
+2026-10-28T13:24:31.2950733Z 
+2026-10-28T13:24:31.2985269Z * What went wrong:
+2026-10-28T13:24:31.2987403Z Script compilation error:
+2026-10-28T13:24:31.3018385Z 
+2026-10-28T13:24:31.3047371Z   Line 62:             useJUnitPlatform()
+2026-10-28T13:24:31.3048145Z                        ^ Unresolved reference: useJUnitPlatform
+2026-10-28T13:24:31.3106880Z 
+2026-10-28T13:24:31.3107236Z 1 error
+2026-10-28T13:24:31.3107504Z 
+2026-10-28T13:24:31.3107663Z * Try:
+2026-10-28T13:24:31.3137437Z > Run with --debug option to get more log output.
+2026-10-28T13:24:31.3164276Z > Run with --scan to get full insights.
+2026-10-28T13:24:31.3178683Z > Get more help at https://help.gradle.org.
+2026-10-28T13:24:31.3216864Z 
+2026-10-28T13:24:31.3227412Z * Exception is:
+2026-10-28T13:24:31.3241166Z ScriptCompilationException(scriptCompilationErrors=[ScriptCompilationError(message=Unresolved reference: useJUnitPlatform, location=/home/runner/.gradle/.tmp/gradle-kotlin-dsl-718088465531765527.tmp/build.gradle.kts (62:13))])
+2026-10-28T13:24:31.3243395Z 	at org.gradle.kotlin.dsl.support.KotlinCompilerKt.compileKotlinScriptModuleTo(KotlinCompiler.kt:191)
+2026-10-28T13:24:31.3244710Z 	at org.gradle.kotlin.dsl.support.KotlinCompilerKt.compileKotlinScriptToDirectory(KotlinCompiler.kt:149)
+2026-10-28T13:24:31.3246147Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler$compileScript$1.invoke(ResidualProgramCompiler.kt:713)
+2026-10-28T13:24:31.3248219Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler$compileScript$1.invoke(ResidualProgramCompiler.kt:712)
+2026-10-28T13:24:31.3249940Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost$runCompileBuildOperation$1.call(KotlinScriptEvaluator.kt:187)
+2026-10-28T13:24:31.3261347Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost$runCompileBuildOperation$1.call(KotlinScriptEvaluator.kt:184)
+2026-10-28T13:24:31.3263171Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3265198Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3266928Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3268392Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3269951Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3271410Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3272847Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3274575Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost.runCompileBuildOperation(KotlinScriptEvaluator.kt:184)
+2026-10-28T13:24:31.3276222Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1$1$1$1$1.invoke(Interpreter.kt:492)
+2026-10-28T13:24:31.3278056Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1$1$1$1$1.invoke(Interpreter.kt:492)
+2026-10-28T13:24:31.3279607Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.compileScript-C5AE47M(ResidualProgramCompiler.kt:712)
+2026-10-28T13:24:31.3281180Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.compileScript-C5AE47M$default(ResidualProgramCompiler.kt:705)
+2026-10-28T13:24:31.3282694Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.emitStage2ProgramFor(ResidualProgramCompiler.kt:364)
+2026-10-28T13:24:31.3284156Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1.invoke(Interpreter.kt:493)
+2026-10-28T13:24:31.3285544Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1.invoke(Interpreter.kt:469)
+2026-10-28T13:24:31.3287613Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation.compile(KotlinScriptEvaluator.kt:409)
+2026-10-28T13:24:31.3289462Z 	at org.gradle.internal.scripts.BuildScriptCompilationAndInstrumentation.execute(BuildScriptCompilationAndInstrumentation.java:95)
+2026-10-28T13:24:31.3290882Z 	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+2026-10-28T13:24:31.3292004Z 	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+2026-10-28T13:24:31.3293092Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+2026-10-28T13:24:31.3294266Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+2026-10-28T13:24:31.3295651Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3297934Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3299553Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3300986Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3302580Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3304086Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3305604Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3307004Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+2026-10-28T13:24:31.3308099Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+2026-10-28T13:24:31.3309257Z 	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+2026-10-28T13:24:31.3310531Z 	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+2026-10-28T13:24:31.3311725Z 	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+2026-10-28T13:24:31.3313049Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+2026-10-28T13:24:31.3314427Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+2026-10-28T13:24:31.3315894Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+2026-10-28T13:24:31.3317458Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+2026-10-28T13:24:31.3318822Z 	at org.gradle.internal.execution.steps.NoInputChangesStep.execute(NoInputChangesStep.java:30)
+2026-10-28T13:24:31.3320088Z 	at org.gradle.internal.execution.steps.NoInputChangesStep.execute(NoInputChangesStep.java:21)
+2026-10-28T13:24:31.3321670Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+2026-10-28T13:24:31.3323550Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+2026-10-28T13:24:31.3325325Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+2026-10-28T13:24:31.3326756Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+2026-10-28T13:24:31.3327889Z 	at org.gradle.internal.Either$Right.fold(Either.java:175)
+2026-10-28T13:24:31.3328795Z 	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+2026-10-28T13:24:31.3329955Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+2026-10-28T13:24:31.3331410Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+2026-10-28T13:24:31.3332624Z 	at org.gradle.internal.execution.steps.NeverUpToDateStep.execute(NeverUpToDateStep.java:34)
+2026-10-28T13:24:31.3333872Z 	at org.gradle.internal.execution.steps.NeverUpToDateStep.execute(NeverUpToDateStep.java:22)
+2026-10-28T13:24:31.3335307Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+2026-10-28T13:24:31.3337314Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+2026-10-28T13:24:31.3339103Z 	at org.gradle.internal.execution.steps.ResolveNonIncrementalCachingStateStep.executeDelegate(ResolveNonIncrementalCachingStateStep.java:50)
+2026-10-28T13:24:31.3340860Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+2026-10-28T13:24:31.3342466Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+2026-10-28T13:24:31.3343879Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+2026-10-28T13:24:31.3345153Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+2026-10-28T13:24:31.3346849Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+2026-10-28T13:24:31.3348256Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+2026-10-28T13:24:31.3349883Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+2026-10-28T13:24:31.3351422Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.lambda$executeInTemporaryWorkspace$3(AssignImmutableWorkspaceStep.java:209)
+2026-10-28T13:24:31.3354981Z 	at org.gradle.internal.execution.workspace.impl.CacheBasedImmutableWorkspaceProvider$1.withTemporaryWorkspace(CacheBasedImmutableWorkspaceProvider.java:119)
+2026-10-28T13:24:31.3357195Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.executeInTemporaryWorkspace(AssignImmutableWorkspaceStep.java:199)
+2026-10-28T13:24:31.3359187Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.lambda$execute$0(AssignImmutableWorkspaceStep.java:121)
+2026-10-28T13:24:31.3360852Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.execute(AssignImmutableWorkspaceStep.java:121)
+2026-10-28T13:24:31.3362657Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.execute(AssignImmutableWorkspaceStep.java:90)
+2026-10-28T13:24:31.3364088Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:38)
+2026-10-28T13:24:31.3365351Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+2026-10-28T13:24:31.3367053Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T13:24:31.3368904Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T13:24:31.3370723Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+2026-10-28T13:24:31.3372145Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+2026-10-28T13:24:31.3373347Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+2026-10-28T13:24:31.3374405Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+2026-10-28T13:24:31.3375561Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+2026-10-28T13:24:31.3377143Z 	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+2026-10-28T13:24:31.3378627Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost.cachedDirFor(KotlinScriptEvaluator.kt:279)
+2026-10-28T13:24:31.3380163Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.compileSecondStageOf(Interpreter.kt:469)
+2026-10-28T13:24:31.3381224Z 	at Program.loadSecondStageFor(Unknown Source)
+2026-10-28T13:24:31.3382362Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.evaluateSecondStageOf(Interpreter.kt:433)
+2026-10-28T13:24:31.3383440Z 	at Program.execute(Unknown Source)
+2026-10-28T13:24:31.3384426Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.eval(Interpreter.kt:516)
+2026-10-28T13:24:31.3385520Z 	at org.gradle.kotlin.dsl.execution.Interpreter.eval(Interpreter.kt:214)
+2026-10-28T13:24:31.3386919Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator.evaluate(KotlinScriptEvaluator.kt:125)
+2026-10-28T13:24:31.3388350Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPluginFactory$create$1.invoke(KotlinScriptPluginFactory.kt:46)
+2026-10-28T13:24:31.3389779Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPluginFactory$create$1.invoke(KotlinScriptPluginFactory.kt:43)
+2026-10-28T13:24:31.3391267Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPlugin.apply(KotlinScriptPlugin.kt:35)
+2026-10-28T13:24:31.3392843Z 	at org.gradle.configuration.BuildOperationScriptPlugin$1.run(BuildOperationScriptPlugin.java:68)
+2026-10-28T13:24:31.3394410Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3395961Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3397716Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3399349Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3401446Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3403087Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3404651Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3406151Z 	at org.gradle.configuration.BuildOperationScriptPlugin.lambda$apply$0(BuildOperationScriptPlugin.java:65)
+2026-10-28T13:24:31.3407895Z 	at org.gradle.internal.code.DefaultUserCodeApplicationContext.apply(DefaultUserCodeApplicationContext.java:44)
+2026-10-28T13:24:31.3408975Z 	at org.gradle.configuration.BuildOperationScriptPlugin.apply(BuildOperationScriptPlugin.java:65)
+2026-10-28T13:24:31.3410137Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$1(DefaultProjectStateRegistry.java:411)
+2026-10-28T13:24:31.3411307Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:429)
+2026-10-28T13:24:31.3412460Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:410)
+2026-10-28T13:24:31.3413503Z 	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:46)
+2026-10-28T13:24:31.3414307Z 	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:27)
+2026-10-28T13:24:31.3415232Z 	at org.gradle.configuration.project.ConfigureActionsProjectEvaluator.evaluate(ConfigureActionsProjectEvaluator.java:35)
+2026-10-28T13:24:31.3416243Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.lambda$run$0(LifecycleProjectEvaluator.java:109)
+2026-10-28T13:24:31.3417814Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$1(DefaultProjectStateRegistry.java:411)
+2026-10-28T13:24:31.3419153Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$fromMutableState$2(DefaultProjectStateRegistry.java:434)
+2026-10-28T13:24:31.3420160Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withReplacedLocks(DefaultWorkerLeaseService.java:359)
+2026-10-28T13:24:31.3421172Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:434)
+2026-10-28T13:24:31.3422241Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:410)
+2026-10-28T13:24:31.3423354Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.run(LifecycleProjectEvaluator.java:100)
+2026-10-28T13:24:31.3424330Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3425269Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3426182Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3427659Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3429233Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3430278Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3431345Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3432525Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator.evaluate(LifecycleProjectEvaluator.java:72)
+2026-10-28T13:24:31.3433559Z 	at org.gradle.api.internal.project.DefaultProject.evaluate(DefaultProject.java:768)
+2026-10-28T13:24:31.3434398Z 	at org.gradle.api.internal.project.DefaultProject.evaluate(DefaultProject.java:158)
+2026-10-28T13:24:31.3435492Z 	at org.gradle.api.internal.project.ProjectLifecycleController.lambda$ensureSelfConfigured$2(ProjectLifecycleController.java:85)
+2026-10-28T13:24:31.3436358Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3437514Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3438309Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3439289Z 	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransitionIfNotCurrentlyTransitioning$10(StateTransitionController.java:199)
+2026-10-28T13:24:31.3440154Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3441044Z 	at org.gradle.internal.model.StateTransitionController.maybeTransitionIfNotCurrentlyTransitioning(StateTransitionController.java:195)
+2026-10-28T13:24:31.3441981Z 	at org.gradle.api.internal.project.ProjectLifecycleController.ensureSelfConfigured(ProjectLifecycleController.java:85)
+2026-10-28T13:24:31.3442866Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.ensureConfigured(DefaultProjectStateRegistry.java:385)
+2026-10-28T13:24:31.3443643Z 	at org.gradle.execution.TaskPathProjectEvaluator.configure(TaskPathProjectEvaluator.java:34)
+2026-10-28T13:24:31.3444323Z 	at org.gradle.execution.TaskPathProjectEvaluator.configureHierarchy(TaskPathProjectEvaluator.java:50)
+2026-10-28T13:24:31.3445017Z 	at org.gradle.configuration.DefaultProjectsPreparer.prepareProjects(DefaultProjectsPreparer.java:42)
+2026-10-28T13:24:31.3445864Z 	at org.gradle.configuration.BuildTreePreparingProjectsPreparer.prepareProjects(BuildTreePreparingProjectsPreparer.java:65)
+2026-10-28T13:24:31.3446971Z 	at org.gradle.configuration.BuildOperationFiringProjectsPreparer$ConfigureBuild.run(BuildOperationFiringProjectsPreparer.java:52)
+2026-10-28T13:24:31.3447952Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3448826Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3449542Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3450360Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3451100Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3451833Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3452543Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3453379Z 	at org.gradle.configuration.BuildOperationFiringProjectsPreparer.prepareProjects(BuildOperationFiringProjectsPreparer.java:40)
+2026-10-28T13:24:31.3454275Z 	at org.gradle.initialization.VintageBuildModelController.lambda$prepareProjects$2(VintageBuildModelController.java:84)
+2026-10-28T13:24:31.3455103Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3455868Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3456673Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3457433Z 	at org.gradle.internal.model.StateTransitionController.lambda$transitionIfNotPreviously$11(StateTransitionController.java:213)
+2026-10-28T13:24:31.3458207Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3458892Z 	at org.gradle.internal.model.StateTransitionController.transitionIfNotPreviously(StateTransitionController.java:209)
+2026-10-28T13:24:31.3460081Z 	at org.gradle.initialization.VintageBuildModelController.prepareProjects(VintageBuildModelController.java:84)
+2026-10-28T13:24:31.3460865Z 	at org.gradle.initialization.VintageBuildModelController.prepareToScheduleTasks(VintageBuildModelController.java:71)
+2026-10-28T13:24:31.3461700Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$prepareToScheduleTasks$6(DefaultBuildLifecycleController.java:175)
+2026-10-28T13:24:31.3462573Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3463304Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3463994Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3464769Z 	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransition$9(StateTransitionController.java:190)
+2026-10-28T13:24:31.3465573Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3466277Z 	at org.gradle.internal.model.StateTransitionController.maybeTransition(StateTransitionController.java:186)
+2026-10-28T13:24:31.3467234Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.prepareToScheduleTasks(DefaultBuildLifecycleController.java:173)
+2026-10-28T13:24:31.3468118Z 	at org.gradle.internal.buildtree.DefaultBuildTreeWorkPreparer.scheduleRequestedTasks(DefaultBuildTreeWorkPreparer.java:36)
+2026-10-28T13:24:31.3469015Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:36)
+2026-10-28T13:24:31.3469942Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:35)
+2026-10-28T13:24:31.3470907Z 	at org.gradle.composite.internal.DefaultIncludedBuildTaskGraph.withNewWorkGraph(DefaultIncludedBuildTaskGraph.java:112)
+2026-10-28T13:24:31.3471784Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController.scheduleAndRunRequestedTasks(VintageBuildTreeWorkController.kt:35)
+2026-10-28T13:24:31.3472732Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$scheduleAndRunTasks$1(DefaultBuildTreeLifecycleController.java:77)
+2026-10-28T13:24:31.3473699Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$runBuild$4(DefaultBuildTreeLifecycleController.java:120)
+2026-10-28T13:24:31.3474525Z 	at org.gradle.internal.model.StateTransitionController.lambda$transition$6(StateTransitionController.java:169)
+2026-10-28T13:24:31.3475305Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3476018Z 	at org.gradle.internal.model.StateTransitionController.lambda$transition$7(StateTransitionController.java:169)
+2026-10-28T13:24:31.3476969Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-10-28T13:24:31.3477656Z 	at org.gradle.internal.model.StateTransitionController.transition(StateTransitionController.java:169)
+2026-10-28T13:24:31.3478481Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.runBuild(DefaultBuildTreeLifecycleController.java:117)
+2026-10-28T13:24:31.3479439Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:77)
+2026-10-28T13:24:31.3480368Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:72)
+2026-10-28T13:24:31.3481164Z 	at org.gradle.tooling.internal.provider.ExecuteBuildActionRunner.run(ExecuteBuildActionRunner.java:31)
+2026-10-28T13:24:31.3481860Z 	at org.gradle.launcher.exec.ChainingBuildActionRunner.run(ChainingBuildActionRunner.java:35)
+2026-10-28T13:24:31.3482561Z 	at org.gradle.internal.buildtree.ProblemReportingBuildActionRunner.run(ProblemReportingBuildActionRunner.java:49)
+2026-10-28T13:24:31.3483367Z 	at org.gradle.launcher.exec.BuildOutcomeReportingBuildActionRunner.run(BuildOutcomeReportingBuildActionRunner.java:65)
+2026-10-28T13:24:31.3484165Z 	at org.gradle.tooling.internal.provider.FileSystemWatchingBuildActionRunner.run(FileSystemWatchingBuildActionRunner.java:140)
+2026-10-28T13:24:31.3485036Z 	at org.gradle.launcher.exec.BuildCompletionNotifyingBuildActionRunner.run(BuildCompletionNotifyingBuildActionRunner.java:41)
+2026-10-28T13:24:31.3485893Z 	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.lambda$execute$0(RootBuildLifecycleBuildActionExecutor.java:54)
+2026-10-28T13:24:31.3486733Z 	at org.gradle.composite.internal.DefaultRootBuildState.run(DefaultRootBuildState.java:130)
+2026-10-28T13:24:31.3487465Z 	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.execute(RootBuildLifecycleBuildActionExecutor.java:54)
+2026-10-28T13:24:31.3488300Z 	at org.gradle.internal.buildtree.InitDeprecationLoggingActionExecutor.execute(InitDeprecationLoggingActionExecutor.java:62)
+2026-10-28T13:24:31.3488962Z 	at org.gradle.internal.buildtree.InitProblems.execute(InitProblems.java:36)
+2026-10-28T13:24:31.3489612Z 	at org.gradle.internal.buildtree.DefaultBuildTreeContext.execute(DefaultBuildTreeContext.java:40)
+2026-10-28T13:24:31.3490379Z 	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.lambda$execute$0(BuildTreeLifecycleBuildActionExecutor.java:71)
+2026-10-28T13:24:31.3491100Z 	at org.gradle.internal.buildtree.BuildTreeState.run(BuildTreeState.java:60)
+2026-10-28T13:24:31.3491760Z 	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.execute(BuildTreeLifecycleBuildActionExecutor.java:71)
+2026-10-28T13:24:31.3492560Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$3.call(RunAsBuildOperationBuildActionExecutor.java:61)
+2026-10-28T13:24:31.3493398Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$3.call(RunAsBuildOperationBuildActionExecutor.java:57)
+2026-10-28T13:24:31.3494344Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3495321Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3496117Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3496975Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3497788Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3498525Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3499295Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3500094Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor.execute(RunAsBuildOperationBuildActionExecutor.java:57)
+2026-10-28T13:24:31.3500961Z 	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.lambda$execute$0(RunAsWorkerThreadBuildActionExecutor.java:36)
+2026-10-28T13:24:31.3501855Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+2026-10-28T13:24:31.3502576Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+2026-10-28T13:24:31.3503427Z 	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.execute(RunAsWorkerThreadBuildActionExecutor.java:36)
+2026-10-28T13:24:31.3504349Z 	at org.gradle.tooling.internal.provider.continuous.ContinuousBuildActionExecutor.execute(ContinuousBuildActionExecutor.java:110)
+2026-10-28T13:24:31.3505244Z 	at org.gradle.tooling.internal.provider.SubscribableBuildActionExecutor.execute(SubscribableBuildActionExecutor.java:64)
+2026-10-28T13:24:31.3506078Z 	at org.gradle.internal.session.DefaultBuildSessionContext.execute(DefaultBuildSessionContext.java:46)
+2026-10-28T13:24:31.3507099Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:92)
+2026-10-28T13:24:31.3508209Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:80)
+2026-10-28T13:24:31.3509088Z 	at org.gradle.internal.session.BuildSessionState.run(BuildSessionState.java:71)
+2026-10-28T13:24:31.3509912Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:62)
+2026-10-28T13:24:31.3511008Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:41)
+2026-10-28T13:24:31.3512004Z 	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:64)
+2026-10-28T13:24:31.3512990Z 	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:32)
+2026-10-28T13:24:31.3513991Z 	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:51)
+2026-10-28T13:24:31.3515029Z 	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:39)
+2026-10-28T13:24:31.3515952Z 	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:47)
+2026-10-28T13:24:31.3516947Z 	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:31)
+2026-10-28T13:24:31.3517799Z 	at org.gradle.launcher.daemon.server.exec.ExecuteBuild.doBuild(ExecuteBuild.java:70)
+2026-10-28T13:24:31.3518447Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3519122Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3519881Z 	at org.gradle.launcher.daemon.server.exec.WatchForDisconnection.execute(WatchForDisconnection.java:39)
+2026-10-28T13:24:31.3520600Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3521362Z 	at org.gradle.launcher.daemon.server.exec.ResetDeprecationLogger.execute(ResetDeprecationLogger.java:29)
+2026-10-28T13:24:31.3522632Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3523411Z 	at org.gradle.launcher.daemon.server.exec.RequestStopIfSingleUsedDaemon.execute(RequestStopIfSingleUsedDaemon.java:35)
+2026-10-28T13:24:31.3524342Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3525084Z 	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.lambda$execute$0(ForwardClientInput.java:40)
+2026-10-28T13:24:31.3525814Z 	at org.gradle.internal.daemon.clientinput.ClientInputForwarder.forwardInput(ClientInputForwarder.java:80)
+2026-10-28T13:24:31.3526739Z 	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.execute(ForwardClientInput.java:37)
+2026-10-28T13:24:31.3527477Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3528201Z 	at org.gradle.launcher.daemon.server.exec.LogAndCheckHealth.execute(LogAndCheckHealth.java:53)
+2026-10-28T13:24:31.3528893Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3529576Z 	at org.gradle.launcher.daemon.server.exec.LogToClient.doBuild(LogToClient.java:63)
+2026-10-28T13:24:31.3530215Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3530873Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3531623Z 	at org.gradle.launcher.daemon.server.exec.EstablishBuildEnvironment.doBuild(EstablishBuildEnvironment.java:84)
+2026-10-28T13:24:31.3532397Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3533068Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3533916Z 	at org.gradle.launcher.daemon.server.exec.StartBuildOrRespondWithBusy$1.run(StartBuildOrRespondWithBusy.java:52)
+2026-10-28T13:24:31.3534683Z 	at org.gradle.launcher.daemon.server.DaemonStateCoordinator.lambda$runCommand$0(DaemonStateCoordinator.java:321)
+2026-10-28T13:24:31.3535414Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-10-28T13:24:31.3536077Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+2026-10-28T13:24:31.3536469Z 
+2026-10-28T13:24:31.3536751Z ==============================================================================
+2026-10-28T13:24:31.3537081Z 
+2026-10-28T13:24:31.3537209Z 2: Task failed with an exception.
+2026-10-28T13:24:31.3537561Z -----------
+2026-10-28T13:24:31.3537853Z * Where:
+2026-10-28T13:24:31.3538309Z Build file '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts' line: 62
+2026-10-28T13:24:31.3538680Z 
+2026-10-28T13:24:31.3538835Z * What went wrong:
+2026-10-28T13:24:31.3539157Z Script compilation error:
+2026-10-28T13:24:31.3539346Z 
+2026-10-28T13:24:31.3539475Z   Line 62:             useJUnitPlatform()
+2026-10-28T13:24:31.3539837Z                        ^ Unresolved reference: useJUnitPlatform
+2026-10-28T13:24:31.3540217Z 
+2026-10-28T13:24:31.3540320Z 1 error
+2026-10-28T13:24:31.3540497Z 
+2026-10-28T13:24:31.3540613Z * Try:
+2026-10-28T13:24:31.3540934Z > Run with --debug option to get more log output.
+2026-10-28T13:24:31.3541286Z > Run with --scan to get full insights.
+2026-10-28T13:24:31.3541644Z > Get more help at https://help.gradle.org.
+2026-10-28T13:24:31.3541883Z 
+2026-10-28T13:24:31.3541990Z * Exception is:
+2026-10-28T13:24:31.3542788Z ScriptCompilationException(scriptCompilationErrors=[ScriptCompilationError(message=Unresolved reference: useJUnitPlatform, location=/home/runner/.gradle/.tmp/gradle-kotlin-dsl-718088465531765527.tmp/build.gradle.kts (62:13))])
+2026-10-28T13:24:31.3543848Z 	at org.gradle.kotlin.dsl.support.KotlinCompilerKt.compileKotlinScriptModuleTo(KotlinCompiler.kt:191)
+2026-10-28T13:24:31.3544604Z 	at org.gradle.kotlin.dsl.support.KotlinCompilerKt.compileKotlinScriptToDirectory(KotlinCompiler.kt:149)
+2026-10-28T13:24:31.3545344Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler$compileScript$1.invoke(ResidualProgramCompiler.kt:713)
+2026-10-28T13:24:31.3546095Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler$compileScript$1.invoke(ResidualProgramCompiler.kt:712)
+2026-10-28T13:24:31.3547145Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost$runCompileBuildOperation$1.call(KotlinScriptEvaluator.kt:187)
+2026-10-28T13:24:31.3548181Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost$runCompileBuildOperation$1.call(KotlinScriptEvaluator.kt:184)
+2026-10-28T13:24:31.3549158Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3550094Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3550975Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3551715Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3552469Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3553201Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3553970Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3554809Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost.runCompileBuildOperation(KotlinScriptEvaluator.kt:184)
+2026-10-28T13:24:31.3555633Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1$1$1$1$1.invoke(Interpreter.kt:492)
+2026-10-28T13:24:31.3556420Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1$1$1$1$1.invoke(Interpreter.kt:492)
+2026-10-28T13:24:31.3557299Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.compileScript-C5AE47M(ResidualProgramCompiler.kt:712)
+2026-10-28T13:24:31.3558076Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.compileScript-C5AE47M$default(ResidualProgramCompiler.kt:705)
+2026-10-28T13:24:31.3558967Z 	at org.gradle.kotlin.dsl.execution.ResidualProgramCompiler.emitStage2ProgramFor(ResidualProgramCompiler.kt:364)
+2026-10-28T13:24:31.3559726Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1.invoke(Interpreter.kt:493)
+2026-10-28T13:24:31.3560461Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost$compileSecondStageOf$cacheDir$1.invoke(Interpreter.kt:469)
+2026-10-28T13:24:31.3561282Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation.compile(KotlinScriptEvaluator.kt:409)
+2026-10-28T13:24:31.3562204Z 	at org.gradle.internal.scripts.BuildScriptCompilationAndInstrumentation.execute(BuildScriptCompilationAndInstrumentation.java:95)
+2026-10-28T13:24:31.3563099Z 	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+2026-10-28T13:24:31.3563769Z 	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+2026-10-28T13:24:31.3564334Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+2026-10-28T13:24:31.3564870Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+2026-10-28T13:24:31.3565565Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3566672Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3567575Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3568343Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3569373Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3570092Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3570944Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3571580Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+2026-10-28T13:24:31.3572137Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+2026-10-28T13:24:31.3572779Z 	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+2026-10-28T13:24:31.3573439Z 	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+2026-10-28T13:24:31.3574070Z 	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+2026-10-28T13:24:31.3574718Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+2026-10-28T13:24:31.3575480Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+2026-10-28T13:24:31.3576263Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+2026-10-28T13:24:31.3577312Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+2026-10-28T13:24:31.3578104Z 	at org.gradle.internal.execution.steps.NoInputChangesStep.execute(NoInputChangesStep.java:30)
+2026-10-28T13:24:31.3578765Z 	at org.gradle.internal.execution.steps.NoInputChangesStep.execute(NoInputChangesStep.java:21)
+2026-10-28T13:24:31.3579514Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+2026-10-28T13:24:31.3580387Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+2026-10-28T13:24:31.3581194Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+2026-10-28T13:24:31.3581863Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+2026-10-28T13:24:31.3582429Z 	at org.gradle.internal.Either$Right.fold(Either.java:175)
+2026-10-28T13:24:31.3582919Z 	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+2026-10-28T13:24:31.3583507Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+2026-10-28T13:24:31.3584129Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+2026-10-28T13:24:31.3584761Z 	at org.gradle.internal.execution.steps.NeverUpToDateStep.execute(NeverUpToDateStep.java:34)
+2026-10-28T13:24:31.3585398Z 	at org.gradle.internal.execution.steps.NeverUpToDateStep.execute(NeverUpToDateStep.java:22)
+2026-10-28T13:24:31.3586275Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+2026-10-28T13:24:31.3587454Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+2026-10-28T13:24:31.3588434Z 	at org.gradle.internal.execution.steps.ResolveNonIncrementalCachingStateStep.executeDelegate(ResolveNonIncrementalCachingStateStep.java:50)
+2026-10-28T13:24:31.3589386Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+2026-10-28T13:24:31.3590221Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+2026-10-28T13:24:31.3590907Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+2026-10-28T13:24:31.3591585Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+2026-10-28T13:24:31.3592346Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+2026-10-28T13:24:31.3593295Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+2026-10-28T13:24:31.3594304Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+2026-10-28T13:24:31.3595233Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.lambda$executeInTemporaryWorkspace$3(AssignImmutableWorkspaceStep.java:209)
+2026-10-28T13:24:31.3596316Z 	at org.gradle.internal.execution.workspace.impl.CacheBasedImmutableWorkspaceProvider$1.withTemporaryWorkspace(CacheBasedImmutableWorkspaceProvider.java:119)
+2026-10-28T13:24:31.3597587Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.executeInTemporaryWorkspace(AssignImmutableWorkspaceStep.java:199)
+2026-10-28T13:24:31.3598526Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.lambda$execute$0(AssignImmutableWorkspaceStep.java:121)
+2026-10-28T13:24:31.3599346Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.execute(AssignImmutableWorkspaceStep.java:121)
+2026-10-28T13:24:31.3600107Z 	at org.gradle.internal.execution.steps.AssignImmutableWorkspaceStep.execute(AssignImmutableWorkspaceStep.java:90)
+2026-10-28T13:24:31.3600883Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:38)
+2026-10-28T13:24:31.3601535Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+2026-10-28T13:24:31.3602363Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T13:24:31.3603268Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T13:24:31.3604145Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+2026-10-28T13:24:31.3604963Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+2026-10-28T13:24:31.3605592Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+2026-10-28T13:24:31.3606201Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+2026-10-28T13:24:31.3607052Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+2026-10-28T13:24:31.3607672Z 	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+2026-10-28T13:24:31.3608467Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator$InterpreterHost.cachedDirFor(KotlinScriptEvaluator.kt:279)
+2026-10-28T13:24:31.3609203Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.compileSecondStageOf(Interpreter.kt:469)
+2026-10-28T13:24:31.3609799Z 	at Program.loadSecondStageFor(Unknown Source)
+2026-10-28T13:24:31.3610321Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.evaluateSecondStageOf(Interpreter.kt:433)
+2026-10-28T13:24:31.3610855Z 	at Program.execute(Unknown Source)
+2026-10-28T13:24:31.3611321Z 	at org.gradle.kotlin.dsl.execution.Interpreter$ProgramHost.eval(Interpreter.kt:516)
+2026-10-28T13:24:31.3611855Z 	at org.gradle.kotlin.dsl.execution.Interpreter.eval(Interpreter.kt:214)
+2026-10-28T13:24:31.3612500Z 	at org.gradle.kotlin.dsl.provider.StandardKotlinScriptEvaluator.evaluate(KotlinScriptEvaluator.kt:125)
+2026-10-28T13:24:31.3613239Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPluginFactory$create$1.invoke(KotlinScriptPluginFactory.kt:46)
+2026-10-28T13:24:31.3613973Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPluginFactory$create$1.invoke(KotlinScriptPluginFactory.kt:43)
+2026-10-28T13:24:31.3614631Z 	at org.gradle.kotlin.dsl.provider.KotlinScriptPlugin.apply(KotlinScriptPlugin.kt:35)
+2026-10-28T13:24:31.3615281Z 	at org.gradle.configuration.BuildOperationScriptPlugin$1.run(BuildOperationScriptPlugin.java:68)
+2026-10-28T13:24:31.3615977Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3616904Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3617781Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3618515Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3619244Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3620010Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3620765Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3621468Z 	at org.gradle.configuration.BuildOperationScriptPlugin.lambda$apply$0(BuildOperationScriptPlugin.java:65)
+2026-10-28T13:24:31.3622213Z 	at org.gradle.internal.code.DefaultUserCodeApplicationContext.apply(DefaultUserCodeApplicationContext.java:44)
+2026-10-28T13:24:31.3622924Z 	at org.gradle.configuration.BuildOperationScriptPlugin.apply(BuildOperationScriptPlugin.java:65)
+2026-10-28T13:24:31.3623701Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$1(DefaultProjectStateRegistry.java:411)
+2026-10-28T13:24:31.3624813Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:429)
+2026-10-28T13:24:31.3625727Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:410)
+2026-10-28T13:24:31.3626658Z 	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:46)
+2026-10-28T13:24:31.3627340Z 	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:27)
+2026-10-28T13:24:31.3628310Z 	at org.gradle.configuration.project.ConfigureActionsProjectEvaluator.evaluate(ConfigureActionsProjectEvaluator.java:35)
+2026-10-28T13:24:31.3629607Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.lambda$run$0(LifecycleProjectEvaluator.java:109)
+2026-10-28T13:24:31.3630968Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$1(DefaultProjectStateRegistry.java:411)
+2026-10-28T13:24:31.3632453Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$fromMutableState$2(DefaultProjectStateRegistry.java:434)
+2026-10-28T13:24:31.3633401Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withReplacedLocks(DefaultWorkerLeaseService.java:359)
+2026-10-28T13:24:31.3634306Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:434)
+2026-10-28T13:24:31.3635277Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:410)
+2026-10-28T13:24:31.3636167Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.run(LifecycleProjectEvaluator.java:100)
+2026-10-28T13:24:31.3637103Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3637823Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3638521Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3639402Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3640128Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3640891Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3641587Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3642382Z 	at org.gradle.configuration.project.LifecycleProjectEvaluator.evaluate(LifecycleProjectEvaluator.java:72)
+2026-10-28T13:24:31.3643135Z 	at org.gradle.api.internal.project.DefaultProject.evaluate(DefaultProject.java:768)
+2026-10-28T13:24:31.3643722Z 	at org.gradle.api.internal.project.DefaultProject.evaluate(DefaultProject.java:158)
+2026-10-28T13:24:31.3644480Z 	at org.gradle.api.internal.project.ProjectLifecycleController.lambda$ensureSelfConfigured$2(ProjectLifecycleController.java:85)
+2026-10-28T13:24:31.3645294Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3646066Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3647025Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3647857Z 	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransitionIfNotCurrentlyTransitioning$10(StateTransitionController.java:199)
+2026-10-28T13:24:31.3648638Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3649434Z 	at org.gradle.internal.model.StateTransitionController.maybeTransitionIfNotCurrentlyTransitioning(StateTransitionController.java:195)
+2026-10-28T13:24:31.3650369Z 	at org.gradle.api.internal.project.ProjectLifecycleController.ensureSelfConfigured(ProjectLifecycleController.java:85)
+2026-10-28T13:24:31.3651297Z 	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.ensureConfigured(DefaultProjectStateRegistry.java:385)
+2026-10-28T13:24:31.3652074Z 	at org.gradle.execution.TaskPathProjectEvaluator.configure(TaskPathProjectEvaluator.java:34)
+2026-10-28T13:24:31.3652745Z 	at org.gradle.execution.TaskPathProjectEvaluator.configureHierarchy(TaskPathProjectEvaluator.java:50)
+2026-10-28T13:24:31.3653450Z 	at org.gradle.configuration.DefaultProjectsPreparer.prepareProjects(DefaultProjectsPreparer.java:42)
+2026-10-28T13:24:31.3654271Z 	at org.gradle.configuration.BuildTreePreparingProjectsPreparer.prepareProjects(BuildTreePreparingProjectsPreparer.java:65)
+2026-10-28T13:24:31.3655373Z 	at org.gradle.configuration.BuildOperationFiringProjectsPreparer$ConfigureBuild.run(BuildOperationFiringProjectsPreparer.java:52)
+2026-10-28T13:24:31.3656173Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T13:24:31.3657049Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T13:24:31.3657884Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3658627Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3659362Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3660141Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3660921Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T13:24:31.3661767Z 	at org.gradle.configuration.BuildOperationFiringProjectsPreparer.prepareProjects(BuildOperationFiringProjectsPreparer.java:40)
+2026-10-28T13:24:31.3662620Z 	at org.gradle.initialization.VintageBuildModelController.lambda$prepareProjects$2(VintageBuildModelController.java:84)
+2026-10-28T13:24:31.3663396Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3664119Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3664869Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3665732Z 	at org.gradle.internal.model.StateTransitionController.lambda$transitionIfNotPreviously$11(StateTransitionController.java:213)
+2026-10-28T13:24:31.3666441Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3667289Z 	at org.gradle.internal.model.StateTransitionController.transitionIfNotPreviously(StateTransitionController.java:209)
+2026-10-28T13:24:31.3668087Z 	at org.gradle.initialization.VintageBuildModelController.prepareProjects(VintageBuildModelController.java:84)
+2026-10-28T13:24:31.3668869Z 	at org.gradle.initialization.VintageBuildModelController.prepareToScheduleTasks(VintageBuildModelController.java:71)
+2026-10-28T13:24:31.3669782Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$prepareToScheduleTasks$6(DefaultBuildLifecycleController.java:175)
+2026-10-28T13:24:31.3670593Z 	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$14(StateTransitionController.java:255)
+2026-10-28T13:24:31.3671322Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3672028Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:254)
+2026-10-28T13:24:31.3672746Z 	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransition$9(StateTransitionController.java:190)
+2026-10-28T13:24:31.3673474Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:34)
+2026-10-28T13:24:31.3674120Z 	at org.gradle.internal.model.StateTransitionController.maybeTransition(StateTransitionController.java:186)
+2026-10-28T13:24:31.3674967Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.prepareToScheduleTasks(DefaultBuildLifecycleController.java:173)
+2026-10-28T13:24:31.3675881Z 	at org.gradle.internal.buildtree.DefaultBuildTreeWorkPreparer.scheduleRequestedTasks(DefaultBuildTreeWorkPreparer.java:36)
+2026-10-28T13:24:31.3676895Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:36)
+2026-10-28T13:24:31.3677868Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:35)
+2026-10-28T13:24:31.3678727Z 	at org.gradle.composite.internal.DefaultIncludedBuildTaskGraph.withNewWorkGraph(DefaultIncludedBuildTaskGraph.java:112)
+2026-10-28T13:24:31.3679618Z 	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController.scheduleAndRunRequestedTasks(VintageBuildTreeWorkController.kt:35)
+2026-10-28T13:24:31.3680576Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$scheduleAndRunTasks$1(DefaultBuildTreeLifecycleController.java:77)
+2026-10-28T13:24:31.3681521Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$runBuild$4(DefaultBuildTreeLifecycleController.java:120)
+2026-10-28T13:24:31.3682359Z 	at org.gradle.internal.model.StateTransitionController.lambda$transition$6(StateTransitionController.java:169)
+2026-10-28T13:24:31.3683110Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T13:24:31.3683841Z 	at org.gradle.internal.model.StateTransitionController.lambda$transition$7(StateTransitionController.java:169)
+2026-10-28T13:24:31.3684542Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-10-28T13:24:31.3685196Z 	at org.gradle.internal.model.StateTransitionController.transition(StateTransitionController.java:169)
+2026-10-28T13:24:31.3686258Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.runBuild(DefaultBuildTreeLifecycleController.java:117)
+2026-10-28T13:24:31.3687357Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:77)
+2026-10-28T13:24:31.3688314Z 	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:72)
+2026-10-28T13:24:31.3689209Z 	at org.gradle.tooling.internal.provider.ExecuteBuildActionRunner.run(ExecuteBuildActionRunner.java:31)
+2026-10-28T13:24:31.3689922Z 	at org.gradle.launcher.exec.ChainingBuildActionRunner.run(ChainingBuildActionRunner.java:35)
+2026-10-28T13:24:31.3690667Z 	at org.gradle.internal.buildtree.ProblemReportingBuildActionRunner.run(ProblemReportingBuildActionRunner.java:49)
+2026-10-28T13:24:31.3691473Z 	at org.gradle.launcher.exec.BuildOutcomeReportingBuildActionRunner.run(BuildOutcomeReportingBuildActionRunner.java:65)
+2026-10-28T13:24:31.3692393Z 	at org.gradle.tooling.internal.provider.FileSystemWatchingBuildActionRunner.run(FileSystemWatchingBuildActionRunner.java:140)
+2026-10-28T13:24:31.3693263Z 	at org.gradle.launcher.exec.BuildCompletionNotifyingBuildActionRunner.run(BuildCompletionNotifyingBuildActionRunner.java:41)
+2026-10-28T13:24:31.3694165Z 	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.lambda$execute$0(RootBuildLifecycleBuildActionExecutor.java:54)
+2026-10-28T13:24:31.3694979Z 	at org.gradle.composite.internal.DefaultRootBuildState.run(DefaultRootBuildState.java:130)
+2026-10-28T13:24:31.3695707Z 	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.execute(RootBuildLifecycleBuildActionExecutor.java:54)
+2026-10-28T13:24:31.3696612Z 	at org.gradle.internal.buildtree.InitDeprecationLoggingActionExecutor.execute(InitDeprecationLoggingActionExecutor.java:62)
+2026-10-28T13:24:31.3697398Z 	at org.gradle.internal.buildtree.InitProblems.execute(InitProblems.java:36)
+2026-10-28T13:24:31.3698049Z 	at org.gradle.internal.buildtree.DefaultBuildTreeContext.execute(DefaultBuildTreeContext.java:40)
+2026-10-28T13:24:31.3698858Z 	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.lambda$execute$0(BuildTreeLifecycleBuildActionExecutor.java:71)
+2026-10-28T13:24:31.3699581Z 	at org.gradle.internal.buildtree.BuildTreeState.run(BuildTreeState.java:60)
+2026-10-28T13:24:31.3700258Z 	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.execute(BuildTreeLifecycleBuildActionExecutor.java:71)
+2026-10-28T13:24:31.3701151Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$3.call(RunAsBuildOperationBuildActionExecutor.java:61)
+2026-10-28T13:24:31.3701969Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$3.call(RunAsBuildOperationBuildActionExecutor.java:57)
+2026-10-28T13:24:31.3702829Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T13:24:31.3703730Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T13:24:31.3704619Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T13:24:31.3705369Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3706114Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T13:24:31.3706923Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T13:24:31.3707648Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T13:24:31.3708461Z 	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor.execute(RunAsBuildOperationBuildActionExecutor.java:57)
+2026-10-28T13:24:31.3709358Z 	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.lambda$execute$0(RunAsWorkerThreadBuildActionExecutor.java:36)
+2026-10-28T13:24:31.3710122Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+2026-10-28T13:24:31.3710842Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+2026-10-28T13:24:31.3711721Z 	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.execute(RunAsWorkerThreadBuildActionExecutor.java:36)
+2026-10-28T13:24:31.3712571Z 	at org.gradle.tooling.internal.provider.continuous.ContinuousBuildActionExecutor.execute(ContinuousBuildActionExecutor.java:110)
+2026-10-28T13:24:31.3713507Z 	at org.gradle.tooling.internal.provider.SubscribableBuildActionExecutor.execute(SubscribableBuildActionExecutor.java:64)
+2026-10-28T13:24:31.3714277Z 	at org.gradle.internal.session.DefaultBuildSessionContext.execute(DefaultBuildSessionContext.java:46)
+2026-10-28T13:24:31.3715152Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:92)
+2026-10-28T13:24:31.3716196Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:80)
+2026-10-28T13:24:31.3717087Z 	at org.gradle.internal.session.BuildSessionState.run(BuildSessionState.java:71)
+2026-10-28T13:24:31.3717966Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:62)
+2026-10-28T13:24:31.3719036Z 	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:41)
+2026-10-28T13:24:31.3720062Z 	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:64)
+2026-10-28T13:24:31.3721017Z 	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:32)
+2026-10-28T13:24:31.3722020Z 	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:51)
+2026-10-28T13:24:31.3723044Z 	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:39)
+2026-10-28T13:24:31.3723992Z 	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:47)
+2026-10-28T13:24:31.3724824Z 	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:31)
+2026-10-28T13:24:31.3725607Z 	at org.gradle.launcher.daemon.server.exec.ExecuteBuild.doBuild(ExecuteBuild.java:70)
+2026-10-28T13:24:31.3726241Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3727109Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3727898Z 	at org.gradle.launcher.daemon.server.exec.WatchForDisconnection.execute(WatchForDisconnection.java:39)
+2026-10-28T13:24:31.3728653Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3729357Z 	at org.gradle.launcher.daemon.server.exec.ResetDeprecationLogger.execute(ResetDeprecationLogger.java:29)
+2026-10-28T13:24:31.3730068Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3730907Z 	at org.gradle.launcher.daemon.server.exec.RequestStopIfSingleUsedDaemon.execute(RequestStopIfSingleUsedDaemon.java:35)
+2026-10-28T13:24:31.3731668Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3732377Z 	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.lambda$execute$0(ForwardClientInput.java:40)
+2026-10-28T13:24:31.3733099Z 	at org.gradle.internal.daemon.clientinput.ClientInputForwarder.forwardInput(ClientInputForwarder.java:80)
+2026-10-28T13:24:31.3733856Z 	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.execute(ForwardClientInput.java:37)
+2026-10-28T13:24:31.3734566Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3735321Z 	at org.gradle.launcher.daemon.server.exec.LogAndCheckHealth.execute(LogAndCheckHealth.java:53)
+2026-10-28T13:24:31.3736011Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3736829Z 	at org.gradle.launcher.daemon.server.exec.LogToClient.doBuild(LogToClient.java:63)
+2026-10-28T13:24:31.3737452Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3738165Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3738894Z 	at org.gradle.launcher.daemon.server.exec.EstablishBuildEnvironment.doBuild(EstablishBuildEnvironment.java:84)
+2026-10-28T13:24:31.3739596Z 	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+2026-10-28T13:24:31.3740293Z 	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+2026-10-28T13:24:31.3741027Z 	at org.gradle.launcher.daemon.server.exec.StartBuildOrRespondWithBusy$1.run(StartBuildOrRespondWithBusy.java:52)
+2026-10-28T13:24:31.3741810Z 	at org.gradle.launcher.daemon.server.DaemonStateCoordinator.lambda$runCommand$0(DaemonStateCoordinator.java:321)
+2026-10-28T13:24:31.3742543Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-10-28T13:24:31.3743216Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+2026-10-28T13:24:31.3743579Z 
+2026-10-28T13:24:31.3743777Z ==============================================================================
+2026-10-28T13:24:31.3744021Z 
+2026-10-28T13:24:31.3744135Z BUILD FAILED in 10s
+2026-10-28T13:24:31.3998091Z ##[error]Process completed with exit code 1.

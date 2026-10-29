@@ -51,6 +51,7 @@ import com.example.pelletswaterheater.SettingsViewModel
 import com.example.pelletswaterheater.ui.misc.UiEvent
 import com.example.pelletswaterheater.ui.dialog.CodeEditorDialog
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -64,6 +65,7 @@ fun SettingsScreen(
     var showEditDialog by remember { mutableStateOf(false) }
     var metadataJson by remember { mutableStateOf("") }
     var editError by remember { mutableStateOf<String?>(null) }
+    var currentMetadataFile by remember { mutableStateOf<String>("") }
 
     val serverUrl by settingsViewModel.serverUrl.collectAsState()
     val widgetWidth by settingsViewModel.widgetWidth.collectAsState()
@@ -95,7 +97,7 @@ fun SettingsScreen(
     val launcher = createManagedLauncher(context, viewModel)
 
     LaunchedEffect(Unit) {
-        settingsViewModel.initialize(context)
+        settingsViewModel.initialize()
 
         // Collect the event and show snackbar
         settingsViewModel.uiEvent.collect { event ->
@@ -120,7 +122,10 @@ fun SettingsScreen(
         Text("Metadata File", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(8.dp))
 
-        Text("Current File: ${viewModel.getMetadataFileName()}")
+        LaunchedEffect(Unit) {
+            currentMetadataFile = viewModel.getMetadataFileName()
+        }
+        Text("Current File: $currentMetadataFile")
         Spacer(Modifier.height(8.dp))
 
         Row(
@@ -129,9 +134,11 @@ fun SettingsScreen(
         ) {
             Button(
                 onClick = {
-                    metadataJson = viewModel.getCurrentMetadataJson()
-                    settingsViewModel.getRawMetadata()
-                    showEditDialog = true
+                    coroutineScope.launch {
+                        metadataJson = viewModel.getCurrentMetadataJson() ?: ""
+                        settingsViewModel.getRawMetadata()
+                        showEditDialog = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

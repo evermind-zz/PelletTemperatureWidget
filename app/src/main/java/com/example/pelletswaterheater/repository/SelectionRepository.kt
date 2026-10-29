@@ -4,6 +4,7 @@ import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ConvertedValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.Serializable
 
 /**
  * Repository for managing user selections (log, widget, showData, showSectionName).
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface SelectionRepository {
     val selections: StateFlow<List<Selection>>
 
+    @Serializable
     data class Selection(
         val key: String,
         val log: Boolean,

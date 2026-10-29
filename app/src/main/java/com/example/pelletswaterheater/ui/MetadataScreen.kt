@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,8 +45,11 @@ fun MetadataScreen(
     viewModel: TemperatureViewModelNew = koinInject(),
     settingsViewModel: SettingsViewModel = koinInject()
 ) {
-    val metadataFiles = viewModel.metadataFiles.collectAsState(initial = emptyList())
-    val currentMetadataFile = viewModel.getMetadataFileName() //.collectedAsState()
+    val metadataFiles = viewModel.getMetadataFiles().collectAsState(initial = emptyList())
+    val currentMetadataFile = remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(Unit) {
+        currentMetadataFile.value = viewModel.getMetadataFileName()
+    }
     //settingsViewModel
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -113,7 +117,7 @@ fun MetadataScreen(
                         actions = listOf(
                             FileRowAction(
                                 "Mark as Default",
-                                onClick = { viewModel.setCurrentMetadata(it) },
+                                onClick = { coroutineScope.launch { viewModel.setCurrentMetadata(it) } },
                                 icon = Icons.Default.Check
                             ),
                             FileRowAction(
@@ -164,19 +168,25 @@ fun MetadataScreen(
         }
 
         fileToEditState.value?.let { file ->
+            val initialTextState = remember { mutableStateOf<String>("") }
+            LaunchedEffect(file) {
+                initialTextState.value = viewModel.getCurrentMetadataJson() ?: ""
+            }
             CodeEditorDialog(
                 "Edit Metadata",
-                initialText = viewModel.getCurrentMetadataJson() ?: "",
+                initialText = initialTextState.value,
                 onDismiss = {
                     fileToEditState.value = null
                 },
                 onSave = { saveText ->
                     fileToEditState.value = null
-                    viewModel.saveUserMetadata(saveText)
+                    coroutineScope.launch { viewModel.saveUserMetadata(saveText) }
                 },
                 onSaveAs = { filename, saveText ->
-                    viewModel.setCurrentMetadata(filename)
-                    viewModel.saveUserMetadata(saveText)
+                    coroutineScope.launch {
+                        viewModel.setCurrentMetadata(filename)
+                        viewModel.saveUserMetadata(saveText)
+                    }
                     fileToEditState.value = null
                 }
             )

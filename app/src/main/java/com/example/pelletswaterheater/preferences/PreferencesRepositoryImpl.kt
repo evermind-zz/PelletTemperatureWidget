@@ -1,27 +1,21 @@
 package com.example.pelletswaterheater.preferences
 
 import android.content.Context
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.preferencesKey
-import androidx.datastore.preferences.rxjava3.PreferencesDataStoreFactory
-import androidx.datastore.preferences.rxjava3.RxDataStore
-import androidx.datastore.preferences.rxjava3.RxDataStoreBuilder
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.PreferencesKeys
 import androidx.datastore.preferences.core.PreferencesSerializer
-import androidx.datastore.preferences.core.mutablePreferencesOf
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx3.awaitSingle
-import kotlinx.coroutines.rx3.asFlowable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -29,28 +23,23 @@ class PreferencesRepositoryImpl(
     private val context: Context
 ) : PreferencesRepository, KoinComponent {
 
-    private val dataStore by lazy {
-        val serializer = AppPreferencesSerializer(context)
-        val migratedPrefs = serializer.migrate()
-
-        RxDataStoreBuilder.create(
-            context,
-            "app_preferences",
-            serializer
-        ).build()
-    }
+    private val dataStore: DataStore<Preferences> = DataStoreFactory.create<Preferences>(
+        serializer = PreferencesSerializer as androidx.datastore.core.Serializer<Preferences>,
+        scope = CoroutineScope(Dispatchers.IO),
+        produceFile = { context.filesDir.resolve("app_preferences.preferences_pb") }
+    )
 
     // Preference keys
-    private val SERVER_URL_KEY = preferencesKey<String>("server_url")
-    private val WIDGET_WIDTH_KEY = preferencesKey<String>("widget_width")
-    private val WIDGET_HEIGHT_KEY = preferencesKey<String>("widget_height")
-    private val BACKGROUND_COLOR_KEY = preferencesKey<String>("background_color")
-    private val TEXT_COLOR_KEY = preferencesKey<String>("text_color")
-    private val STORED_ORDER_HASH_KEY = preferencesKey<Int>("storedOrderHash")
-    private val METADATA_DEFAULT_FILE_KEY = preferencesKey<String>("key_metadata_default_file")
-    private val GATEWAY_FINGERPRINT_KEY = preferencesKey<String>("gateway_fingerprint")
-    private val SELECTIONS_JSON_KEY = preferencesKey<String>("selections_json")
-    private val LAST_REFRESH_TIME_KEY = preferencesKey<Long>("last_refresh_time")
+    private val SERVER_URL_KEY = stringPreferencesKey("server_url")
+    private val WIDGET_WIDTH_KEY = stringPreferencesKey("widget_width")
+    private val WIDGET_HEIGHT_KEY = stringPreferencesKey("widget_height")
+    private val BACKGROUND_COLOR_KEY = stringPreferencesKey("background_color")
+    private val TEXT_COLOR_KEY = stringPreferencesKey("text_color")
+    private val STORED_ORDER_HASH_KEY = intPreferencesKey("storedOrderHash")
+    private val METADATA_DEFAULT_FILE_KEY = stringPreferencesKey("key_metadata_default_file")
+    private val GATEWAY_FINGERPRINT_KEY = stringPreferencesKey("gateway_fingerprint")
+    private val SELECTIONS_JSON_KEY = stringPreferencesKey("selections_json")
+    private val LAST_REFRESH_TIME_KEY = longPreferencesKey("last_refresh_time")
 
     // Public flows
     override val serverUrl: Flow<String?> = dataStore.data
@@ -94,43 +83,43 @@ class PreferencesRepositoryImpl(
         .distinctUntilChanged()
 
     override suspend fun setServerUrl(url: String) {
-        dataStore.updateData { it.edit { it[SERVER_URL_KEY] = url } }.awaitSingle()
+        dataStore.edit { it[SERVER_URL_KEY] = url }
     }
 
     override suspend fun setWidgetWidth(width: String) {
-        dataStore.updateData { it.edit { it[WIDGET_WIDTH_KEY] = width } }.awaitSingle()
+        dataStore.edit { it[WIDGET_WIDTH_KEY] = width }
     }
 
     override suspend fun setWidgetHeight(height: String) {
-        dataStore.updateData { it.edit { it[WIDGET_HEIGHT_KEY] = height } }.awaitSingle()
+        dataStore.edit { it[WIDGET_HEIGHT_KEY] = height }
     }
 
     override suspend fun setBackgroundColor(color: String) {
-        dataStore.updateData { it.edit { it[BACKGROUND_COLOR_KEY] = color } }.awaitSingle()
+        dataStore.edit { it[BACKGROUND_COLOR_KEY] = color }
     }
 
     override suspend fun setTextColor(color: String) {
-        dataStore.updateData { it.edit { it[TEXT_COLOR_KEY] = color } }.awaitSingle()
+        dataStore.edit { it[TEXT_COLOR_KEY] = color }
     }
 
     override suspend fun setStoredOrderHash(hash: Int) {
-        dataStore.updateData { it.edit { it[STORED_ORDER_HASH_KEY] = hash } }.awaitSingle()
+        dataStore.edit { it[STORED_ORDER_HASH_KEY] = hash }
     }
 
     override suspend fun setMetadataDefaultFile(fileName: String) {
-        dataStore.updateData { it.edit { it[METADATA_DEFAULT_FILE_KEY] = fileName } }.awaitSingle()
+        dataStore.edit { it[METADATA_DEFAULT_FILE_KEY] = fileName }
     }
 
     override suspend fun setGatewayFingerprint(fingerprint: String) {
-        dataStore.updateData { it.edit { it[GATEWAY_FINGERPRINT_KEY] = fingerprint } }.awaitSingle()
+        dataStore.edit { it[GATEWAY_FINGERPRINT_KEY] = fingerprint }
     }
 
     override suspend fun setSelectionsJson(json: String) {
-        dataStore.updateData { it.edit { it[SELECTIONS_JSON_KEY] = json } }.awaitSingle()
+        dataStore.edit { it[SELECTIONS_JSON_KEY] = json }
     }
 
     override suspend fun setLastRefreshTime(time: Long) {
-        dataStore.updateData { it.edit { it[LAST_REFRESH_TIME_KEY] = time } }.awaitSingle()
+        dataStore.edit { it[LAST_REFRESH_TIME_KEY] = time }
     }
 
     override suspend fun updateAllSettings(
@@ -140,19 +129,16 @@ class PreferencesRepositoryImpl(
         backgroundColor: String,
         textColor: String
     ): Boolean {
-        // Get current URL to detect change
-        val currentUrl = dataStore.data.first().awaitSingle()[SERVER_URL_KEY]
+        val currentUrl = dataStore.data.first()[SERVER_URL_KEY]
         val urlChanged = currentUrl != url
 
-        dataStore.updateData { prefs ->
-            val edit = prefs.edit()
-            edit[SERVER_URL_KEY] = url
-            edit[WIDGET_WIDTH_KEY] = width
-            edit[WIDGET_HEIGHT_KEY] = height
-            edit[BACKGROUND_COLOR_KEY] = backgroundColor
-            edit[TEXT_COLOR_KEY] = textColor
-            edit
-        }.awaitSingle()
+        dataStore.edit {
+            it[SERVER_URL_KEY] = url
+            it[WIDGET_WIDTH_KEY] = width
+            it[WIDGET_HEIGHT_KEY] = height
+            it[BACKGROUND_COLOR_KEY] = backgroundColor
+            it[TEXT_COLOR_KEY] = textColor
+        }
 
         return urlChanged
     }

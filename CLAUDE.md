@@ -147,3 +147,50 @@ Edit `TemperatureWidget.TemperatureWidgetContent()` Composable
 - App module at `app/` with own `build.gradle.kts`
 - `metadata.json` at root (14KB sample server response)
 - Scripts: `convert_underscore.sh`, `extract_xai_artifacts.py`, `move_kotlin_files.sh`, `renumber_notes.sh`, `show_java_files.sh`
+
+## Development Tools
+
+### Eclipse JDT Language Server (Java)
+Installed at `~/.local/share/jdtls` (v1.53.0 milestone). Launcher script at `~/.local/bin/jdtls`.
+
+**Configuration:**
+- Uses SDKMAN Java 21 (Corretto 21.0.13.0+10)
+- Uses `config_linux` configuration
+- Added to PATH via `~/.bashrc`
+
+**Usage:**
+```bash
+jdtls                    # Start JDT LS
+jdtls --help             # Show help
+```
+
+**For LSP clients (e.g., nvim-lspconfig, vscode):**
+```json
+{
+  "cmd": ["/home/pi/.local/bin/jdtls"],
+  "root_dir": "workspaceFolder"
+}
+```
+
+### Kotlin Language Server (Kotlin)
+Installed at `~/.local/share/kotlin-lsp/kotlin-server-263.7084.0/` (v263.7084.0 EAP). Launcher script at `~/.local/bin/kotlin-lsp`.
+
+**Configuration:**
+- Uses bundled JetBrains Runtime (JBR) Java 25
+- Runs in stdio mode for LSP clients
+
+**Usage:**
+```bash
+kotlin-lsp               # Start Kotlin LSP (stdio mode)
+kotlin-lsp --help        # Show help (via intellij-server)
+```
+
+**For LSP clients (e.g., nvim-lspconfig, vscode):**
+```json
+{
+  "cmd": ["/home/pi/.local/bin/kotlin-lsp"],
+  "root_dir": "workspaceFolder"
+}
+```
+
+**Note:** Kotlin LSP stdio mode may have issues responding to initialize requests. Socket mode (`intellij-server --socket 127.0.0.1:9999`) works reliably.

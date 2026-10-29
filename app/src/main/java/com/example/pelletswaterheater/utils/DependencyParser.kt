@@ -4,8 +4,13 @@ import android.content.Context
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import java.io.InputStreamReader
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Parses the build-time generated license report from assets.
@@ -15,6 +20,7 @@ import java.io.InputStreamReader
 object DependencyParser {
     private val TAG = DependencyParser::class.java.simpleName
     private const val LICENSE_REPORT_FILENAME = "license-report.json"
+    private const val LICENSE_REPORT_FILENAME_ALT = "index.json"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -22,34 +28,42 @@ object DependencyParser {
 
     /**
      * Loads software components from the license report asset.
+     * Tries license-report.json first, then falls back to index.json.
      *
      * @param context Application context to access assets
      * @return List of SoftwareComponent or empty list if parsing fails
      */
     fun loadSoftwareComponents(context: Context): List<SoftwareComponent> {
-        return try {
-            val inputStream = context.assets.open(LICENSE_REPORT_FILENAME)
-            val reader = InputStreamReader(inputStream)
-            val jsonObject = json.parse(jsonObject(), reader)
-            reader.close()
-            inputStream.close()
-
-            parseLicenseReport(jsonObject)
-        } catch (e: Exception) {
-            Logger.w(TAG, "Failed to load license report from assets: $e")
-            emptyList()
+        val filenames = listOf(LICENSE_REPORT_FILENAME, LICENSE_REPORT_FILENAME_ALT)
+        for (filename in filenames) {
+            try {
+                val inputStream = context.assets.open(filename)
+                val jsonString = inputStream.bufferedReader().use { it.readText() }
+                val jsonElement = json.parseToJsonElement(jsonString)
+                val jsonObject = jsonElement.jsonObject
+                inputStream.close()
+                val components = parseLicenseReport(jsonObject)
+                if (components.isNotEmpty()) {
+                    Logger.d(TAG, "Loaded license report from $filename")
+                    return components
+                }
+            } catch (e: Exception) {
+                Logger.d(TAG, "Failed to load $filename: $e")
+            }
         }
+        Logger.w(TAG, "Failed to load license report from assets")
+        return emptyList()
     }
 
     private fun parseLicenseReport(jsonObject: kotlinx.serialization.json.JsonObject): List<SoftwareComponent> {
         val dependencies = jsonObject["dependencies"]
-        if (dependencies == null || !dependencies.isJsonArray) {
+        if (dependencies == null || dependencies !is JsonArray) {
             Logger.w(TAG, "No dependencies array found in license report")
             return emptyList()
         }
 
         val components = mutableListOf<SoftwareComponent>()
-        val jsonArray = dependencies.jsonArray
+        val jsonArray = dependencies
 
         for (element in jsonArray) {
             val obj = element.jsonObject

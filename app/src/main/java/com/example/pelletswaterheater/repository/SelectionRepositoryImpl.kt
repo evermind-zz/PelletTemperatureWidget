@@ -1,6 +1,7 @@
 package com.example.pelletswaterheater.repository
 
 import com.example.pelletswaterheater.preferences.PreferencesRepository
+import com.example.pelletswaterheater.repository.SelectionRepository.Selection
 import com.example.pelletswaterheater.utils.ILogger
 import com.example.pelletswaterheater.utils.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -9,8 +10,11 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -37,7 +41,7 @@ class SelectionRepositoryImpl(
     }
 
     private suspend fun saveSelectionsToDataStore(selections: List<Selection>) {
-        val jsonStr = json.encodeToString(selections)
+        val jsonStr = json.encodeToString(serializer<List<Selection>>(), selections)
         preferencesRepository.setSelectionsJson(jsonStr)
     }
 
@@ -71,8 +75,8 @@ class SelectionRepositoryImpl(
     ) {
         var changedItem: Selection? = null
 
-        _selections.update { list ->
-            list.map { sel ->
+        _selections.update { list: List<Selection> ->
+            list.map { sel: Selection ->
                 if (sel.key == key) {
                     val newSel = sel.copy(
                         log = log ?: sel.log,
@@ -92,22 +96,22 @@ class SelectionRepositoryImpl(
     }
 
     override fun toggleAllLog(checked: Boolean) {
-        _selections.value = _selections.value.map { it.copy(log = checked) }
+        _selections.value = _selections.value.map { it -> it.copy(log = checked) }
         viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     override fun toggleAllWidget(checked: Boolean) {
-        _selections.value = _selections.value.map { it.copy(widget = checked) }
+        _selections.value = _selections.value.map { it -> it.copy(widget = checked) }
         viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     override fun toggleAllShowData(checked: Boolean) {
-        _selections.value = _selections.value.map { it.copy(showData = checked) }
+        _selections.value = _selections.value.map { it -> it.copy(showData = checked) }
         viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 
     override fun toggleAllSectionName(checked: Boolean) {
-        _selections.value = _selections.value.map { it.copy(showSectionName = checked) }
+        _selections.value = _selections.value.map { it -> it.copy(showSectionName = checked) }
         viewModelScope.launch { saveSelectionsToDataStore(_selections.value) }
     }
 }

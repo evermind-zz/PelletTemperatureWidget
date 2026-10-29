@@ -30,10 +30,12 @@ import androidx.glance.unit.ColorProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
+import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -46,17 +48,15 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
 
     @SuppressLint("StateFlowValueCalledInComposition")
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val widgetSnapshotData = viewModel.getWidgetValues()
+        val widgetSnapshotData = viewModel.widgetValues.value
         provideContent {
             Log.d("TemperatureWidget", "provideGlance: glanceId=$id, viewModel=${viewModel.hashCode()}")
-            //val width = TemperatureUtils.getStoredWidgetSize(context, "width")?.toIntOrNull() ?: 100
-            //val height = TemperatureUtils.getStoredWidgetSize(context, "height")?.toIntOrNull() ?: 100
             val size = LocalSize.current // in DpSize (width.dp x height.dp)
             TemperatureWidgetContent(
                 width = size.width,
                 height = size.height,
-                backgroundColor = getStoredBackgroundColor(context),
-                textColor = getStoredTextColor(context),
+                backgroundColor = TemperatureUtils.getStoredBackgroundColor(context),
+                textColor = TemperatureUtils.getStoredTextColor(context),
                 snapshotData = widgetSnapshotData
             )
         }
@@ -182,9 +182,7 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
     }
 
 
-    private fun getStoredBackgroundColor(context: Context): Color = TemperatureUtils.getStoredBackgroundColor(context)
-
-    private fun getStoredTextColor(context: Context): Color = TemperatureUtils.getStoredTextColor(context)
+    // Removed duplicate helper methods - using TemperatureUtils directly
 
     suspend fun forceUpdateAll(context: Context) {
         try {
@@ -231,7 +229,7 @@ class RefreshWidgetAction : ActionCallback, KoinComponent {
     private val temperatureUtils: TemperatureUtils by inject()
 
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        val lastRefresh = preferencesRepository.lastRefreshTime.first().await() ?: 0L
+        val lastRefresh = preferencesRepository.lastRefreshTime.first() ?: 0L
         val currentTime = System.currentTimeMillis()
         Log.d("RefreshWidgetAction", "Refresh attempt: currentTime=$currentTime, lastRefresh=$lastRefresh, delta=${currentTime - lastRefresh}ms")
         if (currentTime - lastRefresh < 5000) {
@@ -239,7 +237,7 @@ class RefreshWidgetAction : ActionCallback, KoinComponent {
             return
         }
         try {
-            preferencesRepository.setLastRefreshTime(currentTime).await()
+            preferencesRepository.setLastRefreshTime(currentTime)
             temperatureUtils.forceTemperatureUpdate()
             (TemperatureWidget()).forceUpdateAll(context)
             Log.d("RefreshWidgetAction", "Refresh enqueued successfully")

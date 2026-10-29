@@ -1,61 +1,699 @@
 {
   "system": {
     "system_info": "system global variables",
-    "L_ambient": { "val": "219", "unit": "°C", "factor": 0.1, "offset": 0, "name": "Außentemperatur", "format": "float", "min": "-32768", "max": "32767", "decimals": 1 },
-    "L_usb_stick": { "val": "0", "unit": "", "factor": 1.0, "name": "USB Stick", "format": "string" },
-    "L_errors": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehler", "format": "int", "min": "0", "max": "255" },
-    "L_existing_boiler": { "val": "0", "unit": "°C", "factor": 0.1, "name": "Kesseltemperatur", "format": "float", "decimals": 1 },
-    "L_boiler_set": { "val": "600", "unit": "°C", "factor": 0.1, "name": "Kesselsoll", "format": "float", "decimals": 1 },
-    "L_returntemp_act": { "val": "450", "unit": "°C", "factor": 0.1, "name": "Rücklauftemperatur", "format": "float", "decimals": 1 },
-    "L_flue_gas": { "val": "1500", "unit": "°C", "factor": 0.1, "name": "Abgastemperatur", "format": "float", "decimals": 1 },
-    "L_o2": { "val": "80", "unit": "%", "factor": 0.1, "name": "O2 Gehalt", "format": "float", "decimals": 1 },
-    "L_co": { "val": "50", "unit": "ppm", "factor": 1.0, "name": "CO Gehalt", "format": "int" },
-    "L_lambda": { "val": "130", "unit": "", "factor": 0.01, "name": "Lambda", "format": "float", "decimals": 2 }
+    "L_ambient": {
+      "val": "219",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Außentemperatur",
+      "offset": 0.0
+    },
+    "L_errors": {
+      "val": "0",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Fehler",
+      "offset": 0.0
+    },
+    "L_usb_stick": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Usb Stick erkannt"
+    },
+    "L_existing_boiler": {
+      "val": "0",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Bestehender Kessel",
+      "offset": 0.0
+    }
   },
   "hk1": {
-    "hk_info": "heating circuit 1 data",
-    "L_roomtemp_set": { "val": "228", "unit": "°C", "factor": 0.1, "name": "Raumsoll", "format": "float", "decimals": 1 },
-    "L_roomtemp_act": { "val": "230", "unit": "°C", "factor": 0.1, "name": "Raumtemperatur aktuell", "format": "float", "decimals": 1 },
-    "L_flowtemp_act": { "val": "288", "unit": "°C", "factor": 0.1, "name": "Vorlauftemperatur aktuell", "format": "float", "decimals": 1 },
-    "L_flowtemp_set": { "val": "80", "unit": "°C", "factor": 0.1, "name": "Vorlaufsoll", "format": "float", "decimals": 1 },
-    "L_pump": { "val": "1", "unit": "", "factor": 1.0, "name": "Pumpe", "format": "string" },
-    "L_mixer": { "val": "45", "unit": "%", "factor": 1.0, "name": "Mischer", "format": "int" },
-    "L_returntemp_act": { "val": "250", "unit": "°C", "factor": 0.1, "name": "Rücklauf HK1", "format": "float", "decimals": 1 }
+    "hk_info": "heating circuit data",
+    "L_roomtemp_act": {
+      "val": "0",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Raumtemperatur",
+      "offset": 0.0
+    },
+    "L_roomtemp_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "RT Soll",
+      "offset": 0.0
+    },
+    "L_flowtemp_act": {
+      "val": "288",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "VL Ist",
+      "offset": 0.0
+    },
+    "L_flowtemp_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "VL Soll",
+      "offset": 0.0
+    },
+    "L_comfort": {
+      "val": "0",
+      "unit": "K",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Komforttemperatur",
+      "offset": 0.0
+    },
+    "L_state": {
+      "val": "8",
+      "factor": 1,
+      "name": "Status",
+      "offset": 0.0
+    },
+    "L_statetext": {
+      "val": "Betriebsart Aus",
+      "name": "L_statetext"
+    },
+    "L_pump": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "HK Pumpe"
+    },
+    "remote_override": {
+      "val": "0",
+      "unit": "K",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "HK Fernbedienung",
+      "offset": 0.0
+    },
+    "mode_auto": {
+      "val": "1",
+      "format": "0:Aus|1:Auto|2:Heizen|3:Absenken",
+      "name": "Betriebsart"
+    },
+    "time_prg": {
+      "val": "0",
+      "format": "0:Zeit 1|1:Zeit 2",
+      "name": "Zeitauswahl"
+    },
+    "temp_setback": {
+      "val": "180",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "100",
+      "max": "400",
+      "name": "Raumtemp Absenken",
+      "offset": 0.0
+    },
+    "temp_heat": {
+      "val": "230",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "100",
+      "max": "400",
+      "name": "Raumtemp Heizen",
+      "offset": 0.0
+    },
+    "temp_vacation": {
+      "val": "150",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "100",
+      "max": "400",
+      "name": "Raumtemp Urlaub",
+      "offset": 0.0
+    },
+    "name": {
+      "val": "Heizkörper",
+      "length": "20",
+      "name": "Anzeigename"
+    },
+    "oekomode": {
+      "val": "0",
+      "format": "0:Aus|1:Komfort|2:Minimum|3:Ökologisch",
+      "name": "Öko Modus"
+    },
+    "autocomfort": {
+      "val": "-1",
+      "format": "0:Aus|1:Ein|2:Morgens|3:Abends",
+      "name": "autocomfort"
+    },
+    "autocomfort_sunset": {
+      "val": "0",
+      "unit": "min",
+      "factor": 1,
+      "min": "-120",
+      "max": "120",
+      "name": "autocomfort_sunset",
+      "offset": 0.0
+    },
+    "autocomfort_sunrise": {
+      "val": "0",
+      "unit": "min",
+      "factor": 1,
+      "min": "-120",
+      "max": "120",
+      "name": "autocomfort_sunrise",
+      "offset": 0.0
+    }
   },
-  "hk2": {
-    "hk_info": "heating circuit 2 data",
-    "L_roomtemp_set": { "val": "210", "unit": "°C", "factor": 0.1, "name": "Raumsoll HK2", "format": "float", "decimals": 1 },
-    "L_roomtemp_act": { "val": "215", "unit": "°C", "factor": 0.1, "name": "Raumtemperatur HK2", "format": "float", "decimals": 1 },
-    "L_flowtemp_act": { "val": "320", "unit": "°C", "factor": 0.1, "name": "Vorlauf HK2", "format": "float", "decimals": 1 },
-    "L_flowtemp_set": { "val": "350", "unit": "°C", "factor": 0.1, "name": "Vorlaufsoll HK2", "format": "float", "decimals": 1 }
+  "pu1": {
+    "pu_info": "accu data",
+    "L_tpo_act": {
+      "val": "424",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Einschaltfühler",
+      "offset": 0.0
+    },
+    "L_tpo_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "TPO Soll",
+      "offset": 0.0
+    },
+    "L_tpm_act": {
+      "val": "305",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Abschaltfühler",
+      "offset": 0.0
+    },
+    "L_tpm_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "TPM Soll",
+      "offset": 0.0
+    },
+    "L_pump_release": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Pumpenfreigabe Temp",
+      "offset": 0.0
+    },
+    "L_pump": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "0",
+      "max": "100",
+      "name": "Drehzahl",
+      "offset": 0.0
+    },
+    "L_state": {
+      "val": "512",
+      "factor": 1,
+      "name": "Status",
+      "offset": 0.0
+    },
+    "L_statetext": {
+      "val": "Anforderung Aus",
+      "name": "L_statetext"
+    },
+    "mintemp_off": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "900",
+      "name": "Puffertemp min Aus",
+      "offset": 0.0
+    },
+    "mintemp_on": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "900",
+      "name": "Puffertemp min Ein",
+      "offset": 0.0
+    },
+    "ext_mintemp_off": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "900",
+      "name": "Puffertemp min Aus",
+      "offset": 0.0
+    },
+    "ext_mintemp_on": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "900",
+      "name": "Puffertemp min Ein",
+      "offset": 0.0
+    }
   },
   "ww1": {
     "ww_info": "domestic hot water data",
-    "L_wwtemp_act": { "val": "500", "unit": "°C", "factor": 0.1, "name": "Warmwassertemperatur", "format": "float", "decimals": 1 },
-    "L_wwtemp_set": { "val": "550", "unit": "°C", "factor": 0.1, "name": "Warmwassersoll", "format": "float", "decimals": 1 },
-    "L_wwpump": { "val": "0", "unit": "", "factor": 1.0, "name": "WW Pumpe", "format": "string" },
-    "L_circpump": { "val": "1", "unit": "", "factor": 1.0, "name": "Zirkulationspumpe", "format": "string" }
+    "L_temp_set": {
+      "val": "270",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Wassertemp Soll",
+      "offset": 0.0
+    },
+    "L_ontemp_act": {
+      "val": "418",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Ein Temperatur",
+      "offset": 0.0
+    },
+    "L_offtemp_act": {
+      "val": "424",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Aus Temperatur",
+      "offset": 0.0
+    },
+    "L_pump": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Pumpe"
+    },
+    "L_state": {
+      "val": "8200",
+      "factor": 1,
+      "name": "Status",
+      "offset": 0.0
+    },
+    "L_statetext": {
+      "val": "Zeit außerhalb Zeitprogramm|Anforderung Aus",
+      "name": "L_statetext"
+    },
+    "time_prg": {
+      "val": "0",
+      "format": "0:Zeit 1|1:Zeit 2",
+      "name": "Zeitauswahl"
+    },
+    "sensor_on": {
+      "val": "0",
+      "format": "0:WW|1:TPO|2:TPM|3:SpUnten",
+      "name": "Einschaltfühler"
+    },
+    "sensor_off": {
+      "val": "1",
+      "format": "0:WW|1:TPO|2:TPM|3:SpUnten",
+      "name": "Abschaltfühler"
+    },
+    "mode_auto": {
+      "val": "1",
+      "format": "0:Aus|1:Auto|2:Ein",
+      "name": "Betriebsart"
+    },
+    "mode_dhw": {
+      "val": "1",
+      "format": "0:Aus|1:Auto|2:Ein",
+      "name": "Betriebsart"
+    },
+    "heat_once": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Einmal Aufbereiten"
+    },
+    "temp_min_set": {
+      "val": "350",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "800",
+      "name": "Wassertemp Min",
+      "offset": 0.0
+    },
+    "temp_max_set": {
+      "val": "500",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "80",
+      "max": "800",
+      "name": "Wassertemp Soll",
+      "offset": 0.0
+    },
+    "name": {
+      "val": "",
+      "length": "20",
+      "name": "Anzeigename"
+    },
+    "smartstart": {
+      "val": "0",
+      "unit": "min",
+      "factor": 1,
+      "min": "0",
+      "max": "90",
+      "name": "Intelligenter Start",
+      "offset": 0.0
+    },
+    "use_boiler_heat": {
+      "val": "0",
+      "format": "0:Aus|1:Ein",
+      "name": "Restwärmenutzung"
+    },
+    "oekomode": {
+      "val": "0",
+      "format": "0:Aus|1:Komfort|2:Minimum|3:Ökologisch",
+      "name": "Öko Modus"
+    }
   },
   "pe1": {
-    "pe_info": "pellet boiler data",
-    "L_pellet_stock": { "val": "85", "unit": "%", "factor": 1.0, "name": "Pellets Vorrat", "format": "int" },
-    "L_burner_state": { "val": "1", "unit": "", "factor": 1.0, "name": "Brennerzustand", "format": "string" },
-    "L_ignition_time": { "val": "120", "unit": "s", "factor": 1.0, "name": "Zündzeit", "format": "int" },
-    "L_cleaning": { "val": "0", "unit": "", "factor": 1.0, "name": "Reinigung", "format": "string" },
-    "L_ash_box": { "val": "15", "unit": "%", "factor": 1.0, "name": "Aschenkasten", "format": "int" },
-    "L_feed_rate": { "val": "250", "unit": "g/h", "factor": 1.0, "name": "Förderleistung", "format": "int" },
-    "L_burn_time": { "val": "480", "unit": "min", "factor": 1.0, "name": "Brenndauer", "format": "int" }
+    "pe_info": "pellematic data",
+    "L_temp_act": {
+      "val": "367",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Kesseltemperatur",
+      "offset": 0.0
+    },
+    "L_temp_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "KT Soll",
+      "offset": 0.0
+    },
+    "L_ext_temp": {
+      "val": "-32768",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Abgastemperatur",
+      "offset": 0.0
+    },
+    "L_frt_temp_act": {
+      "val": "384",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Flammraumtemp",
+      "offset": 0.0
+    },
+    "L_frt_temp_set": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "FRT Soll",
+      "offset": 0.0
+    },
+    "L_frt_temp_end": {
+      "val": "80",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Flammraumendtemp",
+      "offset": 0.0
+    },
+    "L_br": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Brennerkontakt"
+    },
+    "L_ak": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Best Kessel (AK)"
+    },
+    "L_not": {
+      "val": "true",
+      "format": "0:Aus|1:Ein",
+      "name": "Emergency Stop"
+    },
+    "L_stb": {
+      "val": "true",
+      "format": "0:Aus|1:Ein",
+      "name": "Safety Thermostat"
+    },
+    "L_modulation": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Modulationsstufe",
+      "offset": 0.0
+    },
+    "L_runtimeburner": {
+      "val": "0",
+      "unit": "zs",
+      "factor": 0.01,
+      "name": "Einschubzeit",
+      "offset": 0.0
+    },
+    "L_resttimeburner": {
+      "val": "0",
+      "unit": "zs",
+      "factor": 0.01,
+      "name": "Pausenzeit",
+      "offset": 0.0
+    },
+    "L_currentairflow": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Lüfter Drehzahl",
+      "offset": 0.0
+    },
+    "L_lowpressure": {
+      "val": "487",
+      "unit": "EH",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Unterdruck",
+      "offset": 0.0
+    },
+    "L_lowpressure_set": {
+      "val": "1300",
+      "unit": "EH",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Unterdruck Ende",
+      "offset": 0.0
+    },
+    "L_fluegas": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Saugzug Drehzahl",
+      "offset": 0.0
+    },
+    "L_uw_speed": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Drehzahl UW",
+      "offset": 0.0
+    },
+    "L_state": {
+      "val": "99",
+      "format": "0:Dauerlauf|1:Start|2:Zuendung|3:Softstart|4:Leistungsbrand|5:Nachlauf|6:Aus|7:Saugen|8:! Asche !|9:! Pellets !|10:Pell Switch|11:Störung|12:Einmessen|13:1|14:1|15:1|16:1|17:1|18:1|19:1|20:1|21:1|22:1|23:1|24:1|25:1|26:1|27:1|28:1|29:1|30:1|31:1|32:1|33:1|34:1|35:1|36:1|37:1|38:1|39:1|40:1|41:1|42:1|43:1|44:1|45:1|46:1|47:1|48:1|49:1|50:1|51:1|52:1|53:1|54:1|55:1|56:1|57:1|58:1|59:1|60:1|61:1|62:1|63:1|64:1|65:1|66:1|67:1|68:1|69:1|70:1|71:1|72:1|73:1|74:1|75:1|76:1|77:1|78:1|79:1|80:1|81:1|82:1|83:1|84:1|85:1|86:1|87:1|88:1|89:1|90:1|91:1|92:1|93:1|94:1|95:1|96:1|97:Aus|98:Aus|99:Aus|100:Aus|101:Aus",
+      "name": "PE Kesselstatus"
+    },
+    "L_statetext": {
+      "val": "Aus",
+      "name": "L_statetext"
+    },
+    "L_type": {
+      "val": "9",
+      "format": "0:PE|1:PES|2:PEK|3:PESK|4:SMART V1|5:SMART V2|6:CONDENS|7:SMART XS|8:SMART V3|9:COMPACT|10:AIR",
+      "name": "Kesseltyp"
+    },
+    "L_starts": {
+      "val": "6088",
+      "factor": 1,
+      "name": "Brennerstarts",
+      "offset": 0.0
+    },
+    "L_runtime": {
+      "val": "5230",
+      "unit": "h",
+      "factor": 1,
+      "name": "Brennerlaufzeit",
+      "offset": 0.0
+    },
+    "L_avg_runtime": {
+      "val": "51",
+      "unit": "min",
+      "factor": 1,
+      "name": "PE Mittlere Laufzeit",
+      "offset": 0.0
+    },
+    "L_uw_release": {
+      "val": "600",
+      "unit": "°C",
+      "factor": 0.1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Freigabetemperatur",
+      "offset": 0.0
+    },
+    "L_uw": {
+      "val": "0",
+      "unit": "%",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "PE Drehzahl UW",
+      "offset": 0.0
+    },
+    "L_storage_fill": {
+      "val": "5295",
+      "unit": "kg",
+      "factor": 1,
+      "name": "Füllstand Lager",
+      "offset": 0.0
+    },
+    "L_storage_min": {
+      "val": "1000",
+      "unit": "kg",
+      "factor": 1,
+      "min": "0",
+      "max": "4000",
+      "name": "Warnung aus",
+      "offset": 0.0
+    },
+    "L_storage_max": {
+      "val": "5540",
+      "unit": "kg",
+      "factor": 1,
+      "name": "Max. Füllmenge",
+      "offset": 0.0
+    },
+    "L_storage_popper": {
+      "val": "29",
+      "unit": "kg",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Füllstand Zwischen",
+      "offset": 0.0
+    },
+    "storage_fill_today": {
+      "val": "0",
+      "unit": "kg",
+      "factor": 1,
+      "min": "-32768",
+      "max": "32767",
+      "name": "Pelletverbrauch heute",
+      "offset": 0.0
+    },
+    "storage_fill_yesterday": {
+      "val": "2",
+      "unit": "kg",
+      "factor": 1,
+      "name": "Pelletverbrauch gestern",
+      "offset": 0.0
+    },
+    "mode": {
+      "val": "1",
+      "format": "0:Aus|1:Auto|2:Ein",
+      "name": "Betriebsart"
+    }
   },
   "circ1": {
-    "circ_info": "circulation pump data",
-    "L_circ_temp": { "val": "350", "unit": "°C", "factor": 0.1, "name": "Zirkulationstemperatur", "format": "float", "decimals": 1 },
-    "L_circ_pump": { "val": "1", "unit": "", "factor": 1.0, "name": "Zirkulationspumpe", "format": "string" },
-    "L_circ_set": { "val": "400", "unit": "°C", "factor": 0.1, "name": "Zirkulationssoll", "format": "float", "decimals": 1 }
-  },
-  "error": {
-    "error_info": "error codes and messages",
-    "L_error_code": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehlercode", "format": "int" },
-    "L_error_text": { "val": "", "unit": "", "factor": 1.0, "name": "Fehlertext", "format": "string" },
-    "L_error_time": { "val": "0", "unit": "", "factor": 1.0, "name": "Fehlerzeit", "format": "string" }
+    "circ_info": "circulation data",
+    "L_pump": {
+      "val": "false",
+      "format": "0:Aus|1:Ein",
+      "name": "Pumpe"
+    },
+    "L_ret_temp": {
+      "val": "0",
+      "unit": "°C",
+      "factor": 0.1,
+      "name": "Rücklauf",
+      "offset": 0.0
+    },
+    "L_release_temp": {
+      "val": "0",
+      "unit": "°C",
+      "factor": 0.1,
+      "name": "Freigabetemperatur",
+      "offset": 0.0
+    },
+    "time_prg": {
+      "val": "0",
+      "format": "0:Zeit 1|1:Zeit 2",
+      "name": "Zeitauswahl"
+    },
+    "mode": {
+      "val": "0",
+      "format": "0:Aus|1:Auto",
+      "name": "Betriebsart"
+    },
+    "pump_release": {
+      "val": "0",
+      "unit": "°C",
+      "factor": 0.1,
+      "name": "Pumpenfreigabetemperatur",
+      "offset": 0.0
+    },
+    "return_set": {
+      "val": "0",
+      "unit": "°C",
+      "factor": "0.1",
+      "name": "Abschalttemperatur",
+      "offset": "0.0"
+    },
+    "name": {
+      "val": "",
+      "length": "1",
+      "name": "Anzeigename"
+    }
   }
 }

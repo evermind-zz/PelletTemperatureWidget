@@ -11,6 +11,8 @@ licenseReport {
     outputDir = file("${projectDir}/src/main/assets").absolutePath
     renderers = arrayOf(JsonReportRenderer())
     excludeGroups = listOf("com.example").toTypedArray()
+    // Output filename - plugin defaults to index.json but DependencyParser expects license-report.json
+    // We will handle both filenames in DependencyParser
 }
 
 android {
@@ -82,7 +84,6 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-preferences-core:1.1.1")
-    implementation("androidx.datastore:datastore-preferences-rxjava3:1.1.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")

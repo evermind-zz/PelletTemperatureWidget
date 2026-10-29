@@ -17,7 +17,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pelletswaterheater.utils.DonateComponent
+
+data class DonateComponent(
+    val name: String,
+    val isCopyable: Boolean,
+    val link: String?,
+    val address: String?
+)
 
 @Composable
 fun DonateScreen(

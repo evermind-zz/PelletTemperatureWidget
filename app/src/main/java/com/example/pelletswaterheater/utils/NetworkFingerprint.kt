@@ -37,10 +37,6 @@ object NetworkFingerprint {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
             val network = connectivityManager.activeNetwork ?: return null
             val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return null
-            val transportInfo = networkCapabilities.transportInfo
-            if (transportInfo is android.net.ip.IpConfiguration) {
-                // Not directly available, fall back to route
-            }
             // Fallback: read from /proc/net/route
             return readGatewayFromProc()
         } catch (e: Exception) {

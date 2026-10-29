@@ -3,6 +3,7 @@ package com.example.pelletswaterheater.repository
 import com.example.pelletswaterheater.utils.ConvertedValue
 import com.example.pelletswaterheater.utils.TemperatureLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Repository for coordinating temperature logging.

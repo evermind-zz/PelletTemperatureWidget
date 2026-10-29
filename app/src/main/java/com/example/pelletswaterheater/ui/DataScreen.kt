@@ -56,7 +56,7 @@ fun DataScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        settingsViewModel.initialize(context)
+        settingsViewModel.initialize()
 
         // Collect the event and show snackbar
         settingsViewModel.uiEvent.collect { event ->

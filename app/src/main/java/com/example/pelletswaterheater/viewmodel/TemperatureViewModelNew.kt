@@ -20,7 +20,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -66,9 +68,12 @@ class TemperatureViewModelNew(
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     // DataScreen values - combines convertedValues and selections
-    val dataScreenValues: StateFlow<List<ConvertedValueWrapper>> = combine(convertedValues, selections) { values, selections ->
+    val dataScreenValues: StateFlow<List<ConvertedValueWrapper>> = combine(
+        convertedValues,
+        selections
+    ) { values: Map<String, ConvertedValue>, selections: List<SelectionRepository.Selection> ->
         val selectionMap = selections.associateBy { it.key }
-        values.mapNotNull { (key, value) ->
+        values.mapNotNull { (key: String, value: ConvertedValue) ->
             val selection = selectionMap[key] ?: return@mapNotNull null
             if (selection.showData) {
                 ConvertedValueWrapper(
@@ -81,9 +86,15 @@ class TemperatureViewModelNew(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // Widget values - combines convertedValues and selections
-    val widgetValues: StateFlow<WidgetDataWrapper> = combine(convertedValues, selections, stateRepository.state, stateRepository.error, lastTimestamp) { values, selections, state, error, timestamp ->
+    val widgetValues: StateFlow<WidgetDataWrapper> = combine(
+        convertedValues,
+        selections,
+        stateRepository.state,
+        stateRepository.error,
+        lastTimestamp
+    ) { values: Map<String, ConvertedValue>, selections: List<SelectionRepository.Selection>, state: String, error: String?, timestamp: String ->
         val selectionMap = selections.associateBy { it.key }
-        val snapshot = values.mapNotNull { (key, value) ->
+        val snapshot = values.mapNotNull { (key: String, value: ConvertedValue) ->
             val selection = selectionMap[key] ?: return@mapNotNull null
             if (selection.widget) {
                 ConvertedValueWrapper(
@@ -238,15 +249,15 @@ class TemperatureViewModelNew(
     }
 
     // Metadata file methods - delegate to MetadataRepository
-    fun getMetadataFileName(): String = metadataRepository.getCurrentMetadataFilename()
-    fun setCurrentMetadata(filename: String) { metadataRepository.setCurrentMetadataFilename(filename) }
-    fun getMetadataFiles(): StateFlow<List<java.io.File>> = metadataRepository.getMetadataFiles()
+    suspend fun getMetadataFileName(): String = metadataRepository.getCurrentMetadataFilename()
+    suspend fun setCurrentMetadata(filename: String) { metadataRepository.setCurrentMetadataFilename(filename) }
+    fun getMetadataFiles(): StateFlow<List<java.io.File>> = metadataRepository.metadataFiles
     fun deleteMetadataFile(file: java.io.File) { metadataRepository.deleteMetadataFile(file) }
     fun shareMetadata(context: android.content.Context) { metadataRepository.shareMetadata(context) }
     fun importMetadata(context: android.content.Context) { metadataRepository.importMetadata(context) }
     fun getMetadataUri(file: java.io.File): android.net.Uri? = metadataRepository.getMetadataUri(file)
     fun saveUserMetadata(jsonString: String) { metadataRepository.saveUserMetadata(jsonString) }
-    fun getCurrentMetadataJson(): String? = metadataRepository.getMetadataContent(getMetadataFileName())
+    suspend fun getCurrentMetadataJson(): String? = metadataRepository.getMetadataContent(getMetadataFileName())
 
     // Error/State methods - delegate to StateRepository
     fun updateError(error: String?) { stateRepository.updateError(error) }

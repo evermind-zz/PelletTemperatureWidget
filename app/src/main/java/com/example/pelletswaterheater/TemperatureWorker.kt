@@ -1,3 +1,9 @@
+// Periodic WorkManager worker (10 min interval) for fetching pellet heater temperature data.
+// Fetches from server, updates ViewModel, logs CSV, refreshes Glance widget.
+// Injected via Koin: TemperatureViewModelNew, ILogger, TemperatureUtils.
+// TemperatureWorker: Periodic CoroutineWorker (10min) that fetches temperature data from the server,
+// updates the ViewModel, logs to CSV, and refreshes the Glance widget.
+// Runs via WorkManager; injected via Koin with TemperatureViewModelNew, ILogger, TemperatureUtils.
 package com.example.pelletswaterheater
 
 import android.content.Context
@@ -5,9 +11,11 @@ import android.net.wifi.WifiManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.pelletswaterheater.utils.ILogger
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.util.Log
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -33,10 +41,11 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
     private val temperatureUtils: TemperatureUtils by inject()
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER) ?: tags.toString()
+        logger.d(TAG, "doWork started: workId=${id}, worker=$whichWorker")
         try {
             logger.d(TAG, "Starting worker execution: workId=${id}")
             var url = temperatureUtils.getServerUrl()
-            val maskedUrl = temperatureUtils.maskPasswordInUrl(url)
+            val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
             logger.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
             // Check max retries
@@ -66,13 +75,14 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
             // Re-read URL to avoid stale value
             url = temperatureUtils.getServerUrl()
-            val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
+            val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
 
                 logger.d(TAG, "worker=$whichWorker Refreshed URL: $refreshedMaskedUrl")
 
             val result = viewModel.fetchValues(url, whichWorker, false)
             if (result.isSuccess) {
                 backoffCount.set(0)
+                logger.d(TAG, "worker=$whichWorker Temperature fetch successful")
                 return@withContext Result.success()
             } else if (result.exceptionOrNull()?.message == "network busy") {
                 // Network busy - don't count as retry failure, just reschedule
@@ -108,7 +118,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         whichWorker: String?,
         attempt: Int
     ) {
-        val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
+        val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
         val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
         val maskedException = when (e) {
             is FileNotFoundException -> FileNotFoundException(maskedOriginalMessage)

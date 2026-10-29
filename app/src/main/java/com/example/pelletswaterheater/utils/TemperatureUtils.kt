@@ -12,8 +12,9 @@ import androidx.work.WorkManager
 import com.example.pelletswaterheater.TemperatureWorker
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.utils.ConvertedValue
+import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew.ConvertedValueWrapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.first as flowFirst
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -142,7 +143,7 @@ class TemperatureUtils private constructor(
             return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
         }
 
-        fun getStoredBackgroundColor(context: Context): Color {
+        fun getStoredBackgroundColor(context: Context): Int {
             val hex = "FFF3E5F5"
             return try {
                 Color.parseColor("#$hex")
@@ -151,7 +152,7 @@ class TemperatureUtils private constructor(
             }
         }
 
-        fun getStoredTextColor(context: Context): Color {
+        fun getStoredTextColor(context: Context): Int {
             val hex = "FF000000"
             return try {
                 Color.parseColor("#$hex")
@@ -159,18 +160,11 @@ class TemperatureUtils private constructor(
                 Color.BLACK
             }
         }
-
-        // Data class for wrapper (used by static methods)
-        data class ConvertedValueWrapper(
-            val convertedValue: ConvertedValue,
-            val section: String,
-            val showSectionName: Boolean,
-        )
     }
 
     // Instance methods using PreferencesRepository (DataStore)
     suspend fun getServerUrl(): String {
-        return preferencesRepository.serverUrl.first() ?: DEFAULT_SERVER_URL
+        return preferencesRepository.serverUrl.flowFirst() ?: DEFAULT_SERVER_URL
     }
 
     suspend fun setServerUrl(url: String) {
@@ -178,7 +172,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getWidgetWidth(): String {
-        return preferencesRepository.widgetWidth.first() ?: "100"
+        return preferencesRepository.widgetWidth.flowFirst() ?: "100"
     }
 
     suspend fun setWidgetWidth(width: String) {
@@ -186,7 +180,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getWidgetHeight(): String {
-        return preferencesRepository.widgetHeight.first() ?: "100"
+        return preferencesRepository.widgetHeight.flowFirst() ?: "100"
     }
 
     suspend fun setWidgetHeight(height: String) {
@@ -194,7 +188,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getBackgroundColor(): String {
-        return preferencesRepository.backgroundColor.first() ?: "FFF3E5F5"
+        return preferencesRepository.backgroundColor.flowFirst() ?: "FFF3E5F5"
     }
 
     suspend fun setBackgroundColor(color: String) {
@@ -202,7 +196,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getTextColor(): String {
-        return preferencesRepository.textColor.first() ?: "FF000000"
+        return preferencesRepository.textColor.flowFirst() ?: "FF000000"
     }
 
     suspend fun setTextColor(color: String) {
@@ -210,7 +204,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getMetadataDefaultFile(): String {
-        return preferencesRepository.metadataDefaultFile.first() ?: "metadata.json"
+        return preferencesRepository.metadataDefaultFile.flowFirst() ?: "metadata.json"
     }
 
     suspend fun setMetadataDefaultFile(filename: String) {
@@ -218,7 +212,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getGatewayFingerprint(): String? {
-        return preferencesRepository.gatewayFingerprint.first()
+        return preferencesRepository.gatewayFingerprint.flowFirst()
     }
 
     suspend fun setGatewayFingerprint(fingerprint: String) {
@@ -226,7 +220,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getSelectionsJson(): String? {
-        return preferencesRepository.selectionsJson.first()
+        return preferencesRepository.selectionsJson.flowFirst()
     }
 
     suspend fun setSelectionsJson(json: String) {
@@ -234,7 +228,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getStoredOrderHash(): Int {
-        return preferencesRepository.storedOrderHash.first() ?: 0
+        return preferencesRepository.storedOrderHash.flowFirst() ?: 0
     }
 
     suspend fun setStoredOrderHash(hash: Int) {
@@ -242,7 +236,7 @@ class TemperatureUtils private constructor(
     }
 
     suspend fun getLastRefreshTime(): Long? {
-        return preferencesRepository.lastRefreshTime.first()
+        return preferencesRepository.lastRefreshTime.flowFirst()
     }
 
     suspend fun setLastRefreshTime(time: Long) {
@@ -274,14 +268,13 @@ class TemperatureUtils private constructor(
     }
 
     fun schedulePeriodicWork(loggingIntervalMs: Long) {
-        val workRequest = PeriodicWorkRequestBuilder<TemperatureWorker>()
-            .setPeriodic(loggingIntervalMs, TimeUnit.MILLISECONDS)
+        val workRequest = PeriodicWorkRequestBuilder<TemperatureWorker>(loggingIntervalMs, TimeUnit.MILLISECONDS)
             .setInitialDelay(0, TimeUnit.MILLISECONDS)
             .addTag(WORK_NAME)
             .build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             WORK_NAME,
-            androidx.work.ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.REPLACE,
             workRequest
         )
     }
@@ -300,4 +293,5 @@ class TemperatureUtils private constructor(
             workRequest
         )
     }
+
 }

@@ -49,7 +49,7 @@ val appModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     // Provide TemperatureUtils
-    single { TemperatureUtils(get(), get<ContextProvider>().getContext()) }
+    single { TemperatureUtils.getInstance(get(), get<ContextProvider>().getContext()) }
 
     // Provide Repositories
     single<MetadataRepository> { MetadataRepositoryImpl(get(), get(), get(), get(), get()) }
@@ -60,7 +60,7 @@ val appModule = module {
     single<StateRepository> { StateRepositoryImpl(get()) }
 
     // Provide TemperatureViewModelNew
-    single { TemperatureViewModelNew(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { TemperatureViewModelNew(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 
     // Provide SettingsViewModel
     single { SettingsViewModel(get(), get(), get(), get(), get(), get()) }

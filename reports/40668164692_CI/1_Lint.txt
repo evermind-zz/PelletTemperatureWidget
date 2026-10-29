@@ -1,0 +1,1084 @@
+﻿2026-10-28T09:56:34.8900808Z Current runner version: '2.338.0'
+2026-10-28T09:56:34.8927983Z ##[group]Runner Image Provisioner
+2026-10-28T09:56:34.8928885Z Hosted Compute Agent
+2026-10-28T09:56:34.8929467Z Version: 20261021.618
+2026-10-28T09:56:34.8930188Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-28T09:56:34.8930926Z Build Date: 2026-10-21T00:45:21Z
+2026-10-28T09:56:34.8931681Z Worker ID: {ad78e499-3189-4632-8187-610a604ca05c}
+2026-10-28T09:56:34.8932496Z Region: westus2
+2026-10-28T09:56:34.8933039Z Cloud: Azure
+2026-10-28T09:56:34.8933662Z ##[endgroup]
+2026-10-28T09:56:34.8935329Z ##[group]Operating System
+2026-10-28T09:56:34.8936056Z Ubuntu
+2026-10-28T09:56:34.8936844Z 26.04.1
+2026-10-28T09:56:34.8937379Z LTS
+2026-10-28T09:56:34.8937961Z ##[endgroup]
+2026-10-28T09:56:34.8938520Z ##[group]Runner Image
+2026-10-28T09:56:34.8939249Z Image: ubuntu-26.04
+2026-10-28T09:56:34.8939894Z Version: 20261025.179.1
+2026-10-28T09:56:34.8941587Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md
+2026-10-28T09:56:34.8943247Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179
+2026-10-28T09:56:34.8944269Z ##[endgroup]
+2026-10-28T09:56:34.8945496Z ##[group]GITHUB_TOKEN Permissions
+2026-10-28T09:56:34.8948212Z Contents: read
+2026-10-28T09:56:34.8948887Z Metadata: read
+2026-10-28T09:56:34.8949461Z Packages: read
+2026-10-28T09:56:34.8950090Z ##[endgroup]
+2026-10-28T09:56:34.8952546Z Secret source: Actions
+2026-10-28T09:56:34.8953609Z Cache mode: write
+2026-10-28T09:56:34.8954347Z Prepare workflow directory
+2026-10-28T09:56:34.9301954Z Prepare all required actions
+2026-10-28T09:56:34.9352590Z Getting action download info
+2026-10-28T09:56:35.3079701Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-28T09:56:35.4240146Z Download action repository 'actions/setup-java@v4' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+2026-10-28T09:56:35.6872029Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-28T09:56:35.8805531Z Complete job name: Lint
+2026-10-28T09:56:35.9792016Z ##[group]Run actions/checkout@v4
+2026-10-28T09:56:35.9792935Z with:
+2026-10-28T09:56:35.9793457Z   repository: evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:35.9797452Z   token: ***
+2026-10-28T09:56:35.9797905Z   ssh-strict: true
+2026-10-28T09:56:35.9798344Z   ssh-user: git
+2026-10-28T09:56:35.9798791Z   persist-credentials: true
+2026-10-28T09:56:35.9799283Z   clean: true
+2026-10-28T09:56:35.9799728Z   sparse-checkout-cone-mode: true
+2026-10-28T09:56:35.9800240Z   fetch-depth: 1
+2026-10-28T09:56:35.9800660Z   fetch-tags: false
+2026-10-28T09:56:35.9801098Z   show-progress: true
+2026-10-28T09:56:35.9801545Z   lfs: false
+2026-10-28T09:56:35.9801957Z   submodules: false
+2026-10-28T09:56:35.9802403Z   set-safe-directory: true
+2026-10-28T09:56:35.9802904Z   allow-unsafe-pr-checkout: false
+2026-10-28T09:56:35.9803686Z ##[endgroup]
+2026-10-28T09:56:36.2914734Z Syncing repository: evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.2918721Z ##[group]Getting Git version info
+2026-10-28T09:56:36.2919820Z Working directory is '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget'
+2026-10-28T09:56:36.2921025Z [command]/usr/bin/git version
+2026-10-28T09:56:36.2933203Z git version 2.56.0
+2026-10-28T09:56:36.2958793Z ##[endgroup]
+2026-10-28T09:56:36.2974425Z Temporarily overriding HOME='/home/runner/work/_temp/7eac409d-9c74-4911-a436-058ada5efbb5' before making global git config changes
+2026-10-28T09:56:36.2977383Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-28T09:56:36.2982108Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget
+2026-10-28T09:56:36.3065385Z Deleting the contents of '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget'
+2026-10-28T09:56:36.3069636Z ##[group]Initializing the repository
+2026-10-28T09:56:36.3075352Z [command]/usr/bin/git init /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget
+2026-10-28T09:56:36.3212811Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-28T09:56:36.3214331Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-28T09:56:36.3215470Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-28T09:56:36.3216563Z hint: call:
+2026-10-28T09:56:36.3217289Z hint:
+2026-10-28T09:56:36.3217859Z hint: 	git config --global init.defaultBranch <name>
+2026-10-28T09:56:36.3218631Z hint:
+2026-10-28T09:56:36.3219706Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-28T09:56:36.3220965Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-28T09:56:36.3222034Z hint:
+2026-10-28T09:56:36.3222981Z hint: 	git branch -m <name>
+2026-10-28T09:56:36.3224002Z hint:
+2026-10-28T09:56:36.3225034Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-28T09:56:36.3234518Z Initialized empty Git repository in /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/.git/
+2026-10-28T09:56:36.3247874Z [command]/usr/bin/git remote add origin https://github.com/evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.3305371Z ##[endgroup]
+2026-10-28T09:56:36.3306203Z ##[group]Disabling automatic garbage collection
+2026-10-28T09:56:36.3311332Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-28T09:56:36.3348603Z ##[endgroup]
+2026-10-28T09:56:36.3349777Z ##[group]Setting up auth
+2026-10-28T09:56:36.3356970Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-28T09:56:36.3395101Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-28T09:56:36.3922756Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-28T09:56:36.3959709Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-28T09:56:36.4244925Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-28T09:56:36.4283511Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-28T09:56:36.4563568Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-28T09:56:36.4605256Z ##[endgroup]
+2026-10-28T09:56:36.4606223Z ##[group]Fetching the repository
+2026-10-28T09:56:36.4615688Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d3ff5228fe7a6a972c582650f8361e7c98dd1882:refs/remotes/origin/master
+2026-10-28T09:56:36.8197687Z From https://github.com/evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.8199503Z  * [new ref]         d3ff5228fe7a6a972c582650f8361e7c98dd1882 -> origin/master
+2026-10-28T09:56:36.8204661Z ##[endgroup]
+2026-10-28T09:56:36.8205851Z ##[group]Determining the checkout info
+2026-10-28T09:56:36.8207782Z ##[endgroup]
+2026-10-28T09:56:36.8213809Z [command]/usr/bin/git sparse-checkout disable
+2026-10-28T09:56:36.8269741Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-28T09:56:36.8301960Z ##[group]Checking out the ref
+2026-10-28T09:56:36.8306955Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+2026-10-28T09:56:36.8417316Z Reset branch 'master'
+2026-10-28T09:56:36.8423943Z branch 'master' set up to track 'origin/master'.
+2026-10-28T09:56:36.8430173Z ##[endgroup]
+2026-10-28T09:56:36.8475528Z [command]/usr/bin/git log -1 --format=%H
+2026-10-28T09:56:36.8501061Z d3ff5228fe7a6a972c582650f8361e7c98dd1882
+2026-10-28T09:56:36.9043511Z ##[group]Run actions/setup-java@v4
+2026-10-28T09:56:36.9045007Z with:
+2026-10-28T09:56:36.9045813Z   distribution: temurin
+2026-10-28T09:56:36.9046953Z   java-version: 17
+2026-10-28T09:56:36.9047823Z   cache: gradle
+2026-10-28T09:56:36.9048676Z   java-package: jdk
+2026-10-28T09:56:36.9049563Z   check-latest: false
+2026-10-28T09:56:36.9050458Z   server-id: github
+2026-10-28T09:56:36.9051363Z   server-username: GITHUB_ACTOR
+2026-10-28T09:56:36.9052430Z   server-password: GITHUB_TOKEN
+2026-10-28T09:56:36.9053501Z   overwrite-settings: true
+2026-10-28T09:56:36.9054477Z   job-status: success
+2026-10-28T09:56:36.9064008Z   token: ***
+2026-10-28T09:56:36.9064853Z ##[endgroup]
+2026-10-28T09:56:37.0968535Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+2026-10-28T09:56:37.0979963Z ##[group]Installed distributions
+2026-10-28T09:56:37.1233973Z Resolved Java 17.0.21+9 from tool-cache
+2026-10-28T09:56:37.1235526Z Setting Java 17.0.21+9 as the default
+2026-10-28T09:56:37.1245606Z (node:2668) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-28T09:56:37.1249701Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-28T09:56:37.1252645Z Creating toolchains.xml for JDK version 17 from temurin
+2026-10-28T09:56:37.1327877Z Writing to /home/runner/.m2/toolchains.xml
+2026-10-28T09:56:37.1329305Z 
+2026-10-28T09:56:37.1329912Z Java configuration:
+2026-10-28T09:56:37.1331346Z   Distribution: temurin
+2026-10-28T09:56:37.1332805Z   Version: 17.0.21+9
+2026-10-28T09:56:37.1334764Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:56:37.1336826Z 
+2026-10-28T09:56:37.1338451Z ##[endgroup]
+2026-10-28T09:56:37.1358431Z Creating settings.xml with server-id: github
+2026-10-28T09:56:37.1382677Z Writing to /home/runner/.m2/settings.xml
+2026-10-28T09:56:37.4686896Z gradle cache is not found
+2026-10-28T09:56:37.4875535Z ##[group]Run chmod +x ./gradlew
+2026-10-28T09:56:37.4876167Z [36;1mchmod +x ./gradlew[0m
+2026-10-28T09:56:37.4912935Z shell: /usr/bin/bash -e {0}
+2026-10-28T09:56:37.4913478Z env:
+2026-10-28T09:56:37.4914067Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:56:37.4914894Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:56:37.4915548Z ##[endgroup]
+2026-10-28T09:56:37.5070474Z ##[group]Run ./gradlew lint --no-daemon --stacktrace
+2026-10-28T09:56:37.5071136Z [36;1m./gradlew lint --no-daemon --stacktrace[0m
+2026-10-28T09:56:37.5100884Z shell: /usr/bin/bash -e {0}
+2026-10-28T09:56:37.5101336Z env:
+2026-10-28T09:56:37.5101872Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:56:37.5102649Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:56:37.5103252Z ##[endgroup]
+2026-10-28T09:56:40.8583943Z Downloading https://services.gradle.org/distributions/gradle-8.10-bin.zip
+2026-10-28T09:56:44.7294751Z .............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
+2026-10-28T09:56:46.2051443Z 
+2026-10-28T09:56:46.2054903Z Welcome to Gradle 8.10!
+2026-10-28T09:56:46.2063250Z 
+2026-10-28T09:56:46.2063854Z Here are the highlights of this release:
+2026-10-28T09:56:46.2064836Z  - Support for Java 23
+2026-10-28T09:56:46.2065588Z  - Faster configuration cache
+2026-10-28T09:56:46.2066340Z  - Better configuration cache reports
+2026-10-28T09:56:46.2067267Z 
+2026-10-28T09:56:46.2067938Z For more details see https://docs.gradle.org/8.10/release-notes.html
+2026-10-28T09:56:46.2068764Z 
+2026-10-28T09:56:46.6045395Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.10/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-10-28T09:56:48.5041316Z Daemon will be stopped at the end of the build 
+2026-10-28T09:57:45.9047841Z 
+2026-10-28T09:57:45.9130719Z > Configure project :app
+2026-10-28T09:57:45.9188394Z w: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts:58:38: 'getter for buildDir: File!' is deprecated. Deprecated in Java
+2026-10-28T09:57:45.9218374Z w: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/build.gradle.kts:59:37: 'getter for buildDir: File!' is deprecated. Deprecated in Java
+2026-10-28T09:57:49.0041741Z 
+2026-10-28T09:57:49.0054042Z > Task :app:checkKotlinGradlePluginConfigurationErrors
+2026-10-28T09:57:49.0065005Z > Task :app:preBuild UP-TO-DATE
+2026-10-28T09:57:49.0065833Z > Task :app:preDebugBuild UP-TO-DATE
+2026-10-28T09:57:58.4057797Z > Task :app:generateDebugResValues
+2026-10-28T09:57:58.6048053Z > Task :app:checkDebugAarMetadata
+2026-10-28T09:57:58.6127571Z > Task :app:mapDebugSourceSetPaths
+2026-10-28T09:57:58.6187636Z > Task :app:generateDebugResources
+2026-10-28T09:57:59.8057949Z > Task :app:packageDebugResources
+2026-10-28T09:58:00.6042384Z > Task :app:mergeDebugResources
+2026-10-28T09:58:01.7068734Z > Task :app:createDebugCompatibleScreenManifests
+2026-10-28T09:58:01.7112568Z > Task :app:extractDeepLinksDebug
+2026-10-28T09:58:01.8047870Z > Task :app:parseDebugLocalResources
+2026-10-28T09:58:02.2077322Z 
+2026-10-28T09:58:02.2127783Z > Task :app:processDebugMainManifest
+2026-10-28T09:58:02.2138350Z package="com.example.pelletswaterheater" found in source AndroidManifest.xml: /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/AndroidManifest.xml.
+2026-10-28T09:58:02.2167632Z Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+2026-10-28T09:58:02.2208301Z Recommendation: remove package="com.example.pelletswaterheater" from the source AndroidManifest.xml: /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/AndroidManifest.xml.
+2026-10-28T09:58:02.4047471Z 
+2026-10-28T09:58:02.4067631Z > Task :app:processDebugManifest
+2026-10-28T09:58:02.4072529Z > Task :app:preDebugAndroidTestBuild SKIPPED
+2026-10-28T09:58:02.4097335Z > Task :app:generateDebugAndroidTestResValues
+2026-10-28T09:58:02.4098153Z > Task :app:javaPreCompileDebug
+2026-10-28T09:58:02.4099032Z > Task :app:extractProguardFiles
+2026-10-28T09:58:02.4099788Z > Task :app:preDebugUnitTestBuild UP-TO-DATE
+2026-10-28T09:58:02.4101013Z > Task :app:processDebugManifestForPackage
+2026-10-28T09:58:04.3053052Z > Task :app:processDebugResources
+2026-10-28T09:58:25.2047389Z 
+2026-10-28T09:58:25.2098419Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/SettingsViewModel.kt:19:45 Unresolved reference: NetworkFingerprint
+2026-10-28T09:58:25.2100295Z > Task :app:compileDebugKotlin FAILED
+2026-10-28T09:58:25.2108345Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/SettingsViewModel.kt:41:38 Unresolved reference: NetworkFingerprint
+2026-10-28T09:58:25.2168161Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/SettingsViewModel.kt:41:59 Unresolved reference: NetworkFingerprint
+2026-10-28T09:58:25.2208079Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/SettingsViewModel.kt:43:64 Unresolved reference: PreferencesRepositoryImpl
+2026-10-28T09:58:25.2267979Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/SettingsViewModel.kt:352:85 Unresolved reference: it
+2026-10-28T09:58:25.2298050Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:80:16 Type mismatch: inferred type is Unit but String was expected
+2026-10-28T09:58:25.2358171Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:80:16 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2378400Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:80:62 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2418352Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2422946Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2424225Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2425311Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2426575Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2427595Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2428632Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2429710Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2430702Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2431667Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2432704Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2433807Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2434898Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2436021Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2437322Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2438419Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2439547Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2440975Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2442106Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2443220Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2444375Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2448381Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2449502Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2450580Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2451663Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2452725Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2453893Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2455074Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2456637Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2458101Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2459441Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2460596Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2461361Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2462467Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2463288Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2464100Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2465067Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2466785Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2469099Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:84:16 Type mismatch: inferred type is Unit but Int was expected
+2026-10-28T09:58:25.2472007Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:84:16 Type mismatch: inferred type is Unit but Int? was expected
+2026-10-28T09:58:25.2475301Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:84:68 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2480277Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2482629Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2484397Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2485980Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2487930Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2488944Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2489958Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2491181Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2492181Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2493125Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2494121Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2495199Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2496250Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2497584Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2500270Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2501314Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2502484Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2503546Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2504629Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2505714Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2507289Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2508440Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2537837Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2538898Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2539952Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2541006Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2542066Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2543135Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2544309Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2545690Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2547379Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2548406Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2549247Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2550090Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2550947Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2551804Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2552811Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2554273Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2568442Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:93:24 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2571716Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:93:72 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2573900Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2575199Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2576575Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2577599Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2578561Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2579458Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2580363Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2581240Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2582110Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2582944Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2583836Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2584784Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2585722Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2586844Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2588149Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2589140Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2590193Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2591249Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2592348Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2593432Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2594547Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2595672Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2597109Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2598234Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2599383Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2600534Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2601735Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2602932Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2604231Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2605745Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2607396Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2608258Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2608974Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2609680Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2610370Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2611313Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2612171Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2613429Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2615450Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:94:25 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2618396Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:94:74 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2620588Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2621981Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2623277Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2624418Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2625502Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2626660Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2627653Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2629038Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2630155Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2631154Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2632238Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2633382Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2634520Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2635618Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2636955Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2637949Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2639013Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2640059Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2641134Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2642227Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2643378Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2644514Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2645641Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2646998Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2648122Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2649260Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2650418Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2651859Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2653200Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2654723Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2656115Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2657307Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2658097Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2658891Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2659700Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2660518Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2661471Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2662870Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2665426Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:100:76 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2667947Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2669349Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2670890Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2672005Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2673083Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2674070Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2675074Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2676056Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2677238Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2678187Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2679200Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2680225Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2681288Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2682311Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2683343Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2684297Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2685274Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2686259Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2687444Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2688461Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2689469Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2690473Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2691732Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2692872Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2694024Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2695137Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2696194Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2697615Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2698858Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2700270Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2701705Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2702662Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2703459Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2704257Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2705042Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2705852Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2707147Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2708849Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2711540Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:101:85 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2713772Z public inline fun String.toLong(): Long defined in kotlin.text
+2026-10-28T09:58:25.2714627Z public inline fun String.toLong(radix: Int): Long defined in kotlin.text
+2026-10-28T09:58:25.2716900Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:105:16 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2719932Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:105:28 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2723244Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:105:68 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2725660Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2728163Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2729540Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2730720Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2731870Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2732946Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2734035Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2735419Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2736765Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2737759Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2738795Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2739893Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2740977Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2742005Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2743052Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2744046Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2745045Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2746049Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2747485Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2748628Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2749776Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2750903Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2752062Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2753465Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2754592Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2755743Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2757173Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2758319Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2759574Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2761036Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2762426Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2763389Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2764194Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2764983Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2765784Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2766947Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2768047Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2769634Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2772292Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:109:70 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2774634Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2776065Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2777816Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2778938Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2779996Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2780973Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2781968Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2782929Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2783905Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2784841Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2785918Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2787236Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2788328Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2789359Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2790389Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2791352Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2792329Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2793313Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2794628Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2795656Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2796927Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2798012Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2799111Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2800206Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2801278Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2802359Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2803467Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2804569Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2805774Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2807704Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2809126Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2810120Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2810896Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2811685Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2812471Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2813272Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2814212Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2815775Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2818668Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:110:31 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2820762Z public inline fun String.toLong(): Long defined in kotlin.text
+2026-10-28T09:58:25.2821542Z public inline fun String.toLong(radix: Int): Long defined in kotlin.text
+2026-10-28T09:58:25.2823448Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:114:16 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2826759Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:114:28 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2830089Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:114:62 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2832484Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2833957Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2835272Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2837077Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2838213Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2839237Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2840269Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2841320Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2842336Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2843296Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2844326Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2845402Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2846971Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2848032Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2849066Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2850034Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2851048Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2852070Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2853111Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2854150Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2855246Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2856524Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2857662Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2858732Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2860114Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2861231Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2862339Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2863481Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2864693Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2866058Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2867592Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2868480Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2869275Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2870023Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2870751Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2871496Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2872336Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2873586Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2875657Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:225:16 Type mismatch: inferred type is Unit but String was expected
+2026-10-28T09:58:25.2878866Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:225:16 Type mismatch: inferred type is Unit but String? was expected
+2026-10-28T09:58:25.2882093Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureUtils.kt:225:72 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2884422Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2885738Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2887343Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2888409Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.2889443Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2890398Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.2891380Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.2892353Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.2893298Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.2894186Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.2895184Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.2896241Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.2897590Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.2898634Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.2899863Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.2900817Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.2901821Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.2902828Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.2903868Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.2904905Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.2905994Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2907262Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.2908337Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2909401Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.2910470Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2911564Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.2912691Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2913838Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.2915153Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2916934Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2918237Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.2919148Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.2919931Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.2920673Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.2921452Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.2922269Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.2923168Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2924363Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.2926223Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureWidget.kt:49:44 Unresolved reference: getWidgetValues
+2026-10-28T09:58:25.2928804Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureWidget.kt:230:40 Unresolved reference: PreferencesRepository
+2026-10-28T09:58:25.2931137Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureWidget.kt:230:65 Not enough information to infer type variable T
+2026-10-28T09:58:25.2933870Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/TemperatureWidget.kt:230:65 Property delegate must have a 'getValue(RefreshWidgetAction, KProperty<*>)' method. None of the following functions is suitable: 
+2026-10-28T09:58:25.2935961Z public inline operator fun <T> Lazy<???>.getValue(thisRef: Any?, property: KProperty<*>): ??? defined in kotlin
+2026-10-28T09:58:25.2937922Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/di/AppModule.kt:23:45 Unresolved reference: NetworkFingerprint
+2026-10-28T09:58:25.2940004Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/di/AppModule.kt:47:14 Unresolved reference: NetworkFingerprint
+2026-10-28T09:58:25.2942150Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:5:44 Unresolved reference: PreferencesKeys
+2026-10-28T09:58:25.2944687Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:81:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2947754Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:82:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2950585Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:83:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2952798Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:84:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2954579Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:85:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2956811Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:86:17 Type mismatch: inferred type is Preferences.Pair<Int>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2958749Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:87:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2961820Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:88:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2965373Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:89:17 Type mismatch: inferred type is Preferences.Pair<String>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2969170Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:90:17 Type mismatch: inferred type is Preferences.Pair<Long>? but Preferences.Pair<*> was expected
+2026-10-28T09:58:25.2972801Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:91:15 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.2975894Z public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.filterValues(predicate: (TypeVariable(V)) -> Boolean): Map<TypeVariable(K), TypeVariable(V)> defined in kotlin.collections
+2026-10-28T09:58:25.2978753Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:118:71 Unresolved reference: deserialize
+2026-10-28T09:58:25.2981759Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:124:67 Unresolved reference: serialize
+2026-10-28T09:58:25.2984670Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/AppPreferences.kt:142:87 Operator '!=' cannot be applied to 'Long' and 'Int'
+2026-10-28T09:58:25.2987921Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepository.kt:3:44 Unresolved reference: PreferencesKeys
+2026-10-28T09:58:25.2990939Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:5:44 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.2994093Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:6:47 Unresolved reference: PreferencesDataStoreFactory
+2026-10-28T09:58:25.2997314Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:7:47 Unresolved reference: RxDataStore
+2026-10-28T09:58:25.3000391Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:8:47 Unresolved reference: RxDataStoreBuilder
+2026-10-28T09:58:25.3003494Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:10:44 Unresolved reference: PreferencesKeys
+2026-10-28T09:58:25.3006944Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:23:27 Unresolved reference: rx3
+2026-10-28T09:58:25.3009809Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:24:27 Unresolved reference: rx3
+2026-10-28T09:58:25.3013211Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:32:30 Property delegate must have a 'getValue(PreferencesRepositoryImpl, KProperty<*>)' method. None of the following functions is suitable: 
+2026-10-28T09:58:25.3015896Z public inline operator fun <T> Lazy<???>.getValue(thisRef: Any?, property: KProperty<*>): ??? defined in kotlin
+2026-10-28T09:58:25.3018060Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:36:9 Unresolved reference: RxDataStoreBuilder
+2026-10-28T09:58:25.3020922Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:44:34 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3023816Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:45:36 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3026956Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:46:37 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3029961Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:47:40 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3033089Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:48:34 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3036104Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:49:41 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3039310Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:50:45 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3042258Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:51:43 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3045243Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:52:39 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3048548Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:53:41 Unresolved reference: preferencesKey
+2026-10-28T09:58:25.3051393Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:57:16 Unresolved reference: it
+2026-10-28T09:58:25.3054205Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:61:16 Unresolved reference: it
+2026-10-28T09:58:25.3117627Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:65:16 Unresolved reference: it
+2026-10-28T09:58:25.3119862Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:69:16 Unresolved reference: it
+2026-10-28T09:58:25.3122032Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:73:16 Unresolved reference: it
+2026-10-28T09:58:25.3124205Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:77:16 Unresolved reference: it
+2026-10-28T09:58:25.3126315Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:81:16 Unresolved reference: it
+2026-10-28T09:58:25.3128620Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:85:16 Unresolved reference: it
+2026-10-28T09:58:25.3130822Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:89:16 Unresolved reference: it
+2026-10-28T09:58:25.3132975Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:93:16 Unresolved reference: it
+2026-10-28T09:58:25.3135180Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:97:32 Unresolved reference: it
+2026-10-28T09:58:25.3160979Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:97:42 Unresolved reference: it
+2026-10-28T09:58:25.3164001Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:101:32 Unresolved reference: it
+2026-10-28T09:58:25.3167049Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:101:42 Unresolved reference: it
+2026-10-28T09:58:25.3169814Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:105:32 Unresolved reference: it
+2026-10-28T09:58:25.3172603Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:105:42 Unresolved reference: it
+2026-10-28T09:58:25.3175425Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:109:32 Unresolved reference: it
+2026-10-28T09:58:25.3178328Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:109:42 Unresolved reference: it
+2026-10-28T09:58:25.3181086Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:113:32 Unresolved reference: it
+2026-10-28T09:58:25.3183737Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:113:42 Unresolved reference: it
+2026-10-28T09:58:25.3217061Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:117:32 Unresolved reference: it
+2026-10-28T09:58:25.3219916Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:117:42 Unresolved reference: it
+2026-10-28T09:58:25.3222626Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:121:32 Unresolved reference: it
+2026-10-28T09:58:25.3225417Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:121:42 Unresolved reference: it
+2026-10-28T09:58:25.3228419Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:125:32 Unresolved reference: it
+2026-10-28T09:58:25.3231264Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:125:42 Unresolved reference: it
+2026-10-28T09:58:25.3234073Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:129:32 Unresolved reference: it
+2026-10-28T09:58:25.3237106Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:129:42 Unresolved reference: it
+2026-10-28T09:58:25.3239965Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:133:32 Unresolved reference: it
+2026-10-28T09:58:25.3242791Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:133:42 Unresolved reference: it
+2026-10-28T09:58:25.3246184Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/preferences/PreferencesRepositoryImpl.kt:147:32 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3279634Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/LoggingRepository.kt:30:24 Unresolved reference: launch
+2026-10-28T09:58:25.3282717Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:43:9 Suspend function 'loadCachedMetadata' should be called only from a coroutine or another suspend function
+2026-10-28T09:58:25.3286037Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:117:38 Unresolved reference: Flow
+2026-10-28T09:58:25.3289160Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:119:24 Unresolved reference: update
+2026-10-28T09:58:25.3293715Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:144:5 Conflicting overloads: public open fun getMetadataUri(file: File): Uri? defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl, public final fun getMetadataUri(file: File): Uri? defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl
+2026-10-28T09:58:25.3298388Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:147:17 Unresolved reference: context
+2026-10-28T09:58:25.3301436Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:148:20 Unresolved reference: context
+2026-10-28T09:58:25.3306160Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:157:5 Conflicting overloads: public open fun saveUserMetadata(jsonString: String): Unit defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl, public final fun saveUserMetadata(jsonString: String): Unit defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl
+2026-10-28T09:58:25.3342708Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:166:5 Conflicting overloads: public open fun getMetadataUri(file: File): Uri? defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl, public final fun getMetadataUri(file: File): Uri? defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl
+2026-10-28T09:58:25.3347703Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:166:9 'getMetadataUri' hides member of supertype 'MetadataRepository' and needs 'override' modifier
+2026-10-28T09:58:25.3352292Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:180:5 Conflicting overloads: public open fun saveUserMetadata(jsonString: String): Unit defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl, public final fun saveUserMetadata(jsonString: String): Unit defined in com.example.pelletswaterheater.repository.MetadataRepositoryImpl
+2026-10-28T09:58:25.3357645Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/MetadataRepositoryImpl.kt:180:9 'saveUserMetadata' hides member of supertype 'MetadataRepository' and needs 'override' modifier
+2026-10-28T09:58:25.3361034Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:25:93 An overriding function is not allowed to specify default values for its parameters
+2026-10-28T09:58:25.3364198Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:25:133 Unresolved reference: withLock
+2026-10-28T09:58:25.3397434Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:28:44 Suspension functions can be called only within coroutine body
+2026-10-28T09:58:25.3400345Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:32:25 'return' is not allowed here
+2026-10-28T09:58:25.3402944Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:36:17 'return' is not allowed here
+2026-10-28T09:58:25.3405751Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/NetworkRepository.kt:39:40 Suspension functions can be called only within coroutine body
+2026-10-28T09:58:25.3408851Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:26:53 Unresolved reference: Selection
+2026-10-28T09:58:25.3439694Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:27:45 Unresolved reference: Selection
+2026-10-28T09:58:25.3442357Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:29:61 Unresolved reference: Selection
+2026-10-28T09:58:25.3445442Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:30:60 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.3448096Z public fun <T> Array<out TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.3449461Z public inline fun <T> Array<out TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.3450719Z public fun BooleanArray.first(): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.3451836Z public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean defined in kotlin.collections
+2026-10-28T09:58:25.3452907Z public fun ByteArray.first(): Byte defined in kotlin.collections
+2026-10-28T09:58:25.3453842Z public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte defined in kotlin.collections
+2026-10-28T09:58:25.3454708Z public fun CharArray.first(): Char defined in kotlin.collections
+2026-10-28T09:58:25.3455632Z public inline fun CharArray.first(predicate: (Char) -> Boolean): Char defined in kotlin.collections
+2026-10-28T09:58:25.3457138Z public fun CharSequence.first(): Char defined in kotlin.text
+2026-10-28T09:58:25.3458128Z public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char defined in kotlin.text
+2026-10-28T09:58:25.3459141Z public fun DoubleArray.first(): Double defined in kotlin.collections
+2026-10-28T09:58:25.3460210Z public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double defined in kotlin.collections
+2026-10-28T09:58:25.3461273Z public fun FloatArray.first(): Float defined in kotlin.collections
+2026-10-28T09:58:25.3462519Z public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float defined in kotlin.collections
+2026-10-28T09:58:25.3463507Z public fun IntArray.first(): Int defined in kotlin.collections
+2026-10-28T09:58:25.3464427Z public inline fun IntArray.first(predicate: (Int) -> Boolean): Int defined in kotlin.collections
+2026-10-28T09:58:25.3465372Z public fun LongArray.first(): Long defined in kotlin.collections
+2026-10-28T09:58:25.3466319Z public inline fun LongArray.first(predicate: (Long) -> Boolean): Long defined in kotlin.collections
+2026-10-28T09:58:25.3467489Z public fun ShortArray.first(): Short defined in kotlin.collections
+2026-10-28T09:58:25.3468497Z public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short defined in kotlin.collections
+2026-10-28T09:58:25.3469553Z public inline fun UByteArray.first(): UByte defined in kotlin.collections
+2026-10-28T09:58:25.3470603Z public inline fun UByteArray.first(predicate: (UByte) -> Boolean): UByte defined in kotlin.collections
+2026-10-28T09:58:25.3471626Z public inline fun UIntArray.first(): UInt defined in kotlin.collections
+2026-10-28T09:58:25.3472637Z public inline fun UIntArray.first(predicate: (UInt) -> Boolean): UInt defined in kotlin.collections
+2026-10-28T09:58:25.3473683Z public inline fun ULongArray.first(): ULong defined in kotlin.collections
+2026-10-28T09:58:25.3474714Z public inline fun ULongArray.first(predicate: (ULong) -> Boolean): ULong defined in kotlin.collections
+2026-10-28T09:58:25.3475791Z public inline fun UShortArray.first(): UShort defined in kotlin.collections
+2026-10-28T09:58:25.3497415Z public inline fun UShortArray.first(predicate: (UShort) -> Boolean): UShort defined in kotlin.collections
+2026-10-28T09:58:25.3498629Z public fun <T> Iterable<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.3500357Z public inline fun <T> Iterable<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.3501605Z public fun <T> List<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.collections
+2026-10-28T09:58:25.3502585Z public fun CharProgression.first(): Char defined in kotlin.ranges
+2026-10-28T09:58:25.3503374Z public fun IntProgression.first(): Int defined in kotlin.ranges
+2026-10-28T09:58:25.3504132Z public fun LongProgression.first(): Long defined in kotlin.ranges
+2026-10-28T09:58:25.3504902Z public fun UIntProgression.first(): UInt defined in kotlin.ranges
+2026-10-28T09:58:25.3505607Z public fun ULongProgression.first(): ULong defined in kotlin.ranges
+2026-10-28T09:58:25.3506719Z public fun <T> Sequence<TypeVariable(T)>.first(): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.3508088Z public inline fun <T> Sequence<TypeVariable(T)>.first(predicate: (TypeVariable(T)) -> Boolean): TypeVariable(T) defined in kotlin.sequences
+2026-10-28T09:58:25.3510320Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:32:40 Unresolved reference: Selection
+2026-10-28T09:58:25.3513056Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:39:68 Unresolved reference: Selection
+2026-10-28T09:58:25.3516673Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:40:43 Type mismatch: inferred type is List<[Error type: Unresolved type for Selection]> but SerializationStrategy<TypeVariable(T)> was expected
+2026-10-28T09:58:25.3520213Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:40:43 No value passed for parameter 'value'
+2026-10-28T09:58:25.3522939Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:44:49 Unresolved reference: Selection
+2026-10-28T09:58:25.3526045Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:49:46 Not enough information to infer type variable R
+2026-10-28T09:58:25.3559403Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:52:46 Not enough information to infer type variable K
+2026-10-28T09:58:25.3562261Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:54:35 Unresolved reference: Selection
+2026-10-28T09:58:25.3564937Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:72:26 Unresolved reference: Selection
+2026-10-28T09:58:25.3567984Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:74:21 Unresolved reference: update
+2026-10-28T09:58:25.3571184Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:74:30 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3574369Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:75:24 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3578156Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/SelectionRepositoryImpl.kt:89:28 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3581182Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/StateRepository.kt:41:32 Unresolved reference: SystemStats
+2026-10-28T09:58:25.3583865Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:40:52 Unresolved reference: value
+2026-10-28T09:58:25.3616886Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:43:27 Overload resolution ambiguity: 
+2026-10-28T09:58:25.3619126Z public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+2026-10-28T09:58:25.3621004Z public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): Unit defined in kotlin.collections
+2026-10-28T09:58:25.3623704Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:43:37 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3626874Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:44:20 Overload resolution ambiguity: 
+2026-10-28T09:58:25.3628988Z public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+2026-10-28T09:58:25.3737925Z public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): Unit defined in kotlin.collections
+2026-10-28T09:58:25.3741218Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:44:30 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3744165Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:48:37 Unresolved reference: Field
+2026-10-28T09:58:25.3747696Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:52:37 Unresolved reference: Label
+2026-10-28T09:58:25.3750853Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/repository/ValueRepositoryImpl.kt:67:33 Suspend function 'forceUpdateAll' should be called only from a coroutine or another suspend function
+2026-10-28T09:58:25.3753879Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:20:45 Unresolved reference: DonateComponent
+2026-10-28T09:58:25.3756338Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:27:9 Unresolved reference: DonateComponent
+2026-10-28T09:58:25.3759238Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:34:9 Unresolved reference: DonateComponent
+2026-10-28T09:58:25.3761762Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:40:9 Unresolved reference: DonateComponent
+2026-10-28T09:58:25.3764223Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:77:44 Unresolved reference: DonateComponent
+2026-10-28T09:58:25.3767706Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:121:17 @Composable invocations can only happen from the context of a @Composable function
+2026-10-28T09:58:25.3770613Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:123:28 Unresolved reference: it
+2026-10-28T09:58:25.3772971Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/DonateScreen.kt:127:70 Unresolved reference: it
+2026-10-28T09:58:25.3775399Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/MetadataScreen.kt:47:35 Unresolved reference: metadataFiles
+2026-10-28T09:58:25.3798470Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/MetadataScreen.kt:112:41 Unresolved reference: name
+2026-10-28T09:58:25.3801092Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/ui/SettingsScreen.kt:132:36 Type mismatch: inferred type is String? but String was expected
+2026-10-28T09:58:25.3803844Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/utils/DependencyParser.kt:33:35 Unresolved reference: parse
+2026-10-28T09:58:25.3807097Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/utils/DependencyParser.kt:33:41 Expression 'jsonObject' cannot be invoked as a function. The function 'invoke()' is not found
+2026-10-28T09:58:25.3810643Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/utils/DependencyParser.kt:33:41 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.3813109Z public val JsonElement.jsonObject: JsonObject defined in kotlinx.serialization.json
+2026-10-28T09:58:25.3815306Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/utils/DependencyParser.kt:46:51 Unresolved reference: isJsonArray
+2026-10-28T09:58:25.3818145Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/utils/DependencyParser.kt:52:38 Unresolved reference: jsonArray
+2026-10-28T09:58:25.3821257Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:107:37 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+2026-10-28T09:58:25.3823954Z public inline fun <T, C : Iterable<TypeVariable(T)>> TypeVariable(C).onEach(action: (TypeVariable(T)) -> Unit): TypeVariable(C) defined in kotlin.collections
+2026-10-28T09:58:25.3826137Z public inline fun <K, V, M : Map<out TypeVariable(K), TypeVariable(V)>> TypeVariable(M).onEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): TypeVariable(M) defined in kotlin.collections
+2026-10-28T09:58:25.3854319Z public inline fun <S : CharSequence> TypeVariable(S).onEach(action: (Char) -> Unit): TypeVariable(S) defined in kotlin.text
+2026-10-28T09:58:25.3855969Z public inline fun <T> Array<out TypeVariable(T)>.onEach(action: (TypeVariable(T)) -> Unit): Array<out TypeVariable(T)> defined in kotlin.collections
+2026-10-28T09:58:25.3865030Z public inline fun BooleanArray.onEach(action: (Boolean) -> Unit): BooleanArray defined in kotlin.collections
+2026-10-28T09:58:25.3866342Z public inline fun ByteArray.onEach(action: (Byte) -> Unit): ByteArray defined in kotlin.collections
+2026-10-28T09:58:25.3868085Z public inline fun CharArray.onEach(action: (Char) -> Unit): CharArray defined in kotlin.collections
+2026-10-28T09:58:25.3869113Z public inline fun DoubleArray.onEach(action: (Double) -> Unit): DoubleArray defined in kotlin.collections
+2026-10-28T09:58:25.3870278Z public inline fun FloatArray.onEach(action: (Float) -> Unit): FloatArray defined in kotlin.collections
+2026-10-28T09:58:25.3871432Z public inline fun IntArray.onEach(action: (Int) -> Unit): IntArray defined in kotlin.collections
+2026-10-28T09:58:25.3872665Z public inline fun LongArray.onEach(action: (Long) -> Unit): LongArray defined in kotlin.collections
+2026-10-28T09:58:25.3873896Z public inline fun ShortArray.onEach(action: (Short) -> Unit): ShortArray defined in kotlin.collections
+2026-10-28T09:58:25.3875161Z public inline fun UByteArray.onEach(action: (UByte) -> Unit): UByteArray defined in kotlin.collections
+2026-10-28T09:58:25.3876242Z public inline fun UIntArray.onEach(action: (UInt) -> Unit): UIntArray defined in kotlin.collections
+2026-10-28T09:58:25.3877803Z public inline fun ULongArray.onEach(action: (ULong) -> Unit): ULongArray defined in kotlin.collections
+2026-10-28T09:58:25.3879007Z public inline fun UShortArray.onEach(action: (UShort) -> Unit): UShortArray defined in kotlin.collections
+2026-10-28T09:58:25.3880460Z public fun <T> Sequence<TypeVariable(T)>.onEach(action: (TypeVariable(T)) -> Unit): Sequence<TypeVariable(T)> defined in kotlin.sequences
+2026-10-28T09:58:25.3882882Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:107:46 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3886136Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:110:63 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3889718Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:111:53 Cannot infer a type for this parameter. Please specify it explicitly.
+2026-10-28T09:58:25.3892999Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:205:9 Val cannot be reassigned
+2026-10-28T09:58:25.3896023Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:243:85 Type mismatch: inferred type is Flow<List<File>> but StateFlow<List<File>> was expected
+2026-10-28T09:58:25.3899179Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:247:88 Unresolved reference: MetadataRepositoryImpl
+2026-10-28T09:58:25.3901939Z e: file:///home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/app/src/main/java/com/example/pelletswaterheater/viewmodel/TemperatureViewModelNew.kt:248:72 Unresolved reference: MetadataRepositoryImpl
+2026-10-28T09:58:25.3903444Z 
+2026-10-28T09:58:25.3903654Z FAILURE: Build failed with an exception.
+2026-10-28T09:58:25.3903954Z 
+2026-10-28T09:58:25.3904099Z * What went wrong:
+2026-10-28T09:58:25.3904555Z Execution failed for task ':app:compileDebugKotlin'.
+2026-10-28T09:58:25.3905841Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2026-10-28T09:58:25.3907809Z    > Compilation error. See log for more details
+2026-10-28T09:58:25.3908182Z 
+2026-10-28T09:58:25.3908305Z * Try:
+2026-10-28T09:58:25.3908755Z > Run with --info or --debug option to get more log output.
+2026-10-28T09:58:25.3909398Z > Run with --scan to get full insights.
+2026-10-28T09:58:25.3910201Z > Get more help at https://help.gradle.org.
+2026-10-28T09:58:25.3910545Z 
+2026-10-28T09:58:25.3910686Z * Exception is:
+2026-10-28T09:58:25.3911488Z org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+2026-10-28T09:58:25.3913091Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+2026-10-28T09:58:25.3914481Z 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+2026-10-28T09:58:25.3915821Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+2026-10-28T09:58:25.3917977Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+2026-10-28T09:58:25.3919753Z 	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+2026-10-28T09:58:25.3921762Z 	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+2026-10-28T09:58:25.3923622Z 	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+2026-10-28T09:58:25.3925302Z 	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+2026-10-28T09:58:25.3927186Z 	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+2026-10-28T09:58:25.3928817Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+2026-10-28T09:58:25.3930373Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+2026-10-28T09:58:25.3931859Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+2026-10-28T09:58:25.3933527Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.3935522Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.3938017Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.3939562Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.3941091Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.3942640Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.3944154Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.3945691Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+2026-10-28T09:58:25.3947348Z 	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+2026-10-28T09:58:25.3948943Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+2026-10-28T09:58:25.3950867Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+2026-10-28T09:58:25.3952968Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+2026-10-28T09:58:25.3954793Z 	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+2026-10-28T09:58:25.3956761Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+2026-10-28T09:58:25.3958871Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+2026-10-28T09:58:25.3960829Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+2026-10-28T09:58:25.3962263Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+2026-10-28T09:58:25.3963524Z 	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+2026-10-28T09:58:25.3965009Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+2026-10-28T09:58:25.3966844Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+2026-10-28T09:58:25.3968295Z 	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+2026-10-28T09:58:25.3969639Z 	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+2026-10-28T09:58:25.3971293Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+2026-10-28T09:58:25.3973287Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+2026-10-28T09:58:25.3975465Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.3977775Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.3979595Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.3981229Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.3982761Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.3984311Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.3985798Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.3987920Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+2026-10-28T09:58:25.3989709Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+2026-10-28T09:58:25.3991323Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T09:58:25.3992826Z 	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+2026-10-28T09:58:25.3994151Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-10-28T09:58:25.3995452Z 	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+2026-10-28T09:58:25.3997234Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+2026-10-28T09:58:25.3999024Z 	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+2026-10-28T09:58:25.4000702Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+2026-10-28T09:58:25.4002214Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+2026-10-28T09:58:25.4003659Z 	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+2026-10-28T09:58:25.4005063Z 	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+2026-10-28T09:58:25.4006767Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+2026-10-28T09:58:25.4008575Z 	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+2026-10-28T09:58:25.4010042Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+2026-10-28T09:58:25.4011545Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-10-28T09:58:25.4012962Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+2026-10-28T09:58:25.4015192Z Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2026-10-28T09:58:25.4017836Z 	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:287)
+2026-10-28T09:58:25.4019603Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+2026-10-28T09:58:25.4020885Z 	at org.gradle.internal.Factories$1.create(Factories.java:31)
+2026-10-28T09:58:25.4021989Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:335)
+2026-10-28T09:58:25.4023467Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:318)
+2026-10-28T09:58:25.4024937Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:323)
+2026-10-28T09:58:25.4026820Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+2026-10-28T09:58:25.4028537Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+2026-10-28T09:58:25.4030113Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+2026-10-28T09:58:25.4031584Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+2026-10-28T09:58:25.4032932Z 	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:252)
+2026-10-28T09:58:25.4034539Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-10-28T09:58:25.4036100Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-10-28T09:58:25.4037895Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.4039440Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4041001Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.4042585Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4044178Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-10-28T09:58:25.4045644Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+2026-10-28T09:58:25.4047188Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+2026-10-28T09:58:25.4048737Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+2026-10-28T09:58:25.4050222Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+2026-10-28T09:58:25.4051496Z 	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+2026-10-28T09:58:25.4052731Z 	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+2026-10-28T09:58:25.4053858Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+2026-10-28T09:58:25.4055187Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+2026-10-28T09:58:25.4056928Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.4058994Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.4061297Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.4062858Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4064453Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.4066046Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4067991Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.4069309Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+2026-10-28T09:58:25.4071177Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+2026-10-28T09:58:25.4072444Z 	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+2026-10-28T09:58:25.4073807Z 	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+2026-10-28T09:58:25.4075006Z 	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+2026-10-28T09:58:25.4076636Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+2026-10-28T09:58:25.4078241Z 	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+2026-10-28T09:58:25.4079771Z 	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+2026-10-28T09:58:25.4081259Z 	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+2026-10-28T09:58:25.4083088Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+2026-10-28T09:58:25.4084763Z 	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+2026-10-28T09:58:25.4086658Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+2026-10-28T09:58:25.4088417Z 	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+2026-10-28T09:58:25.4090050Z 	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+2026-10-28T09:58:25.4091528Z 	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+2026-10-28T09:58:25.4092993Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+2026-10-28T09:58:25.4094366Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+2026-10-28T09:58:25.4095394Z 	at org.gradle.internal.Either$Right.fold(Either.java:175)
+2026-10-28T09:58:25.4096297Z 	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+2026-10-28T09:58:25.4097678Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+2026-10-28T09:58:25.4098843Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+2026-10-28T09:58:25.4100174Z 	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+2026-10-28T09:58:25.4101663Z 	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+2026-10-28T09:58:25.4103321Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+2026-10-28T09:58:25.4104704Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+2026-10-28T09:58:25.4106031Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+2026-10-28T09:58:25.4107484Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+2026-10-28T09:58:25.4109128Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+2026-10-28T09:58:25.4111177Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+2026-10-28T09:58:25.4113237Z 	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+2026-10-28T09:58:25.4115321Z 	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+2026-10-28T09:58:25.4117472Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+2026-10-28T09:58:25.4119287Z 	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+2026-10-28T09:58:25.4120878Z 	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+2026-10-28T09:58:25.4122167Z 	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+2026-10-28T09:58:25.4123372Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+2026-10-28T09:58:25.4124492Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+2026-10-28T09:58:25.4126108Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+2026-10-28T09:58:25.4130236Z 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+2026-10-28T09:58:25.4132567Z 	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+2026-10-28T09:58:25.4134377Z 	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+2026-10-28T09:58:25.4136006Z 	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+2026-10-28T09:58:25.4138018Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+2026-10-28T09:58:25.4139925Z 	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+2026-10-28T09:58:25.4141772Z 	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+2026-10-28T09:58:25.4143413Z 	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+2026-10-28T09:58:25.4144881Z 	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+2026-10-28T09:58:25.4146682Z 	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+2026-10-28T09:58:25.4148202Z 	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+2026-10-28T09:58:25.4149636Z 	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+2026-10-28T09:58:25.4151223Z 	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+2026-10-28T09:58:25.4152634Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+2026-10-28T09:58:25.4154149Z 	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+2026-10-28T09:58:25.4155760Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T09:58:25.4157909Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+2026-10-28T09:58:25.4159801Z 	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+2026-10-28T09:58:25.4161338Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+2026-10-28T09:58:25.4162560Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+2026-10-28T09:58:25.4163727Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+2026-10-28T09:58:25.4164814Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+2026-10-28T09:58:25.4166090Z 	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+2026-10-28T09:58:25.4167885Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+2026-10-28T09:58:25.4169630Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+2026-10-28T09:58:25.4171350Z 	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+2026-10-28T09:58:25.4173200Z 	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+2026-10-28T09:58:25.4175009Z 	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+2026-10-28T09:58:25.4176838Z 	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+2026-10-28T09:58:25.4178443Z 	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+2026-10-28T09:58:25.4180072Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+2026-10-28T09:58:25.4181790Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+2026-10-28T09:58:25.4183293Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+2026-10-28T09:58:25.4185075Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.4187325Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.4189079Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.4190621Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4192170Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.4193750Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4195264Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.4203415Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+2026-10-28T09:58:25.4204892Z 	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+2026-10-28T09:58:25.4206708Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+2026-10-28T09:58:25.4208861Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+2026-10-28T09:58:25.4210938Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+2026-10-28T09:58:25.4212757Z 	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+2026-10-28T09:58:25.4214473Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+2026-10-28T09:58:25.4216867Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+2026-10-28T09:58:25.4218454Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+2026-10-28T09:58:25.4219687Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+2026-10-28T09:58:25.4220829Z 	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+2026-10-28T09:58:25.4222255Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+2026-10-28T09:58:25.4223899Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+2026-10-28T09:58:25.4225379Z 	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+2026-10-28T09:58:25.4227002Z 	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+2026-10-28T09:58:25.4228664Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+2026-10-28T09:58:25.4230733Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+2026-10-28T09:58:25.4232849Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.4234894Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.4237256Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.4238864Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4240479Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.4242113Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4243696Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.4245447Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+2026-10-28T09:58:25.4247617Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+2026-10-28T09:58:25.4249317Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-10-28T09:58:25.4250918Z 	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+2026-10-28T09:58:25.4252294Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-10-28T09:58:25.4253864Z 	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+2026-10-28T09:58:25.4255471Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+2026-10-28T09:58:25.4257522Z 	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+2026-10-28T09:58:25.4259400Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+2026-10-28T09:58:25.4260864Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+2026-10-28T09:58:25.4262271Z 	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+2026-10-28T09:58:25.4263598Z 	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+2026-10-28T09:58:25.4265087Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+2026-10-28T09:58:25.4266756Z 	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+2026-10-28T09:58:25.4268181Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+2026-10-28T09:58:25.4269632Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-10-28T09:58:25.4270976Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+2026-10-28T09:58:25.4272414Z Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+2026-10-28T09:58:25.4273930Z 	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:20)
+2026-10-28T09:58:25.4275382Z 	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:141)
+2026-10-28T09:58:25.4277561Z 	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:73)
+2026-10-28T09:58:25.4279354Z 	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+2026-10-28T09:58:25.4280703Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+2026-10-28T09:58:25.4282123Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+2026-10-28T09:58:25.4283957Z 	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+2026-10-28T09:58:25.4285506Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+2026-10-28T09:58:25.4287194Z 	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+2026-10-28T09:58:25.4288226Z 	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+2026-10-28T09:58:25.4289829Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+2026-10-28T09:58:25.4291956Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-10-28T09:58:25.4293842Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-10-28T09:58:25.4295451Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4297389Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+2026-10-28T09:58:25.4299045Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-10-28T09:58:25.4300575Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-10-28T09:58:25.4302056Z 	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+2026-10-28T09:58:25.4303440Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+2026-10-28T09:58:25.4304836Z 	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+2026-10-28T09:58:25.4307212Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+2026-10-28T09:58:25.4309092Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+2026-10-28T09:58:25.4310886Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+2026-10-28T09:58:25.4312159Z 	at org.gradle.internal.Factories$1.create(Factories.java:31)
+2026-10-28T09:58:25.4313215Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+2026-10-28T09:58:25.4314691Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+2026-10-28T09:58:25.4316238Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+2026-10-28T09:58:25.4318154Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+2026-10-28T09:58:25.4319952Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+2026-10-28T09:58:25.4321059Z 	... 2 more
+2026-10-28T09:58:25.4321240Z 
+2026-10-28T09:58:25.4321255Z 
+2026-10-28T09:58:25.4321399Z BUILD FAILED in 1m 45s
+2026-10-28T09:58:25.4321797Z 18 actionable tasks: 18 executed
+2026-10-28T09:58:25.8513724Z ##[error]Process completed with exit code 1.
+2026-10-28T09:58:25.8587529Z ##[group]Run actions/upload-artifact@v4
+2026-10-28T09:58:25.8587840Z with:
+2026-10-28T09:58:25.8588038Z   name: lint-reports
+2026-10-28T09:58:25.8588285Z   path: app/build/reports/lint-results.html
+2026-10-28T09:58:25.8588568Z   retention-days: 7
+2026-10-28T09:58:25.8588784Z   if-no-files-found: warn
+2026-10-28T09:58:25.8589018Z   compression-level: 6
+2026-10-28T09:58:25.8589247Z   overwrite: false
+2026-10-28T09:58:25.8589461Z   include-hidden-files: false
+2026-10-28T09:58:25.8589691Z env:
+2026-10-28T09:58:25.8589986Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:58:25.8590481Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.21-9/x64
+2026-10-28T09:58:25.8590855Z ##[endgroup]
+2026-10-28T09:58:26.0373962Z (node:2941) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-28T09:58:26.0374928Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-28T09:58:26.0393270Z ##[warning]No files were found with the provided path: app/build/reports/lint-results.html. No artifacts will be uploaded.
+2026-10-28T09:58:26.0674071Z Post job cleanup.
+2026-10-28T09:58:26.2098328Z (node:2953) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-28T09:58:26.2099297Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-28T09:58:26.2389527Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget --files-from manifest.txt --use-compress-program zstdmt
+2026-10-28T09:58:29.7615082Z (node:2953) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-28T09:58:30.7437042Z Sent 0 of 618459637 (0.0%), 0.0 MBs/sec
+2026-10-28T09:58:31.7487560Z Sent 0 of 618459637 (0.0%), 0.0 MBs/sec
+2026-10-28T09:58:32.7467425Z Sent 551350773 of 618459637 (89.1%), 175.3 MBs/sec
+2026-10-28T09:58:33.4487049Z Sent 618459637 of 618459637 (100.0%), 159.2 MBs/sec
+2026-10-28T09:58:33.8235163Z Cache saved with the key: setup-java-Linux-x64-gradle-10c25ec835df1cb737fbd17b7dfa07fd4d1c8d881f051bb3ece1ea53a0bc37cf
+2026-10-28T09:58:33.8435479Z Post job cleanup.
+2026-10-28T09:58:33.9290547Z [command]/usr/bin/git version
+2026-10-28T09:58:33.9338755Z git version 2.56.0
+2026-10-28T09:58:33.9383613Z Temporarily overriding HOME='/home/runner/work/_temp/df0868e8-157a-4bc4-ab96-68f400604af2' before making global git config changes
+2026-10-28T09:58:33.9385051Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-28T09:58:33.9389825Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget
+2026-10-28T09:58:33.9430246Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-28T09:58:33.9467595Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-28T09:58:33.9798729Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-28T09:58:33.9825197Z http.https://github.com/.extraheader
+2026-10-28T09:58:33.9838332Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-28T09:58:33.9877600Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-28T09:58:34.0196646Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-28T09:58:34.0236934Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-28T09:58:34.0695709Z Cleaning up orphan processes
+2026-10-28T09:58:34.1082240Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

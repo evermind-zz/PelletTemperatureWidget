@@ -1,8 +1,6 @@
 package com.example.pelletswaterheater.preferences
 
-import androidx.datastore.preferences.core.PreferencesKeys
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 /**
  * Repository interface for type-safe preferences access.

@@ -1,0 +1,73 @@
+﻿2026-10-28T09:56:36.1741441Z ##[group]Run actions/checkout@v4
+2026-10-28T09:56:36.1742586Z with:
+2026-10-28T09:56:36.1743409Z   repository: evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.1750775Z   token: ***
+2026-10-28T09:56:36.1751323Z   ssh-strict: true
+2026-10-28T09:56:36.1751857Z   ssh-user: git
+2026-10-28T09:56:36.1752411Z   persist-credentials: true
+2026-10-28T09:56:36.1753008Z   clean: true
+2026-10-28T09:56:36.1753596Z   sparse-checkout-cone-mode: true
+2026-10-28T09:56:36.1754240Z   fetch-depth: 1
+2026-10-28T09:56:36.1754772Z   fetch-tags: false
+2026-10-28T09:56:36.1755325Z   show-progress: true
+2026-10-28T09:56:36.1755884Z   lfs: false
+2026-10-28T09:56:36.1756783Z   submodules: false
+2026-10-28T09:56:36.1757448Z   set-safe-directory: true
+2026-10-28T09:56:36.1758085Z   allow-unsafe-pr-checkout: false
+2026-10-28T09:56:36.1759004Z ##[endgroup]
+2026-10-28T09:56:36.4396217Z Syncing repository: evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.4398751Z ##[group]Getting Git version info
+2026-10-28T09:56:36.4400288Z Working directory is '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget'
+2026-10-28T09:56:36.4402622Z [command]/usr/bin/git version
+2026-10-28T09:56:36.4411599Z git version 2.55.0
+2026-10-28T09:56:36.4432573Z ##[endgroup]
+2026-10-28T09:56:36.4441465Z Temporarily overriding HOME='/home/runner/work/_temp/606e94c3-1184-49fe-a875-cff1616d6880' before making global git config changes
+2026-10-28T09:56:36.4444125Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-28T09:56:36.4446914Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget
+2026-10-28T09:56:36.4544320Z Deleting the contents of '/home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget'
+2026-10-28T09:56:36.4548198Z ##[group]Initializing the repository
+2026-10-28T09:56:36.4553022Z [command]/usr/bin/git init /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget
+2026-10-28T09:56:36.5432137Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-28T09:56:36.5434161Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-28T09:56:36.5435467Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-28T09:56:36.5436385Z hint: call:
+2026-10-28T09:56:36.5437090Z hint:
+2026-10-28T09:56:36.5437796Z hint: 	git config --global init.defaultBranch <name>
+2026-10-28T09:56:36.5438561Z hint:
+2026-10-28T09:56:36.5439292Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-28T09:56:36.5440423Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-28T09:56:36.5441367Z hint:
+2026-10-28T09:56:36.5442017Z hint: 	git branch -m <name>
+2026-10-28T09:56:36.5442627Z hint:
+2026-10-28T09:56:36.5443405Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-28T09:56:36.5445087Z Initialized empty Git repository in /home/runner/work/PelletTemperatureWidget/PelletTemperatureWidget/.git/
+2026-10-28T09:56:36.5448029Z [command]/usr/bin/git remote add origin https://github.com/evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:36.6379474Z ##[endgroup]
+2026-10-28T09:56:36.6380882Z ##[group]Disabling automatic garbage collection
+2026-10-28T09:56:36.6381952Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-28T09:56:36.6937683Z ##[endgroup]
+2026-10-28T09:56:36.6938897Z ##[group]Setting up auth
+2026-10-28T09:56:36.6947801Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-28T09:56:36.6981088Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-28T09:56:36.7365712Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-28T09:56:36.7398461Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-28T09:56:36.7638816Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-28T09:56:36.7671993Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-28T09:56:36.7913647Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-28T09:56:36.8715731Z ##[endgroup]
+2026-10-28T09:56:36.8716889Z ##[group]Fetching the repository
+2026-10-28T09:56:36.8726502Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d3ff5228fe7a6a972c582650f8361e7c98dd1882:refs/remotes/origin/master
+2026-10-28T09:56:37.4167749Z From https://github.com/evermind-zz/PelletTemperatureWidget
+2026-10-28T09:56:37.4168352Z  * [new ref]         d3ff5228fe7a6a972c582650f8361e7c98dd1882 -> origin/master
+2026-10-28T09:56:37.4171776Z ##[endgroup]
+2026-10-28T09:56:37.4172272Z ##[group]Determining the checkout info
+2026-10-28T09:56:37.4173627Z ##[endgroup]
+2026-10-28T09:56:37.4179095Z [command]/usr/bin/git sparse-checkout disable
+2026-10-28T09:56:37.4415245Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-28T09:56:37.4534175Z ##[group]Checking out the ref
+2026-10-28T09:56:37.4538729Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+2026-10-28T09:56:37.5107134Z Reset branch 'master'
+2026-10-28T09:56:37.5108376Z branch 'master' set up to track 'origin/master'.
+2026-10-28T09:56:37.5113797Z ##[endgroup]
+2026-10-28T09:56:37.5162943Z [command]/usr/bin/git log -1 --format=%H
+2026-10-28T09:56:37.5187737Z d3ff5228fe7a6a972c582650f8361e7c98dd1882

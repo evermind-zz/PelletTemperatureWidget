@@ -17,6 +17,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -40,7 +41,7 @@ class MetadataRepositoryImpl(
     override val metadataFiles: StateFlow<List<File>> = _metadataFiles.asStateFlow()
 
     init {
-        loadCachedMetadata()
+        viewModelScope.launch { loadCachedMetadata() }
     }
 
     override suspend fun fetchMetadata(url: String): Result<MetadataJson> {
@@ -109,26 +110,16 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override fun getMetadataContent(filename: String): String? {
+    override suspend fun getMetadataContent(filename: String): String? {
         return contextProvider.getMetadata(filename)
     }
 
-    override fun getCurrentMetadataFilename(): String {
+    override suspend fun getCurrentMetadataFilename(): String {
         return temperatureUtils.getMetadataDefaultFile()
     }
 
-    override fun setCurrentMetadataFilename(filename: String) {
+    override suspend fun setCurrentMetadataFilename(filename: String) {
         temperatureUtils.setMetadataDefaultFile(filename)
-    }
-
-    override fun getMetadataFiles(): StateFlow<List<File>> {
-        val metadataDir = File(contextProvider.getContext().filesDir, "")
-        _metadataFiles.update {
-            metadataDir.listFiles { file ->
-                file.isFile && file.extension == "json"
-            }?.toList() ?: emptyList()
-        }
-        return metadataFiles
     }
 
     override fun deleteMetadataFile(file: File) {
@@ -136,19 +127,30 @@ class MetadataRepositoryImpl(
         val target = File(context.filesDir, file.name)
         if (target.exists()) {
             target.delete()
-            getMetadataFiles() // refresh
+            refreshMetadataFiles()
+        }
+    }
+
+    private fun refreshMetadataFiles() {
+        val metadataDir = File(contextProvider.getContext().filesDir, "")
+        _metadataFiles.update { it ->
+            metadataDir.listFiles { file ->
+                file.isFile && file.extension == "json"
+            }?.toList() ?: emptyList()
         }
     }
 
     override fun shareMetadata(context: Context) {
-        val currentMetadataFile = temperatureUtils.getMetadataDefaultFile()
-        val uri = getMetadataUri(File(context.filesDir, currentMetadataFile))
-        uri?.let { uri ->
-            val intent = android.content.Intent(android.content.Intent.ACTION_SEND)
-            intent.type = "text/json"
-            intent.putExtra(android.content.Intent.EXTRA_STREAM, uri)
-            intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            context.startActivity(android.content.Intent.createChooser(intent, "Share Metadata"))
+        viewModelScope.launch {
+            val currentMetadataFile = temperatureUtils.getMetadataDefaultFile()
+            val uri = getMetadataUri(File(context.filesDir, currentMetadataFile))
+            uri?.let { uri ->
+                val intent = android.content.Intent(android.content.Intent.ACTION_SEND)
+                intent.type = "text/json"
+                intent.putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                context.startActivity(android.content.Intent.createChooser(intent, "Share Metadata"))
+            }
         }
     }
 
@@ -177,7 +179,7 @@ class MetadataRepositoryImpl(
         viewModelScope.launch { loadUserMetadata(jsonString) }
     }
 
-    private fun getCurrentMetadataContent(): String? {
+    private suspend fun getCurrentMetadataContent(): String? {
         val currentMetadataFilename = temperatureUtils.getMetadataDefaultFile()
         return contextProvider.getMetadata(currentMetadataFilename)
     }
