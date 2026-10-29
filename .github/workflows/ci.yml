@@ -104,16 +104,14 @@ jobs:
           cmdline-tools-version: latest
           packages: platform-tools platforms;android-34 build-tools;34.0.0 system-images;android-34;default;x86_64
 
+      - name: Accept SDK Licenses
+        run: yes | sdkmanager --licenses
+
       - name: Create and Start Emulator
         run: |
           echo "no" | avdmanager create avd -n test -k "system-images;android-34;default;x86_64" --force
           emulator -avd test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
-
-      - name: Accept SDK Licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Wait for Emulator
-        run: |
+          # Wait for emulator to boot
           adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
           adb shell input keyevent 82
 
