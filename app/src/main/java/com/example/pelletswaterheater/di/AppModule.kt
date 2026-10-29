@@ -2,6 +2,7 @@ package com.example.pelletswaterheater.di
 
 import com.example.pelletswaterheater.NetworkAccess
 import com.example.pelletswaterheater.SettingsViewModel
+import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.preferences.PreferencesRepositoryImpl
 import com.example.pelletswaterheater.repository.LoggingRepository
@@ -23,7 +24,6 @@ import com.example.pelletswaterheater.utils.Logger
 import com.example.pelletswaterheater.utils.NetworkFingerprint
 import com.example.pelletswaterheater.utils.TemperatureLogger
 import com.example.pelletswaterheater.utils.TemperatureLoggerCsvImpl
-import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
@@ -43,13 +43,13 @@ val appModule = module {
     single { NetworkAccess() }
 
     // Provide TemperatureLogger
-    single<TemperatureLogger> { TemperatureLoggerCsvImpl(get(), get()) }
+    single<TemperatureLogger> { TemperatureLoggerCsvImpl(get(), get(), get()) }
 
     // Provide PreferencesRepository (DataStore)
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     // Provide TemperatureUtils
-    single { TemperatureUtils.getInstance(get(), get<ContextProvider>().getContext()) }
+    single { TemperatureUtils(get(), get<ContextProvider>().getContext()) }
 
     // Provide Repositories
     single<MetadataRepository> { MetadataRepositoryImpl(get(), get(), get(), get(), get()) }

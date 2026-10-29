@@ -43,20 +43,25 @@ import org.koin.core.component.inject
 class TemperatureWidget : GlanceAppWidget(), KoinComponent {
 
     private val viewModel: TemperatureViewModelNew by inject()
+    private val temperatureUtils: TemperatureUtils by inject()
     override val sizeMode: SizeMode
         get() = SizeMode.Exact
 
     @SuppressLint("StateFlowValueCalledInComposition")
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val widgetSnapshotData = viewModel.widgetValues.value
+        // Get colors from TemperatureUtils (injected)
+        val backgroundColor = temperatureUtils.getStoredBackgroundColor()
+        val textColor = temperatureUtils.getStoredTextColor()
+        
         provideContent {
             Log.d("TemperatureWidget", "provideGlance: glanceId=$id, viewModel=${viewModel.hashCode()}")
             val size = LocalSize.current // in DpSize (width.dp x height.dp)
             TemperatureWidgetContent(
                 width = size.width,
                 height = size.height,
-                backgroundColor = TemperatureUtils.getStoredBackgroundColor(context),
-                textColor = TemperatureUtils.getStoredTextColor(context),
+                backgroundColor = backgroundColor,
+                textColor = textColor,
                 snapshotData = widgetSnapshotData
             )
         }
@@ -116,7 +121,7 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
                             val wrapper = widgetValues[index]
                             Column(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 4.dp)) {
                                 Text(
-                                    text = TemperatureUtils.getNameSuffix(wrapper),
+                                    text = temperatureUtils.getNameSuffix(wrapper),
                                     style = TextStyle(
                                         fontSize = 12.sp,
                                         color = ColorProvider(textColor),
@@ -124,7 +129,7 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
                                     ),
                                 )
                                 Text(
-                                    text = TemperatureUtils.getLogicalValueWithUnit(wrapper.convertedValue),
+                                    text = temperatureUtils.getLogicalValueWithUnit(wrapper.convertedValue),
                                     style = TextStyle(
                                         fontSize = 18.sp,
                                         color = ColorProvider(textColor),
@@ -151,7 +156,7 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
 
             if (state.isNotEmpty()) {
                 Text(
-                    text = TemperatureUtils.formattedState(state),
+                    text = temperatureUtils.formattedState(state),
                     style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
                     modifier = GlanceModifier
                         .fillMaxWidth()
@@ -159,15 +164,6 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
                 )
             }
 
-            //if (error.isNotEmpty()) {
-            //    Text(
-            //        text = error,
-            //        style = TextStyle(fontSize = 12.sp, color = ColorProvider(textColor)),
-            //        modifier = GlanceModifier
-            //            .fillMaxWidth()
-            //            .padding(top = 2.dp)
-            //    )
-            //}
             error?.let {
                 Text(
                     text = it,
@@ -180,7 +176,6 @@ class TemperatureWidget : GlanceAppWidget(), KoinComponent {
             }
         }
     }
-
 
     // Removed duplicate helper methods - using TemperatureUtils directly
 

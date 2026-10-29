@@ -25,7 +25,7 @@ while true; do
 
     # 1. Fetch recent runs natively using gh api
     # Uses implicit context tracking for {owner}/{repo}
-    RUNS_JSON=$(gh api $REPO_FLAG "/repos/{owner}/{repo}/actions/runs" --jq '.workflow_runs[] | {id: .id, name: .name}')
+    RUNS_JSON=$(gh api $REPO_FLAG "/repos/{owner}/{repo}/actions/runs" --jq '.workflow_runs[] | {id: .id, name: .name, status: .status}')
 
     if [ -z "$RUNS_JSON" ]; then
         echo "No runs found or failed to connect to GitHub API."
@@ -34,6 +34,7 @@ while true; do
         echo "$RUNS_JSON" | jq -c '.' | while read -r run; do
             RUN_ID=$(echo "$run" | jq -r '.id')
             RUN_NAME=$(echo "$run" | jq -r '.name')
+            RUN_STATE=$(echo "$run" | jq -r '.status')
             
             # Sanitize the workflow name to make it legal for filesystem paths
             SAFE_NAME=$(echo "$RUN_NAME" | sed 's/[^a-zA-Z0-9_-]/_/g')
@@ -42,7 +43,10 @@ while true; do
 
             # 2. Check if the log file has already been fetched
 
-            ls  "$FILE_PATH" -laht 
+            if [ "a${RUN_STATE}b" != "acompletedb" ]; then
+                echo "[-] Still running: $FILE_NAME (Skipping)"
+                continue
+            fi
             if [ -d "$FILE_PATH" ]; then
                 echo "[-] Already fetched: $FILE_NAME (Skipping)"
                 continue

@@ -11,7 +11,6 @@ import org.koin.core.context.startKoin
 class PelletsWaterHeaterApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        TemperatureUtils.appContext = requireNotNull(applicationContext)
         startKoin {
             androidContext(this@PelletsWaterHeaterApplication)
             modules(appModule)

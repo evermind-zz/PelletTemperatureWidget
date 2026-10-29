@@ -11,7 +11,7 @@ import android.net.wifi.WifiManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.pelletswaterheater.utils.ILogger
-import com.example.pelletswaterheater.utils.TemperatureUtils
+import com.example.pelletswaterheater.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,54 +19,46 @@ import android.util.Log
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import java.io.FileNotFoundException
 import java.net.URI
 import java.util.concurrent.atomic.AtomicInteger
 
-class TemperatureWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) , KoinComponent {
+class TemperatureWorker(
+    appContext: Context,
+    params: WorkerParameters,
+    private val viewModel: TemperatureViewModelNew,
+    private val logger: ILogger,
+    private val temperatureUtils: TemperatureUtils
+) : CoroutineWorker(appContext, params) {
 
     companion object {
         private val TAG = TemperatureWorker::class.java.simpleName
         private var backoffCount = 0
-        //private val accessTimeMutex = Mutex()
         private var lastAccessTime = 0L
-        //private val networkMutex = Mutex()
         fun resetBackoffCount() { backoffCount = 0 }
     }
     private val backoffCount = AtomicInteger(0)
-    private val viewModel: TemperatureViewModelNew by inject()
-    private val logger: ILogger by inject()
-    private val temperatureUtils: TemperatureUtils by inject()
+
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val whichWorker = inputData.getString(TemperatureUtils.WHICH_WORKER) ?: tags.toString()
         logger.d(TAG, "doWork started: workId=${id}, worker=$whichWorker")
         try {
             logger.d(TAG, "Starting worker execution: workId=${id}")
             var url = temperatureUtils.getServerUrl()
-            val maskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+            val maskedUrl = temperatureUtils.maskPasswordInUrl(url)
             logger.d(TAG, "worker=$whichWorker Starting work: url=$maskedUrl, backoffCount=${backoffCount.get()}")
 
             // Check max retries
             if (backoffCount.get() > 5) {
                 logger.e(TAG, "worker=$whichWorker Max retries exceeded")
 
-                //  NO local mutex here networkMutex.withLock {
-                    viewModel.updateStats(error ="Max retries exceeded", state ="Error")
-                    //viewModel.updateError("Max retries exceeded")
-                    //viewModel.updateState("Error")
-                //  NO local mutex here }
+                viewModel.updateStats(error ="Max retries exceeded", state ="Error")
                 updateWidget(whichWorker)
                 return@withContext Result.failure()
             }
 
             if (!isOnSameLocalNetwork(applicationContext, url)) {
-                //  NO local mutex here networkMutex.withLock {
-                    viewModel.updateStats(error ="Device not on the same network as the server", state ="Wrong Network")
-                    //viewModel.updateState("Wrong Network")
-                    //viewModel.updateError("Device not on the same network as the server")
-                // NO local mutex here}
+                viewModel.updateStats(error ="Device not on the same network as the server", state ="Wrong Network")
                 logger.e(TAG, "worker=$whichWorker Network mismatch")
                 updateWidget(whichWorker)
                 return@withContext Result.failure()
@@ -75,7 +67,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
             // Re-read URL to avoid stale value
             url = temperatureUtils.getServerUrl()
-            val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+            val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
 
                 logger.d(TAG, "worker=$whichWorker Refreshed URL: $refreshedMaskedUrl")
 
@@ -92,20 +84,12 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
 
                 // All retries failed
                 val currentBackoff = backoffCount.incrementAndGet()
-                //viewModel.updateStats(error = "Failed to fetch temperature after $maxAttempts attempts", state = "Error")
-                //viewModel.updateState("Error")
-                //viewModel.updateError("Failed to fetch temperature after $maxAttempts attempts")
                 logger.e(TAG, "worker=$whichWorker All retries failed, backoffCount=$currentBackoff")
                 updateWidget(whichWorker)
-            //}
             Result.failure()
         } catch (e: Exception) {
             logger.e(TAG, "worker=${whichWorker} Unexpected error in doWork", e)
-            //  NO local mutex here networkMutex.withLock {
-                viewModel.updateStats(error = "Worker failed: ${e.message}", state = "Error")
-                //viewModel.updateError("Worker failed: ${e.message}")
-                //viewModel.updateState("Error")
-            //  NO local mutex here }
+            viewModel.updateStats(error = "Worker failed: ${e.message}", state = "Error")
             updateWidget(whichWorker)
             Result.failure()
         }
@@ -118,7 +102,7 @@ class TemperatureWorker(appContext: Context, params: WorkerParameters) : Corouti
         whichWorker: String?,
         attempt: Int
     ) {
-        val refreshedMaskedUrl = TemperatureUtils.maskPasswordInUrl(url)
+        val refreshedMaskedUrl = temperatureUtils.maskPasswordInUrl(url)
         val maskedOriginalMessage = e.message?.replace(url, refreshedMaskedUrl) ?: "Unknown error"
         val maskedException = when (e) {
             is FileNotFoundException -> FileNotFoundException(maskedOriginalMessage)

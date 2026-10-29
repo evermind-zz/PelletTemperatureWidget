@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -42,6 +43,7 @@ interface TemperatureLogger {
  */
 class TemperatureLoggerCsvImpl(
     private val contextProvider: ContextProvider,
+    private val temperatureUtils: TemperatureUtils,
     private val logger: ILogger = Logger
 ) : TemperatureLogger {
     private val TAG = TemperatureLoggerCsvImpl::class.java.simpleName
@@ -85,7 +87,7 @@ class TemperatureLoggerCsvImpl(
 
             // Write values as a single row
             val csvRow = buildCsvRow(actualTimestamp, values, keyOrder)
-            logFile.appendText(csvRow, Charsets.UTF_8)
+            logFile.appendText(csvRow, StandardCharsets.UTF_8)
         } catch (e: Exception) {
             logger.e(TAG, "Failed to log values: $e", e)
         }
@@ -93,12 +95,11 @@ class TemperatureLoggerCsvImpl(
 
     // eg. new elements are selected to be logged
     private fun keyOrderListChanged(keyOrder: List<String>): Boolean {
-        val previousHash = TemperatureUtils.getStoredLoggerHeaderHash()
+        val previousHash = temperatureUtils.getStoredLoggerHeaderHash()
         // Use content-based hash (stable across JVM runs), not List.hashCode()
         val currentHash = keyOrder.joinToString(",").hashCode()
         if (previousHash != currentHash) {
-            val context = contextProvider.getContext()
-            TemperatureUtils.setStoredLoggerHeaderHash(context, currentHash)
+            temperatureUtils.setStoredLoggerHeaderHash(currentHash)
             return true
         }
         return false
@@ -186,7 +187,7 @@ class TemperatureLoggerCsvImpl(
         val nameHeader = keyOrder.joinToString(",") { values[it]?.name ?: "" }
         val unitHeader = keyOrder.joinToString(",") { values[it]?.unit ?: "" }
         val header = "${commentHeader}Machine parts:$sectionHeader\n,$fieldHeader\n,$nameHeader\ntimestamp,$unitHeader\n"
-        logFile.writeText(header, Charsets.UTF_8)
+        logFile.writeText(header, StandardCharsets.UTF_8)
     }
 
     private fun rotateLogFile(

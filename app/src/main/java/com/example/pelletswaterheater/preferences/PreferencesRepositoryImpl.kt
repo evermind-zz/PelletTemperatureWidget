@@ -15,13 +15,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class PreferencesRepositoryImpl(
     private val context: Context
-) : PreferencesRepository, KoinComponent {
+) : PreferencesRepository {
 
     private val dataStore: DataStore<Preferences> = DataStoreFactory.create<Preferences>(
         serializer = PreferencesSerializer as androidx.datastore.core.Serializer<Preferences>,

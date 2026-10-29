@@ -24,25 +24,22 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.first
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import kotlinx.coroutines.withContext
 
-object Settings {
-    const val KEY_METADATA_DEFAULT_FILE = "key_metadata_default_file"
-    const val METADATA_DEFAULT_FILE = "metadata_en.json"
-}
-
-object TemperatureUtils : KoinComponent {
-    private const val PERIODIC_WORK_NAME = "periodic_temperature_update"
-    private const val ONETIME_WORK_NAME = "onetime_temperature_update"
-    const val WHICH_WORKER = "which_worker"
-    private const val WORK_TAG = "temperature_update"
-    private const val TAG = "TemperatureUtils"
-    var appContext: Context? = null // Set in Application or MainActivity
-
-    private val preferencesRepository: PreferencesRepository by inject()
+class TemperatureUtils(
+    private val preferencesRepository: PreferencesRepository,
+    private val context: Context
+) {
+    companion object {
+        const val TAG = "TemperatureUtils"
+        const val PERIODIC_WORK_NAME = "periodic_temperature_update"
+        const val ONETIME_WORK_NAME = "onetime_temperature_update"
+        const val WHICH_WORKER = "which_worker"
+        const val WORK_TAG = "temperature_update"
+    }
 
     fun formatTemperature(rawValue: String?): String {
         return when {
@@ -81,15 +78,17 @@ object TemperatureUtils : KoinComponent {
         return runBlocking { preferencesRepository.serverUrl.first() } ?: SettingsViewModel.DEFAULT_SERVER_URL
     }
 
+    fun getServerUrl(): String = getStoredUrl()
+
     fun getStoredLoggerHeaderHash(): Int {
         return runBlocking { preferencesRepository.storedOrderHash.first() } ?: -1
     }
 
-    fun setStoredLoggerHeaderHash(context: Context, hash: Int) {
+    fun setStoredLoggerHeaderHash(hash: Int) {
         runBlocking { preferencesRepository.setStoredOrderHash(hash) }
     }
 
-    fun getStoredWidgetSize(context: Context, dimension: String): String? {
+    fun getStoredWidgetSize(dimension: String): String? {
         return when (dimension) {
             "width" -> runBlocking { preferencesRepository.widgetWidth.first() }
             "height" -> runBlocking { preferencesRepository.widgetHeight.first() }
@@ -97,26 +96,32 @@ object TemperatureUtils : KoinComponent {
         }
     }
 
-    fun getStoredBackgroundColor(context: Context): Color {
+    fun getWidgetWidth(): String = runBlocking { preferencesRepository.widgetWidth.first() } ?: "100"
+    fun getWidgetHeight(): String = runBlocking { preferencesRepository.widgetHeight.first() } ?: "100"
+
+    fun getStoredBackgroundColor(): Color {
         val colorHex = runBlocking { preferencesRepository.backgroundColor.first() } ?: "FFF3E5F5"
         return if (colorHex == "TRANSPARENT") Color.Transparent else Color(colorHex.toLong(16))
     }
 
-    fun getStoredBackgroundColorHex(context: Context): String? {
+    fun getBackgroundColor(): String = runBlocking { preferencesRepository.backgroundColor.first() } ?: "FFF3E5F5"
+
+    fun getStoredBackgroundColorHex(): String? {
         return runBlocking { preferencesRepository.backgroundColor.first() }
     }
 
-    fun getStoredTextColor(context: Context): Color {
+    fun getStoredTextColor(): Color {
         val colorHex = runBlocking { preferencesRepository.textColor.first() } ?: "FF000000"
         return Color(colorHex.toLong(16))
     }
 
-    fun getStoredTextColorHex(context: Context): String? {
+    fun getTextColor(): String = runBlocking { preferencesRepository.textColor.first() } ?: "FF000000"
+
+    fun getStoredTextColorHex(): String? {
         return runBlocking { preferencesRepository.textColor.first() }
     }
 
     fun saveSettings(
-        context: Context,
         url: String,
         width: String,
         height: String,
@@ -132,17 +137,24 @@ object TemperatureUtils : KoinComponent {
         }
     }
 
-    fun cancelPeriodicWorker(context: Context = appContext!!) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG) // Cancel pending work
+    fun cancelPeriodicWork() {
+        cancelPeriodicWorker()
     }
 
-    fun schedulePeriodicTemperatureUpdate(context: Context = appContext!!) {
-        cancelPeriodicWorker(context)
+    fun cancelPeriodicWorker() {
+        WorkManager.getInstance(context).cancelAllWorkByTag(WORK_TAG)
+    }
+
+    fun schedulePeriodicWork(intervalMs: Long = 600000) {
+        schedulePeriodicTemperatureUpdate()
+    }
+
+    fun schedulePeriodicTemperatureUpdate() {
+        cancelPeriodicWorker()
         enqueueWork<PeriodicWorkRequest>(
-            context,
             configure = { builder ->
                 builder.setRequiresDeviceIdle(false)
-                builder.setRequiresBatteryNotLow(false) // Allow in Doze mode
+                builder.setRequiresBatteryNotLow(false)
             },
             enqueue = { wm, request ->
                 wm.enqueueUniquePeriodicWork(
@@ -156,10 +168,9 @@ object TemperatureUtils : KoinComponent {
         )
     }
 
-    fun forceTemperatureUpdate(context: Context = appContext!!) {
+    fun forceTemperatureUpdate() {
         TemperatureWorker.resetBackoffCount()
         enqueueWork<OneTimeWorkRequest>(
-            context,
             configure = { /* No additional config needed */ },
             enqueue = { wm, request ->
                 wm.enqueueUniqueWork(
@@ -183,8 +194,25 @@ object TemperatureUtils : KoinComponent {
         }
     }
 
+    suspend fun pingServerAsync(url: String): Boolean = withContext(Dispatchers.IO) { pingServer(url) }
+
+    fun setGatewayFingerprint(fingerprint: String) {
+        runBlocking { preferencesRepository.setGatewayFingerprint(fingerprint) }
+    }
+
+    fun updateAllSettings(
+        url: String,
+        width: String,
+        height: String,
+        backgroundColor: String,
+        textColor: String
+    ): Boolean {
+        return runBlocking {
+            preferencesRepository.updateAllSettings(url, width, height, backgroundColor, textColor)
+        }
+    }
+
     private inline fun <reified T : WorkRequest> enqueueWork(
-        context: Context,
         configure: (Constraints.Builder) -> Unit,
         enqueue: (WorkManager, WorkRequest) -> Unit,
         logMessage: String,
@@ -225,4 +253,9 @@ object TemperatureUtils : KoinComponent {
     fun getCurrentMetadataFile(): String {
         return runBlocking { preferencesRepository.metadataDefaultFile.first() } ?: Settings.METADATA_DEFAULT_FILE
     }
+}
+
+object Settings {
+    const val KEY_METADATA_DEFAULT_FILE = "key_metadata_default_file"
+    const val METADATA_DEFAULT_FILE = "metadata_en.json"
 }
