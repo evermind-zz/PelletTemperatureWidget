@@ -31,6 +31,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import com.example.pelletswaterheater.preferences.PreferencesRepository
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

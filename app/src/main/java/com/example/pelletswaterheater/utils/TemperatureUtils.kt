@@ -294,4 +294,21 @@ class TemperatureUtils private constructor(
         )
     }
 
+    // Instance method delegating to companion for Koin injection
+    fun maskPasswordInUrl(url: String): String = maskPasswordInUrl(url)
+
+    fun getStoredLoggerHeaderHash(): Int = getStoredLoggerHeaderHash()
+
+    fun setStoredLoggerHeaderHash(hash: Int) { setStoredLoggerHeaderHash(context, hash) }
+
+    fun getStoredBackgroundColor(): Int = getStoredBackgroundColor(context)
+
+    fun getStoredTextColor(): Int = getStoredTextColor(context)
+
+    fun getNameSuffix(wrapper: ConvertedValueWrapper): String = getNameSuffix(wrapper)
+
+    fun getLogicalValueWithUnit(value: ConvertedValue): String = getLogicalValueWithUnit(value)
+
+    fun formattedState(state: String): String = formattedState(state)
+
 }
