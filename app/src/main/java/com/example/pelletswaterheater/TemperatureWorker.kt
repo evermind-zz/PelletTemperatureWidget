@@ -11,7 +11,7 @@ import android.net.wifi.WifiManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.pelletswaterheater.utils.ILogger
-import com.example.pelletswaterheater.TemperatureUtils
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.viewmodel.TemperatureViewModelNew
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

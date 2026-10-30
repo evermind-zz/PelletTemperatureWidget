@@ -24,6 +24,6 @@ class AppStartupTest {
     @Test
     fun appHasCorrectPackageName() {
         val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
-        assert(context.packageName == "com.example.pelletswaterheater")
+        assert(context.packageName == "com.example.pelletswaterheater.new")
     }
 }

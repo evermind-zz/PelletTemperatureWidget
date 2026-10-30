@@ -2,7 +2,7 @@ package com.example.pelletswaterheater.utils
 
 import android.net.Uri
 import androidx.core.content.FileProvider
-import com.example.pelletswaterheater.TemperatureUtils
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

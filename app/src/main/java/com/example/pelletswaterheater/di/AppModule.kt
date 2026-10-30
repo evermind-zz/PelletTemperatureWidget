@@ -2,7 +2,7 @@ package com.example.pelletswaterheater.di
 
 import com.example.pelletswaterheater.NetworkAccess
 import com.example.pelletswaterheater.SettingsViewModel
-import com.example.pelletswaterheater.TemperatureUtils
+import com.example.pelletswaterheater.utils.TemperatureUtils
 import com.example.pelletswaterheater.preferences.PreferencesRepository
 import com.example.pelletswaterheater.preferences.PreferencesRepositoryImpl
 import com.example.pelletswaterheater.repository.LoggingRepository
@@ -49,7 +49,7 @@ val appModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     // Provide TemperatureUtils
-    single { TemperatureUtils(get(), get<ContextProvider>().getContext()) }
+    single { TemperatureUtils.getInstance(get(), get<ContextProvider>().getContext()) }
 
     // Provide Repositories
     single<MetadataRepository> { MetadataRepositoryImpl(get(), get(), get(), get(), get()) }
