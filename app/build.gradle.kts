@@ -25,6 +25,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -91,6 +92,15 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.3")
 
     testImplementation("io.insert-koin:koin-test:3.5.6")
+
+    // Android Instrumented Tests
+    androidTestImplementation("androidx.test:runner:1.6.0")
+    androidTestImplementation("androidx.test:rules:1.6.0")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-manifest:1.7.0")
+    androidTestImplementation("org.junit:junit:4.13.2")
+    androidTestRuntimeOnly("androidx.test:orchestrator:1.6.0")
 }
 
 // Configure JUnit Platform for all test tasks (debug and release unit tests)
