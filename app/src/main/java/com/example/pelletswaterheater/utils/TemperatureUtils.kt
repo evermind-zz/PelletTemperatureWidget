@@ -1,6 +1,7 @@
 package com.example.pelletswaterheater.utils
 
 import android.content.Context
+import android.graphics.Color as AndroidColor
 import androidx.compose.ui.graphics.Color
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
@@ -146,7 +147,7 @@ class TemperatureUtils private constructor(
         fun getStoredBackgroundColor(context: Context): Color {
             val hex = "FFF3E5F5"
             return try {
-                Color.parseColor("#$hex")
+                Color.valueOf(AndroidColor.parseColor("#$hex").toLong())
             } catch (e: Exception) {
                 Color.White
             }
@@ -155,7 +156,7 @@ class TemperatureUtils private constructor(
         fun getStoredTextColor(context: Context): Color {
             val hex = "FF000000"
             return try {
-                Color.parseColor("#$hex")
+                Color.valueOf(AndroidColor.parseColor("#$hex").toLong())
             } catch (e: Exception) {
                 Color.Black
             }
