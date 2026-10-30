@@ -1,7 +1,7 @@
 package com.example.pelletswaterheater.utils
 
 import android.content.Context
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
@@ -143,21 +143,21 @@ class TemperatureUtils private constructor(
             return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
         }
 
-        fun getStoredBackgroundColor(context: Context): Int {
+        fun getStoredBackgroundColor(context: Context): Color {
             val hex = "FFF3E5F5"
             return try {
                 Color.parseColor("#$hex")
             } catch (e: Exception) {
-                Color.WHITE
+                Color.White
             }
         }
 
-        fun getStoredTextColor(context: Context): Int {
+        fun getStoredTextColor(context: Context): Color {
             val hex = "FF000000"
             return try {
                 Color.parseColor("#$hex")
             } catch (e: Exception) {
-                Color.BLACK
+                Color.Black
             }
         }
     }
@@ -301,9 +301,9 @@ class TemperatureUtils private constructor(
 
     fun setStoredLoggerHeaderHash(hash: Int) { setStoredLoggerHeaderHash(context, hash) }
 
-    fun getStoredBackgroundColor(): Int = getStoredBackgroundColor(context)
+    fun getStoredBackgroundColor(): Color = getStoredBackgroundColor(context)
 
-    fun getStoredTextColor(): Int = getStoredTextColor(context)
+    fun getStoredTextColor(): Color = getStoredTextColor(context)
 
     fun getNameSuffix(wrapper: ConvertedValueWrapper): String = getNameSuffix(wrapper)
 
