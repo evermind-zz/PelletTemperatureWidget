@@ -31,7 +31,7 @@ jobs:
         continue-on-error: true
 
       - name: Compile Test Classes
-        run: ./gradlew compileTestKotlin --no-daemon --stacktrace
+        run: ./gradlew :app:compileDebugUnitTestKotlin --no-daemon --stacktrace
         continue-on-error: true
 
       - name: Run Unit Tests
