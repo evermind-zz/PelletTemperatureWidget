@@ -98,29 +98,21 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: latest
-          packages: platform-tools platforms;android-34 build-tools;34.0.0 system-images;android-34;default;x86_64
-
-      - name: Accept SDK Licenses
-        run: yes | sdkmanager --licenses
-
-      - name: Add Android SDK to PATH
-        run: echo "$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
-
-      - name: Create and Start Emulator
+      - name: Enable KVM group permissions
         run: |
-          export ANDROID_AVD_HOME=$HOME/.android/avd
-          echo "no" | avdmanager create avd -n test -k "system-images;android-34;default;x86_64" --force
-          emulator -avd test -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
-          # Wait for emulator to boot
-          adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
-          adb shell input keyevent 82
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
-      - name: Run Instrumented Tests
-        run: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+      - name: Run Android Emulator and Tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none
+          script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
 
       - name: Upload Instrumented Test Reports
         if: always()
