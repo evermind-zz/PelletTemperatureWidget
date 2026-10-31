@@ -147,7 +147,7 @@ class TemperatureUtils private constructor(
         fun getStoredBackgroundColor(context: Context): Color {
             val hex = "FFF3E5F5"
             return try {
-                Color.valueOf(AndroidColor.parseColor("#$hex").toLong())
+                Color(AndroidColor.parseColor("#$hex").toLong())
             } catch (e: Exception) {
                 Color.White
             }
@@ -156,7 +156,7 @@ class TemperatureUtils private constructor(
         fun getStoredTextColor(context: Context): Color {
             val hex = "FF000000"
             return try {
-                Color.valueOf(AndroidColor.parseColor("#$hex").toLong())
+                Color(AndroidColor.parseColor("#$hex").toLong())
             } catch (e: Exception) {
                 Color.Black
             }
